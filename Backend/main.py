@@ -1,7 +1,9 @@
-from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Form
+from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Form, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from app.schemas import pydantic_schemas as schemas
 from app.services import logic
+from fastapi import WebSocket
+from app.services.audio_stream import handle_audio_stream
 from typing import List
 from uuid import uuid4
 
@@ -110,3 +112,7 @@ def get_config():
 @app.post("/config")
 def update_config(status: bool):
     return logic.toggle_demo_mode(status)
+
+@app.websocket("/stream-audio")
+async def stream_audio(ws: WebSocket):
+    await handle_audio_stream(ws)

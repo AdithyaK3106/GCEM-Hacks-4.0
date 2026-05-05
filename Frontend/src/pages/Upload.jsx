@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Upload as UploadIcon, FileText, ArrowRight } from 'lucide-react';
+import { Upload as UploadIcon, FileText, ArrowRight, Mic } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { uploadLecture, getDemoConfig, setDemoConfig } from '../services/zeroFrictionApi';
 import { useEffect } from 'react';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
+import AudioRecorder from '../components/audio/AudioRecorder';
 import './pages.css';
 
 const Upload = () => {
@@ -17,7 +18,9 @@ const Upload = () => {
   const [demoMode, setDemoMode] = useState(true);
   const [processingStep, setProcessingStep] = useState('');
   const [error, setError] = useState('');
-  const { setSessionId, setTranscript, setNotes, setQuizQuestions, setQuizData, updateProgress, setPipelineStep } = useAppContext();
+  const [inputMode, setInputMode] = useState('file'); // 'file' | 'audio'
+  const [liveTranscript, setLiveTranscript] = useState('');
+  const { setSessionId, setTranscript, setNotes, setQuizQuestions, setQuizData, updateProgress, setPipelineStep, sessionId } = useAppContext();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -64,7 +67,10 @@ const Upload = () => {
     setFile(selectedFile);
   };
 
-  const processUpload = async () => {
+  const processUpload = async (overrideFile = null) => {
+    const fileToProcess = overrideFile || file;
+    if (!fileToProcess) return;
+
     setIsProcessing(true);
     setError('');
 
@@ -76,7 +82,7 @@ const Upload = () => {
       setProcessingStep('Preparing Quiz...');
       await new Promise(r => setTimeout(r, 1200));
 
-      const data = await uploadLecture(file, targetLanguage);
+      const data = await uploadLecture(fileToProcess, targetLanguage);
       setSessionId(data.session_id);
       setTranscript(data.transcript_text);
       setNotes(null);
@@ -93,16 +99,73 @@ const Upload = () => {
     }
   };
 
+  const handleRecordingComplete = async (transcript) => {
+    if (!transcript?.trim()) { setError('No speech detected.'); return; }
+    setIsProcessing(true);
+    try {
+      const blob = new Blob([transcript], { type: 'text/plain' });
+      const syntheticFile = new File([blob], 'audio_transcript.txt', { type: 'text/plain' });
+      const data = await uploadLecture(syntheticFile, targetLanguage);
+      setSessionId(data.session_id);
+      setTranscript(transcript);
+      setNotes(null); setQuizQuestions([]); setQuizData(null);
+      updateProgress(10); setPipelineStep(1);
+      navigate('/notes');
+    } catch (err) {
+      setError(err.message || 'Processing failed.');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   return (
     <div className="page-transition max-w-4xl mx-auto">
       <div className="text-center mb-10">
         <h1 className="text-3xl font-bold mb-4">Upload Lecture Material</h1>
         <p className="text-text-secondary">Upload audio, video, or a text transcript. Our AI will analyze it.</p>
+        
+        {/* Premium Mode Toggle */}
+        <div className="flex justify-center mt-8 mb-10">
+          <div className="relative bg-white/5 p-2 rounded-[24px] border border-white/10 flex gap-2 backdrop-blur-xl shadow-2xl overflow-hidden w-full max-w-sm">
+            <button 
+              onClick={() => setInputMode('file')}
+              className={`relative flex-1 flex items-center justify-center gap-3 px-6 py-3 rounded-[16px] text-sm font-bold transition-all duration-300 z-10 ${inputMode === 'file' ? 'text-white' : 'text-white/50 hover:text-white/80'}`}
+            >
+              {inputMode === 'file' && (
+                <motion.div
+                  layoutId="activeModePill"
+                  className="absolute inset-0 rounded-[16px] bg-gradient-to-r from-accent-primary to-accent-secondary shadow-lg"
+                  transition={{ type: "spring", bounce: 0.25, duration: 0.6 }}
+                  style={{ zIndex: -1 }}
+                />
+              )}
+              <FileText size={18} />
+              <span className="tracking-wide">File Upload</span>
+            </button>
+            
+            <button 
+              onClick={() => setInputMode('audio')}
+              className={`relative flex-1 flex items-center justify-center gap-3 px-6 py-3 rounded-[16px] text-sm font-bold transition-all duration-300 z-10 ${inputMode === 'audio' ? 'text-white' : 'text-white/50 hover:text-white/80'}`}
+            >
+              {inputMode === 'audio' && (
+                <motion.div
+                  layoutId="activeModePill"
+                  className="absolute inset-0 rounded-[16px] bg-gradient-to-r from-accent-primary to-accent-secondary shadow-lg"
+                  transition={{ type: "spring", bounce: 0.25, duration: 0.6 }}
+                  style={{ zIndex: -1 }}
+                />
+              )}
+              <Mic size={18} />
+              <span className="tracking-wide">Record Audio</span>
+            </button>
+          </div>
+        </div>
       </div>
 
-      <Card>
-        {!file ? (
-          <form 
+      {inputMode === 'file' && (
+        <Card>
+          {!file ? (
+            <form 
             onDragEnter={handleDrag} 
             onDragLeave={handleDrag} 
             onDragOver={handleDrag} 
@@ -274,6 +337,15 @@ const Upload = () => {
           </motion.div>
         )}
       </Card>
+      )}
+
+      {inputMode === 'audio' && (
+        <AudioRecorder
+          sessionId={sessionId || 'new-session'}
+          onTranscriptUpdate={setLiveTranscript}
+          onRecordingComplete={handleRecordingComplete}
+        />
+      )}
     </div>
   );
 };

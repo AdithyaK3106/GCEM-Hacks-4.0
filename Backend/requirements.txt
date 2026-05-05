@@ -6,3 +6,6 @@ pypdf
 python-multipart
 openai
 python-dotenv
+faster-whisper
+numpy
+torch

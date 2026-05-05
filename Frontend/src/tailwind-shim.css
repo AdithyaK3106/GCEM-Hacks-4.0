@@ -137,6 +137,8 @@
 .bg-danger\/20 { background-color: rgba(239, 68, 68, 0.2); }
 .bg-warning\/10 { background-color: rgba(245, 158, 11, 0.1); }
 .bg-accent-primary\/10 { background-color: rgba(138, 43, 226, 0.1); }
+.bg-accent-primary { background-color: var(--accent-primary); }
+.bg-accent-secondary { background-color: var(--accent-secondary); }
 
 .bg-purple-600 { background-color: #9333ea; }
 .bg-blue-600 { background-color: #2563eb; }
