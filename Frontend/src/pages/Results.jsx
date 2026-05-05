@@ -1,21 +1,34 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Award, Target, ArrowRight } from 'lucide-react';
+import { Award, Target, ArrowRight, Zap, Flame, Brain, BookOpen } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
+import { getSessionSummary, getFlashcards } from '../services/zeroFrictionApi';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import './pages.css';
 
 const Results = () => {
   const { quizData, sessionId } = useAppContext();
+  const [summary, setSummary] = useState(null);
+  const [flashcards, setFlashcards] = useState([]);
+  const [showFlashcards, setShowFlashcards] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!quizData) {
       navigate('/dashboard');
+      return;
     }
-  }, [quizData, navigate]);
+
+    const fetchData = async () => {
+      const summaryData = await getSessionSummary(sessionId);
+      setSummary(summaryData);
+      const cards = await getFlashcards(sessionId);
+      setFlashcards(cards);
+    };
+    fetchData();
+  }, [quizData, navigate, sessionId]);
 
   if (!quizData) return null;
 
@@ -34,22 +47,90 @@ const Results = () => {
           <Award size={64} className="text-white" />
         </motion.div>
         <h1 className="text-4xl font-bold mb-2">Quiz Completed!</h1>
-        <p className="text-xl text-text-secondary">Here's how you performed.</p>
+        <p className="text-xl text-text-secondary">Here's your intelligence-driven learning summary.</p>
+        <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] uppercase font-bold tracking-widest text-text-secondary">
+          <span className="w-2 h-2 bg-success rounded-full"></span> Language: Hindi
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        <Card className="text-center py-8">
-          <div className="text-5xl font-bold text-accent-primary mb-2">{quizData.score}/{quizData.total}</div>
-          <p className="text-text-secondary">Correct Answers</p>
+      {/* Fix 1: Performance Dashboard */}
+      <div className="summary-dashboard">
+        <Card className="summary-card">
+          <div className="summary-val text-accent-primary">{summary?.xp || 0}</div>
+          <p className="summary-label">XP Earned</p>
         </Card>
-        <Card className="text-center py-8">
-          <div className="text-5xl font-bold text-success mb-2">{percentage}%</div>
-          <p className="text-text-secondary">Accuracy</p>
+        <Card className="summary-card warning">
+          <div className="summary-val text-warning flex items-center justify-center gap-2">
+            <Flame size={24} /> {summary?.streak || 0}
+          </div>
+          <p className="summary-label">Day Streak</p>
         </Card>
-        <Card className="text-center py-8">
-          <div className="text-5xl font-bold text-warning mb-2">+50</div>
-          <p className="text-text-secondary">XP Earned</p>
+        <Card className="summary-card success">
+          <div className="summary-val text-success">{summary?.accuracy || 0}%</div>
+          <p className="summary-label">Session Accuracy</p>
         </Card>
+        <Card className="summary-card danger">
+          <div className="summary-val text-danger">{summary?.misconceptions || 0}</div>
+          <p className="summary-label">Misconceptions</p>
+        </Card>
+      </div>
+
+      {/* Fix 2: Recommendation Engine Visualization */}
+      <Card className="mb-8" style={{ borderLeft: '4px solid var(--accent-primary)', backgroundColor: 'rgba(138,43,226,0.05)' }}>
+        <div className="flex" style={{ alignItems: 'flex-start', gap: '1rem' }}>
+          <div className="p-3 bg-accent-primary/20 rounded-xl" style={{ color: 'var(--accent-primary)', backgroundColor: 'rgba(138,43,226,0.1)' }}>
+            <Brain size={32} />
+          </div>
+          <div>
+            <h3 className="text-xl font-bold mb-2">Mastery Path Recommendation</h3>
+            <p className="text-text-primary mb-4 leading-relaxed">
+              {summary?.recommendation || "Based on your cognitive patterns, we've adjusted your learning path to optimize retention."}
+            </p>
+            <div className="flex gap-2">
+              <span className="badge badge-primary" style={{ padding: '0.25rem 0.75rem', backgroundColor: 'rgba(138,43,226,0.1)', color: 'var(--accent-primary)', fontSize: '10px', fontWeight: '700', borderRadius: '9999px', textTransform: 'uppercase' }}>Cognitive Action: Reteach</span>
+              <span className="badge badge-secondary" style={{ padding: '0.25rem 0.75rem', backgroundColor: 'rgba(255,255,255,0.05)', color: 'var(--text-secondary)', fontSize: '10px', fontWeight: '700', borderRadius: '9999px', border: '1px solid rgba(255,255,255,0.1)', textTransform: 'uppercase' }}>Priority: Critical</span>
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      {/* Fix 4: Flashcard View Toggle */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-bold flex items-center gap-2">
+            <BookOpen size={20} className="text-accent-primary" /> Dynamic Flashcards
+          </h3>
+          <Button variant="outline" className="text-xs py-1.5" onClick={() => setShowFlashcards(!showFlashcards)}>
+            {showFlashcards ? "Hide Flashcards" : "View Practice Cards"}
+          </Button>
+        </div>
+        
+        {showFlashcards && (
+          <div className="flashcards-grid">
+            {flashcards.map((card, idx) => (
+              <motion.div 
+                key={idx}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.1 }}
+                className="flashcard-wrapper"
+              >
+                <div className="flashcard-inner">
+                  {/* Front */}
+                  <div className="flashcard-front">
+                    <span className="summary-label mb-2">Question</span>
+                    <p className="font-bold text-lg">{card.front}</p>
+                  </div>
+                  {/* Back */}
+                  <div className="flashcard-back">
+                    <span className="text-[10px] uppercase tracking-widest text-white/60 mb-2">Answer</span>
+                    <p className="text-sm font-medium">{card.back}</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </div>
 
       <Card className="mb-8">

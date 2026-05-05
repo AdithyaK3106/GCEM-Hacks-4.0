@@ -1,7 +1,17 @@
 {
-  "note_id": 1,
-  "topic": "Photosynthesis",
-  "topic_title": "The Solar Engine: Photosynthesis",
-  "summary_md": "# Photosynthesis Overview\n\n## 1. Energy Capture\nPlants use chlorophyll in thylakoid membranes to capture light energy and split water, releasing **Oxygen**.\n\n## 2. Carbon Fixation (Calvin Cycle)\nIn the stroma, the enzyme **Rubisco** captures CO2 to build glucose molecules.\n\n## 3. Environmental Impact\nPhotosynthesis is the primary source of organic matter for all life and regulates global CO2 levels.",
-  "key_highlights": ["Light Reactions", "Calvin Cycle", "Environmental Impact"]
+  "title": "Topic Analysis & Summary",
+  "topic_title": "Automated Lecture Synthesis",
+  "topics": [
+    {
+      "name": "Note Processing",
+      "summary": "Our AI is currently synthesizing your lecture content. This specific view is a fallback placeholder.",
+      "intuition": "Like a librarian organizing books into the correct sections.",
+      "when_to_use": ["Reviewing complex topics", "Preparing for exams"],
+      "common_mistake": "Relying on fallbacks instead of checking server logs for processing errors.",
+      "real_world_example": "Digital knowledge management systems.",
+      "key_concepts": ["Information Synthesis", "Pattern Recognition", "Content Extraction"]
+    }
+  ],
+  "content_markdown": "### System Status\nThe AI has processed your document. If you see this message instead of your specific topics, please ensure the Ollama server is running and the 'deepseek-coder:6.7b' model is available.",
+  "key_highlights": ["Synthesis", "Analysis", "Review"]
 }

@@ -250,32 +250,44 @@ const Quiz = () => {
                   {/* Thinking Trace Stats */}
                   <div className="mb-6 grid grid-cols-3 gap-4 border-b border-white/5 pb-6">
                     <div className="text-center">
-                      <p className="text-[10px] uppercase tracking-wider text-text-secondary mb-1">Accuracy</p>
-                      <p className={`text-lg font-bold ${feedback.is_correct ? 'text-success' : 'text-danger'}`}>
-                        {feedback.is_correct ? '100%' : '0%'}
+                      <p className="text-[10px] uppercase tracking-wider text-text-secondary mb-1">XP Earned</p>
+                      <p className="text-lg font-bold text-accent-primary">+{feedback.xp || 10}</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-[10px] uppercase tracking-wider text-text-secondary mb-1">Streak</p>
+                      <p className="text-lg font-bold text-warning">
+                        {feedback.streak > 1 ? `🔥 ${feedback.streak}` : feedback.streak}
                       </p>
                     </div>
                     <div className="text-center">
                       <p className="text-[10px] uppercase tracking-wider text-text-secondary mb-1">Confidence</p>
-                      <p className="text-lg font-bold text-warning">High</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-[10px] uppercase tracking-wider text-text-secondary mb-1">Time</p>
-                      <p className="text-lg font-bold text-accent-primary">Optimal</p>
+                      <p className={`text-lg font-bold ${feedback.is_correct && feedback.confidence < 0.7 ? 'text-warning' : 'text-success'}`}>
+                        {feedback.confidence > 0.8 ? 'High' : (feedback.confidence > 0.6 ? 'Medium' : 'Low')}
+                      </p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-3">
                     {feedback?.learner_state?.state_label === 'MISCONCEPTION' && <AlertTriangle size={22} className="shrink-0 mt-1" />}
                     <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="flex flex-col">
+                      <div className="flex flex-col gap-3 mb-4">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-bold text-text-secondary uppercase">State:</span>
                           <span className="status-badge">{feedback?.learner_state?.state_label || 'ANALYSED'}</span>
-                          <span className="text-[9px] uppercase tracking-tighter mt-1 opacity-50 font-bold">
-                            {feedback.learner_state.insight_reason || 'Adaptive analysis triggered'}
-                          </span>
                         </div>
-                        <strong className="text-sm">{feedback?.learner_state?.message || 'Processing response...'}</strong>
+                        <div className="flex items-start gap-2">
+                          <span className="text-[10px] font-bold text-text-secondary uppercase mt-1">Reason:</span>
+                          <strong className="text-sm leading-tight text-text-primary">
+                            {feedback.learner_state.insight_reason || 'Adaptive pattern detection triggered.'}
+                          </strong>
+                        </div>
+                        <div className="mt-1">
+                          <strong className="text-xs text-text-secondary italic">
+                            {feedback.is_correct && feedback.confidence < 0.6 ? "Correct, but you were unsure — let's reinforce." : 
+                             (!feedback.is_correct && feedback.confidence > 0.7 ? "You were confident but incorrect — this is a misconception." : 
+                             feedback?.learner_state?.message || 'Processing response...')}
+                          </strong>
+                        </div>
                       </div>
                       
                       {feedback.explanation.wrong_belief && (

@@ -200,3 +200,120 @@
   padding: 2rem;
   min-height: calc(100vh - 80px);
 }
+/* Topbar Interactive Elements */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 1rem;
+  width: 280px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 1rem;
+  z-index: 1000;
+  backdrop-filter: blur(20px);
+}
+
+.dropdown-header {
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 0.75rem;
+}
+
+.dropdown-header h4 {
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.notification-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.notification-item {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: var(--border-radius-md);
+  transition: background 0.2s ease;
+  cursor: pointer;
+}
+
+.notification-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.notification-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(138, 43, 226, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-primary);
+  flex-shrink: 0;
+}
+
+.notification-content p {
+  font-size: 0.8125rem;
+  margin: 0;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.notification-content span {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.profile-menu {
+  width: 200px;
+}
+
+.profile-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: var(--border-radius-md);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  transition: background 0.2s ease;
+}
+
+.profile-link:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.profile-link.logout {
+  color: var(--danger);
+  margin-top: 0.5rem;
+  border-top: 1px solid var(--border-color);
+  border-radius: 0 0 var(--border-radius-md) var(--border-radius-md);
+}
+
+.search-container {
+  position: relative;
+}
+
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  box-shadow: var(--shadow-lg);
+  display: none;
+}
+
+.search-container:focus-within .search-results {
+  display: block;
+}

@@ -9,7 +9,7 @@
       "source_file": "Backend\\main.py",
       "source_location": "L1",
       "id": "backend_main_py",
-      "community": 0,
+      "community": 4,
       "norm_label": "main.py"
     },
     {
@@ -18,7 +18,7 @@
       "source_file": "Backend\\main.py",
       "source_location": "L20",
       "id": "main_read_root",
-      "community": 0,
+      "community": 4,
       "norm_label": "read_root()"
     },
     {
@@ -27,7 +27,7 @@
       "source_file": "Backend\\main.py",
       "source_location": "L24",
       "id": "main_upload_file",
-      "community": 0,
+      "community": 4,
       "norm_label": "upload_file()"
     },
     {
@@ -36,7 +36,7 @@
       "source_file": "Backend\\main.py",
       "source_location": "L53",
       "id": "main_get_notes",
-      "community": 0,
+      "community": 4,
       "norm_label": "get_notes()"
     },
     {
@@ -45,7 +45,7 @@
       "source_file": "Backend\\main.py",
       "source_location": "L58",
       "id": "main_get_quiz",
-      "community": 0,
+      "community": 4,
       "norm_label": "get_quiz()"
     },
     {
@@ -54,7 +54,7 @@
       "source_file": "Backend\\main.py",
       "source_location": "L63",
       "id": "main_submit_answer",
-      "community": 0,
+      "community": 4,
       "norm_label": "submit_answer()"
     },
     {
@@ -63,35 +63,35 @@
       "source_file": "Backend\\test_pipeline.py",
       "source_location": "L1",
       "id": "backend_test_pipeline_py",
-      "community": 5,
+      "community": 1,
       "norm_label": "test_pipeline.py"
     },
     {
-      "label": "test_grounding_consistency()",
+      "label": "test_chunking()",
       "file_type": "code",
       "source_file": "Backend\\test_pipeline.py",
-      "source_location": "L5",
-      "id": "test_pipeline_test_grounding_consistency",
-      "community": 5,
-      "norm_label": "test_grounding_consistency()"
+      "source_location": "L6",
+      "id": "test_pipeline_test_chunking",
+      "community": 1,
+      "norm_label": "test_chunking()"
     },
     {
-      "label": "test_sentence_filtering()",
+      "label": "test_json_extraction()",
+      "file_type": "code",
+      "source_file": "Backend\\test_pipeline.py",
+      "source_location": "L14",
+      "id": "test_pipeline_test_json_extraction",
+      "community": 1,
+      "norm_label": "test_json_extraction()"
+    },
+    {
+      "label": "test_full_pipeline_mock()",
       "file_type": "code",
       "source_file": "Backend\\test_pipeline.py",
       "source_location": "L25",
-      "id": "test_pipeline_test_sentence_filtering",
-      "community": 5,
-      "norm_label": "test_sentence_filtering()"
-    },
-    {
-      "label": "test_full_pipeline_with_mock_pdf()",
-      "file_type": "code",
-      "source_file": "Backend\\test_pipeline.py",
-      "source_location": "L33",
-      "id": "test_pipeline_test_full_pipeline_with_mock_pdf",
-      "community": 5,
-      "norm_label": "test_full_pipeline_with_mock_pdf()"
+      "id": "test_pipeline_test_full_pipeline_mock",
+      "community": 1,
+      "norm_label": "test_full_pipeline_mock()"
     },
     {
       "label": "database.py",
@@ -99,7 +99,7 @@
       "source_file": "Backend\\app\\db\\database.py",
       "source_location": "L1",
       "id": "backend_app_db_database_py",
-      "community": 4,
+      "community": 5,
       "norm_label": "database.py"
     },
     {
@@ -108,7 +108,7 @@
       "source_file": "Backend\\app\\db\\database.py",
       "source_location": "L15",
       "id": "database_get_db",
-      "community": 4,
+      "community": 5,
       "norm_label": "get_db()"
     },
     {
@@ -117,7 +117,7 @@
       "source_file": "Backend\\app\\models\\sqlalchemy_models.py",
       "source_location": "L1",
       "id": "backend_app_models_sqlalchemy_models_py",
-      "community": 4,
+      "community": 5,
       "norm_label": "sqlalchemy_models.py"
     },
     {
@@ -126,7 +126,7 @@
       "source_file": "Backend\\app\\models\\sqlalchemy_models.py",
       "source_location": "L6",
       "id": "sqlalchemy_models_session",
-      "community": 4,
+      "community": 5,
       "norm_label": "session"
     },
     {
@@ -135,7 +135,7 @@
       "source_file": "",
       "source_location": "",
       "id": "base",
-      "community": 4,
+      "community": 5,
       "norm_label": "base"
     },
     {
@@ -144,7 +144,7 @@
       "source_file": "Backend\\app\\models\\sqlalchemy_models.py",
       "source_location": "L11",
       "id": "sqlalchemy_models_note",
-      "community": 4,
+      "community": 5,
       "norm_label": "note"
     },
     {
@@ -153,7 +153,7 @@
       "source_file": "Backend\\app\\models\\sqlalchemy_models.py",
       "source_location": "L19",
       "id": "sqlalchemy_models_quizquestion",
-      "community": 4,
+      "community": 5,
       "norm_label": "quizquestion"
     },
     {
@@ -162,7 +162,7 @@
       "source_file": "Backend\\app\\models\\sqlalchemy_models.py",
       "source_location": "L28",
       "id": "sqlalchemy_models_responseevent",
-      "community": 4,
+      "community": 5,
       "norm_label": "responseevent"
     },
     {
@@ -171,7 +171,7 @@
       "source_file": "Backend\\app\\models\\sqlalchemy_models.py",
       "source_location": "L37",
       "id": "sqlalchemy_models_topicmastery",
-      "community": 4,
+      "community": 5,
       "norm_label": "topicmastery"
     },
     {
@@ -232,7 +232,7 @@
       "label": "NotesData",
       "file_type": "code",
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
-      "source_location": "L31",
+      "source_location": "L33",
       "id": "pydantic_schemas_notesdata",
       "community": 2,
       "norm_label": "notesdata"
@@ -241,7 +241,7 @@
       "label": "QuizQuestionData",
       "file_type": "code",
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
-      "source_location": "L38",
+      "source_location": "L40",
       "id": "pydantic_schemas_quizquestiondata",
       "community": 2,
       "norm_label": "quizquestiondata"
@@ -250,7 +250,7 @@
       "label": "LearnerStateSchema",
       "file_type": "code",
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
-      "source_location": "L46",
+      "source_location": "L48",
       "id": "pydantic_schemas_learnerstateschema",
       "community": 2,
       "norm_label": "learnerstateschema"
@@ -259,7 +259,7 @@
       "label": "ExplanationSchema",
       "file_type": "code",
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
-      "source_location": "L52",
+      "source_location": "L55",
       "id": "pydantic_schemas_explanationschema",
       "community": 2,
       "norm_label": "explanationschema"
@@ -268,7 +268,7 @@
       "label": "RecommendationData",
       "file_type": "code",
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
-      "source_location": "L60",
+      "source_location": "L63",
       "id": "pydantic_schemas_recommendationdata",
       "community": 2,
       "norm_label": "recommendationdata"
@@ -277,7 +277,7 @@
       "label": "SubmitRequest",
       "file_type": "code",
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
-      "source_location": "L65",
+      "source_location": "L68",
       "id": "pydantic_schemas_submitrequest",
       "community": 2,
       "norm_label": "submitrequest"
@@ -286,7 +286,7 @@
       "label": "SubmitResponseData",
       "file_type": "code",
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
-      "source_location": "L71",
+      "source_location": "L74",
       "id": "pydantic_schemas_submitresponsedata",
       "community": 2,
       "norm_label": "submitresponsedata"
@@ -297,152 +297,170 @@
       "source_file": "Backend\\app\\services\\logic.py",
       "source_location": "L1",
       "id": "backend_app_services_logic_py",
-      "community": 0,
+      "community": 1,
       "norm_label": "logic.py"
     },
     {
       "label": "load_fallback_file()",
       "file_type": "code",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L27",
+      "source_location": "L30",
       "id": "logic_load_fallback_file",
-      "community": 0,
+      "community": 1,
       "norm_label": "load_fallback_file()"
     },
     {
       "label": "call_ollama()",
       "file_type": "code",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L45",
+      "source_location": "L48",
       "id": "logic_call_ollama",
-      "community": 0,
+      "community": 1,
       "norm_label": "call_ollama()"
     },
     {
-      "label": "safe_json_parse()",
+      "label": "extract_json()",
       "file_type": "code",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L64",
-      "id": "logic_safe_json_parse",
-      "community": 0,
-      "norm_label": "safe_json_parse()"
+      "source_location": "L68",
+      "id": "logic_extract_json",
+      "community": 1,
+      "norm_label": "extract_json()"
     },
     {
       "label": "chunk_text()",
       "file_type": "code",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L77",
+      "source_location": "L92",
       "id": "logic_chunk_text",
-      "community": 0,
+      "community": 1,
       "norm_label": "chunk_text()"
     },
     {
       "label": "generate_notes_llm()",
       "file_type": "code",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L97",
+      "source_location": "L112",
       "id": "logic_generate_notes_llm",
-      "community": 0,
+      "community": 1,
       "norm_label": "generate_notes_llm()"
     },
     {
       "label": "generate_quiz_llm()",
       "file_type": "code",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L153",
+      "source_location": "L193",
       "id": "logic_generate_quiz_llm",
-      "community": 0,
+      "community": 1,
       "norm_label": "generate_quiz_llm()"
     },
     {
       "label": "generate_explanation_llm()",
       "file_type": "code",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L204",
+      "source_location": "L242",
       "id": "logic_generate_explanation_llm",
-      "community": 0,
+      "community": 1,
       "norm_label": "generate_explanation_llm()"
     },
     {
       "label": "extract_pdf_text()",
       "file_type": "code",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L238",
+      "source_location": "L272",
       "id": "logic_extract_pdf_text",
-      "community": 0,
+      "community": 1,
       "norm_label": "extract_pdf_text()"
     },
     {
       "label": "process_pdf_pipeline()",
       "file_type": "code",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L248",
+      "source_location": "L284",
       "id": "logic_process_pdf_pipeline",
-      "community": 0,
+      "community": 1,
       "norm_label": "process_pdf_pipeline()"
     },
     {
       "label": "get_cached_notes()",
       "file_type": "code",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L274",
+      "source_location": "L311",
       "id": "logic_get_cached_notes",
-      "community": 0,
+      "community": 4,
       "norm_label": "get_cached_notes()"
     },
     {
       "label": "get_cached_quiz()",
       "file_type": "code",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L277",
+      "source_location": "L314",
       "id": "logic_get_cached_quiz",
-      "community": 0,
+      "community": 4,
       "norm_label": "get_cached_quiz()"
     },
     {
       "label": "get_deterministic_intelligence()",
       "file_type": "code",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L280",
+      "source_location": "L317",
       "id": "logic_get_deterministic_intelligence",
-      "community": 0,
+      "community": 4,
       "norm_label": "get_deterministic_intelligence()"
     },
     {
       "label": "get_session_summary()",
       "file_type": "code",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L350",
+      "source_location": "L385",
       "id": "logic_get_session_summary",
-      "community": 0,
+      "community": 1,
       "norm_label": "get_session_summary()"
     },
     {
-      "label": "Enhanced Quiz Generation (Trap questions enabled).",
+      "label": "Robust JSON extraction using regex.",
       "file_type": "rationale",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L154",
-      "community": 0,
-      "norm_label": "enhanced quiz generation (trap questions enabled).",
-      "id": "logic_rationale_154"
+      "source_location": "L69",
+      "id": "logic_rationale_69",
+      "community": 1,
+      "norm_label": "robust json extraction using regex."
     },
     {
-      "label": "Data-driven Intelligence Layer (Hardcoded overrides removed).",
+      "label": "Robust Notes Generation with chunk-level fault tolerance.",
       "file_type": "rationale",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L281",
-      "community": 0,
-      "norm_label": "data-driven intelligence layer (hardcoded overrides removed).",
-      "id": "logic_rationale_281"
+      "source_location": "L113",
+      "id": "logic_rationale_113",
+      "community": 1,
+      "norm_label": "robust notes generation with chunk-level fault tolerance."
     },
     {
-      "label": "Requirement 4: Strengthened Post-Quiz Fallback.",
+      "label": "Robust Quiz Generation with extraction and fallback.",
       "file_type": "rationale",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L351",
-      "community": 0,
-      "norm_label": "requirement 4: strengthened post-quiz fallback.",
-      "id": "logic_rationale_351"
+      "source_location": "L194",
+      "id": "logic_rationale_194",
+      "community": 1,
+      "norm_label": "robust quiz generation with extraction and fallback."
+    },
+    {
+      "label": "Robust Explanation Generation.",
+      "file_type": "rationale",
+      "source_file": "Backend\\app\\services\\logic.py",
+      "source_location": "L243",
+      "id": "logic_rationale_243",
+      "community": 1,
+      "norm_label": "robust explanation generation."
+    },
+    {
+      "label": "Data-driven Intelligence Layer.",
+      "file_type": "rationale",
+      "source_file": "Backend\\app\\services\\logic.py",
+      "source_location": "L318",
+      "id": "logic_rationale_318",
+      "community": 4,
+      "norm_label": "data-driven intelligence layer."
     },
     {
       "label": "uuid_helper.py",
@@ -513,7 +531,7 @@
       "source_file": "Frontend\\src\\components\\debug\\DebugPanel.jsx",
       "source_location": "L1",
       "id": "frontend_src_components_debug_debugpanel_jsx",
-      "community": 1,
+      "community": 0,
       "norm_label": "debugpanel.jsx"
     },
     {
@@ -522,7 +540,7 @@
       "source_file": "Frontend\\src\\components\\debug\\DebugPanel.jsx",
       "source_location": "L4",
       "id": "debugpanel_debugpanel",
-      "community": 1,
+      "community": 0,
       "norm_label": "debugpanel()"
     },
     {
@@ -567,7 +585,7 @@
       "source_file": "Frontend\\src\\components\\layout\\Topbar.jsx",
       "source_location": "L1",
       "id": "frontend_src_components_layout_topbar_jsx",
-      "community": 1,
+      "community": 0,
       "norm_label": "topbar.jsx"
     },
     {
@@ -576,7 +594,7 @@
       "source_file": "Frontend\\src\\components\\layout\\Topbar.jsx",
       "source_location": "L7",
       "id": "topbar_topbar",
-      "community": 1,
+      "community": 0,
       "norm_label": "topbar()"
     },
     {
@@ -639,7 +657,7 @@
       "source_file": "Frontend\\src\\context\\AppContext.jsx",
       "source_location": "L1",
       "id": "frontend_src_context_appcontext_jsx",
-      "community": 1,
+      "community": 0,
       "norm_label": "appcontext.jsx"
     },
     {
@@ -648,7 +666,7 @@
       "source_file": "Frontend\\src\\context\\AppContext.jsx",
       "source_location": "L5",
       "id": "appcontext_useappcontext",
-      "community": 1,
+      "community": 0,
       "norm_label": "useappcontext()"
     },
     {
@@ -657,7 +675,7 @@
       "source_file": "Frontend\\src\\context\\AppContext.jsx",
       "source_location": "L7",
       "id": "appcontext_getstorageitem",
-      "community": 1,
+      "community": 0,
       "norm_label": "getstorageitem()"
     },
     {
@@ -666,7 +684,7 @@
       "source_file": "Frontend\\src\\context\\AppContext.jsx",
       "source_location": "L16",
       "id": "appcontext_setstorageitem",
-      "community": 1,
+      "community": 0,
       "norm_label": "setstorageitem()"
     },
     {
@@ -675,7 +693,7 @@
       "source_file": "Frontend\\src\\context\\AppContext.jsx",
       "source_location": "L20",
       "id": "appcontext_appprovider",
-      "community": 1,
+      "community": 0,
       "norm_label": "appprovider()"
     },
     {
@@ -684,7 +702,7 @@
       "source_file": "Frontend\\src\\pages\\Dashboard.jsx",
       "source_location": "L1",
       "id": "frontend_src_pages_dashboard_jsx",
-      "community": 1,
+      "community": 0,
       "norm_label": "dashboard.jsx"
     },
     {
@@ -693,7 +711,7 @@
       "source_file": "Frontend\\src\\pages\\Dashboard.jsx",
       "source_location": "L9",
       "id": "dashboard_dashboard",
-      "community": 1,
+      "community": 0,
       "norm_label": "dashboard()"
     },
     {
@@ -720,7 +738,7 @@
       "source_file": "Frontend\\src\\pages\\Leaderboard.jsx",
       "source_location": "L1",
       "id": "frontend_src_pages_leaderboard_jsx",
-      "community": 1,
+      "community": 0,
       "norm_label": "leaderboard.jsx"
     },
     {
@@ -729,7 +747,7 @@
       "source_file": "Frontend\\src\\pages\\Leaderboard.jsx",
       "source_location": "L16",
       "id": "leaderboard_leaderboard",
-      "community": 1,
+      "community": 0,
       "norm_label": "leaderboard()"
     },
     {
@@ -756,7 +774,7 @@
       "source_file": "Frontend\\src\\pages\\Notes.jsx",
       "source_location": "L1",
       "id": "frontend_src_pages_notes_jsx",
-      "community": 1,
+      "community": 0,
       "norm_label": "notes.jsx"
     },
     {
@@ -765,7 +783,7 @@
       "source_file": "Frontend\\src\\pages\\Notes.jsx",
       "source_location": "L12",
       "id": "notes_notes",
-      "community": 1,
+      "community": 0,
       "norm_label": "notes()"
     },
     {
@@ -774,7 +792,7 @@
       "source_file": "Frontend\\src\\pages\\Quiz.jsx",
       "source_location": "L1",
       "id": "frontend_src_pages_quiz_jsx",
-      "community": 1,
+      "community": 0,
       "norm_label": "quiz.jsx"
     },
     {
@@ -783,7 +801,7 @@
       "source_file": "Frontend\\src\\pages\\Quiz.jsx",
       "source_location": "L12",
       "id": "quiz_quiz",
-      "community": 1,
+      "community": 0,
       "norm_label": "quiz()"
     },
     {
@@ -792,7 +810,7 @@
       "source_file": "Frontend\\src\\pages\\Results.jsx",
       "source_location": "L1",
       "id": "frontend_src_pages_results_jsx",
-      "community": 1,
+      "community": 0,
       "norm_label": "results.jsx"
     },
     {
@@ -801,7 +819,7 @@
       "source_file": "Frontend\\src\\pages\\Results.jsx",
       "source_location": "L10",
       "id": "results_results",
-      "community": 1,
+      "community": 0,
       "norm_label": "results()"
     },
     {
@@ -810,7 +828,7 @@
       "source_file": "Frontend\\src\\pages\\Upload.jsx",
       "source_location": "L1",
       "id": "frontend_src_pages_upload_jsx",
-      "community": 1,
+      "community": 0,
       "norm_label": "upload.jsx"
     },
     {
@@ -819,7 +837,7 @@
       "source_file": "Frontend\\src\\pages\\Upload.jsx",
       "source_location": "L11",
       "id": "upload_upload",
-      "community": 1,
+      "community": 0,
       "norm_label": "upload()"
     },
     {
@@ -889,7 +907,7 @@
       "label": "uploadLecture()",
       "file_type": "code",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L113",
+      "source_location": "L114",
       "id": "zerofrictionapi_uploadlecture",
       "community": 3,
       "norm_label": "uploadlecture()"
@@ -898,7 +916,7 @@
       "label": "getNotes()",
       "file_type": "code",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L127",
+      "source_location": "L128",
       "id": "zerofrictionapi_getnotes",
       "community": 3,
       "norm_label": "getnotes()"
@@ -907,7 +925,7 @@
       "label": "getQuiz()",
       "file_type": "code",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L137",
+      "source_location": "L138",
       "id": "zerofrictionapi_getquiz",
       "community": 3,
       "norm_label": "getquiz()"
@@ -916,17 +934,44 @@
       "label": "submitAnswer()",
       "file_type": "code",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L147",
+      "source_location": "L148",
       "id": "zerofrictionapi_submitanswer",
       "community": 3,
       "norm_label": "submitanswer()"
+    },
+    {
+      "label": "Enhanced Quiz Generation (Trap questions enabled).",
+      "file_type": "rationale",
+      "source_file": "Backend\\app\\services\\logic.py",
+      "source_location": "L154",
+      "community": 18,
+      "norm_label": "enhanced quiz generation (trap questions enabled).",
+      "id": "logic_rationale_154"
+    },
+    {
+      "label": "Data-driven Intelligence Layer (Hardcoded overrides removed).",
+      "file_type": "rationale",
+      "source_file": "Backend\\app\\services\\logic.py",
+      "source_location": "L281",
+      "community": 19,
+      "norm_label": "data-driven intelligence layer (hardcoded overrides removed).",
+      "id": "logic_rationale_281"
+    },
+    {
+      "label": "Requirement 4: Strengthened Post-Quiz Fallback.",
+      "file_type": "rationale",
+      "source_file": "Backend\\app\\services\\logic.py",
+      "source_location": "L351",
+      "community": 20,
+      "norm_label": "requirement 4: strengthened post-quiz fallback.",
+      "id": "logic_rationale_351"
     },
     {
       "label": "Splits text into logical chunks of fixed size.",
       "file_type": "rationale",
       "source_file": "Backend\\app\\services\\logic.py",
       "source_location": "L52",
-      "community": 18,
+      "community": 21,
       "norm_label": "splits text into logical chunks of fixed size.",
       "id": "logic_rationale_52"
     },
@@ -935,7 +980,7 @@
       "file_type": "rationale",
       "source_file": "Backend\\app\\services\\logic.py",
       "source_location": "L60",
-      "community": 19,
+      "community": 22,
       "norm_label": "simulates llm extracting 2-3 topics from a chunk.",
       "id": "logic_rationale_60"
     },
@@ -944,7 +989,7 @@
       "file_type": "rationale",
       "source_file": "Backend\\app\\services\\logic.py",
       "source_location": "L83",
-      "community": 20,
+      "community": 23,
       "norm_label": "merges topics from multiple chunks, limits to 6 max, and deduplicates.",
       "id": "logic_rationale_83"
     },
@@ -953,7 +998,7 @@
       "file_type": "rationale",
       "source_file": "Backend\\app\\services\\logic.py",
       "source_location": "L97",
-      "community": 21,
+      "community": 24,
       "norm_label": "checks if the extracted topics follow the required schema.",
       "id": "logic_rationale_97"
     },
@@ -962,7 +1007,7 @@
       "file_type": "rationale",
       "source_file": "Backend\\app\\services\\logic.py",
       "source_location": "L117",
-      "community": 22,
+      "community": 25,
       "norm_label": "generates natural questions only from the final merged topics.",
       "id": "logic_rationale_117"
     }
@@ -1080,12 +1125,24 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\test_pipeline.py",
-      "source_location": "L5",
+      "source_location": "L6",
       "weight": 1.0,
       "_src": "backend_test_pipeline_py",
-      "_tgt": "test_pipeline_test_grounding_consistency",
+      "_tgt": "test_pipeline_test_chunking",
       "source": "backend_test_pipeline_py",
-      "target": "test_pipeline_test_grounding_consistency",
+      "target": "test_pipeline_test_chunking",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend\\test_pipeline.py",
+      "source_location": "L14",
+      "weight": 1.0,
+      "_src": "backend_test_pipeline_py",
+      "_tgt": "test_pipeline_test_json_extraction",
+      "source": "backend_test_pipeline_py",
+      "target": "test_pipeline_test_json_extraction",
       "confidence_score": 1.0
     },
     {
@@ -1095,21 +1152,9 @@
       "source_location": "L25",
       "weight": 1.0,
       "_src": "backend_test_pipeline_py",
-      "_tgt": "test_pipeline_test_sentence_filtering",
+      "_tgt": "test_pipeline_test_full_pipeline_mock",
       "source": "backend_test_pipeline_py",
-      "target": "test_pipeline_test_sentence_filtering",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "Backend\\test_pipeline.py",
-      "source_location": "L33",
-      "weight": 1.0,
-      "_src": "backend_test_pipeline_py",
-      "_tgt": "test_pipeline_test_full_pipeline_with_mock_pdf",
-      "source": "backend_test_pipeline_py",
-      "target": "test_pipeline_test_full_pipeline_with_mock_pdf",
+      "target": "test_pipeline_test_full_pipeline_mock",
       "confidence_score": 1.0
     },
     {
@@ -1117,11 +1162,35 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "Backend\\test_pipeline.py",
-      "source_location": "L38",
+      "source_location": "L9",
       "weight": 1.0,
-      "_src": "test_pipeline_test_full_pipeline_with_mock_pdf",
+      "_src": "test_pipeline_test_chunking",
+      "_tgt": "logic_chunk_text",
+      "source": "test_pipeline_test_chunking",
+      "target": "logic_chunk_text"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "Backend\\test_pipeline.py",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_src": "test_pipeline_test_json_extraction",
+      "_tgt": "logic_extract_json",
+      "source": "test_pipeline_test_json_extraction",
+      "target": "logic_extract_json"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "Backend\\test_pipeline.py",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_src": "test_pipeline_test_full_pipeline_mock",
       "_tgt": "logic_process_pdf_pipeline",
-      "source": "test_pipeline_test_full_pipeline_with_mock_pdf",
+      "source": "test_pipeline_test_full_pipeline_mock",
       "target": "logic_process_pdf_pipeline"
     },
     {
@@ -1320,7 +1389,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
-      "source_location": "L31",
+      "source_location": "L33",
       "weight": 1.0,
       "_src": "backend_app_schemas_pydantic_schemas_py",
       "_tgt": "pydantic_schemas_notesdata",
@@ -1332,7 +1401,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
-      "source_location": "L38",
+      "source_location": "L40",
       "weight": 1.0,
       "_src": "backend_app_schemas_pydantic_schemas_py",
       "_tgt": "pydantic_schemas_quizquestiondata",
@@ -1344,7 +1413,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
-      "source_location": "L46",
+      "source_location": "L48",
       "weight": 1.0,
       "_src": "backend_app_schemas_pydantic_schemas_py",
       "_tgt": "pydantic_schemas_learnerstateschema",
@@ -1356,7 +1425,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
-      "source_location": "L52",
+      "source_location": "L55",
       "weight": 1.0,
       "_src": "backend_app_schemas_pydantic_schemas_py",
       "_tgt": "pydantic_schemas_explanationschema",
@@ -1368,7 +1437,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
-      "source_location": "L60",
+      "source_location": "L63",
       "weight": 1.0,
       "_src": "backend_app_schemas_pydantic_schemas_py",
       "_tgt": "pydantic_schemas_recommendationdata",
@@ -1380,7 +1449,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
-      "source_location": "L65",
+      "source_location": "L68",
       "weight": 1.0,
       "_src": "backend_app_schemas_pydantic_schemas_py",
       "_tgt": "pydantic_schemas_submitrequest",
@@ -1392,7 +1461,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
-      "source_location": "L71",
+      "source_location": "L74",
       "weight": 1.0,
       "_src": "backend_app_schemas_pydantic_schemas_py",
       "_tgt": "pydantic_schemas_submitresponsedata",
@@ -1452,7 +1521,7 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
-      "source_location": "L31",
+      "source_location": "L33",
       "weight": 1.0,
       "_src": "pydantic_schemas_notesdata",
       "_tgt": "basemodel",
@@ -1464,7 +1533,7 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
-      "source_location": "L38",
+      "source_location": "L40",
       "weight": 1.0,
       "_src": "pydantic_schemas_quizquestiondata",
       "_tgt": "basemodel",
@@ -1476,7 +1545,7 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
-      "source_location": "L46",
+      "source_location": "L48",
       "weight": 1.0,
       "_src": "pydantic_schemas_learnerstateschema",
       "_tgt": "basemodel",
@@ -1488,7 +1557,7 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
-      "source_location": "L52",
+      "source_location": "L55",
       "weight": 1.0,
       "_src": "pydantic_schemas_explanationschema",
       "_tgt": "basemodel",
@@ -1500,7 +1569,7 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
-      "source_location": "L60",
+      "source_location": "L63",
       "weight": 1.0,
       "_src": "pydantic_schemas_recommendationdata",
       "_tgt": "basemodel",
@@ -1512,7 +1581,7 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
-      "source_location": "L65",
+      "source_location": "L68",
       "weight": 1.0,
       "_src": "pydantic_schemas_submitrequest",
       "_tgt": "basemodel",
@@ -1524,7 +1593,7 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
-      "source_location": "L71",
+      "source_location": "L74",
       "weight": 1.0,
       "_src": "pydantic_schemas_submitresponsedata",
       "_tgt": "basemodel",
@@ -1536,7 +1605,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L27",
+      "source_location": "L30",
       "weight": 1.0,
       "_src": "backend_app_services_logic_py",
       "_tgt": "logic_load_fallback_file",
@@ -1548,7 +1617,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L45",
+      "source_location": "L48",
       "weight": 1.0,
       "_src": "backend_app_services_logic_py",
       "_tgt": "logic_call_ollama",
@@ -1560,19 +1629,19 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L64",
+      "source_location": "L68",
       "weight": 1.0,
       "_src": "backend_app_services_logic_py",
-      "_tgt": "logic_safe_json_parse",
+      "_tgt": "logic_extract_json",
       "source": "backend_app_services_logic_py",
-      "target": "logic_safe_json_parse",
+      "target": "logic_extract_json",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L77",
+      "source_location": "L92",
       "weight": 1.0,
       "_src": "backend_app_services_logic_py",
       "_tgt": "logic_chunk_text",
@@ -1584,7 +1653,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L97",
+      "source_location": "L112",
       "weight": 1.0,
       "_src": "backend_app_services_logic_py",
       "_tgt": "logic_generate_notes_llm",
@@ -1596,7 +1665,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L153",
+      "source_location": "L193",
       "weight": 1.0,
       "_src": "backend_app_services_logic_py",
       "_tgt": "logic_generate_quiz_llm",
@@ -1608,7 +1677,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L204",
+      "source_location": "L242",
       "weight": 1.0,
       "_src": "backend_app_services_logic_py",
       "_tgt": "logic_generate_explanation_llm",
@@ -1620,7 +1689,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L238",
+      "source_location": "L272",
       "weight": 1.0,
       "_src": "backend_app_services_logic_py",
       "_tgt": "logic_extract_pdf_text",
@@ -1632,7 +1701,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L248",
+      "source_location": "L284",
       "weight": 1.0,
       "_src": "backend_app_services_logic_py",
       "_tgt": "logic_process_pdf_pipeline",
@@ -1644,7 +1713,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L274",
+      "source_location": "L311",
       "weight": 1.0,
       "_src": "backend_app_services_logic_py",
       "_tgt": "logic_get_cached_notes",
@@ -1656,7 +1725,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L277",
+      "source_location": "L314",
       "weight": 1.0,
       "_src": "backend_app_services_logic_py",
       "_tgt": "logic_get_cached_quiz",
@@ -1668,7 +1737,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L280",
+      "source_location": "L317",
       "weight": 1.0,
       "_src": "backend_app_services_logic_py",
       "_tgt": "logic_get_deterministic_intelligence",
@@ -1680,7 +1749,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L350",
+      "source_location": "L385",
       "weight": 1.0,
       "_src": "backend_app_services_logic_py",
       "_tgt": "logic_get_session_summary",
@@ -1692,7 +1761,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L130",
+      "source_location": "L155",
       "weight": 1.0,
       "_src": "logic_generate_notes_llm",
       "_tgt": "logic_call_ollama",
@@ -1704,12 +1773,36 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L186",
+      "source_location": "L221",
       "weight": 1.0,
       "_src": "logic_generate_quiz_llm",
       "_tgt": "logic_call_ollama",
       "source": "logic_call_ollama",
       "target": "logic_generate_quiz_llm",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend\\app\\services\\logic.py",
+      "source_location": "L258",
+      "weight": 1.0,
+      "_src": "logic_generate_explanation_llm",
+      "_tgt": "logic_call_ollama",
+      "source": "logic_call_ollama",
+      "target": "logic_generate_explanation_llm",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend\\app\\services\\logic.py",
+      "source_location": "L160",
+      "weight": 1.0,
+      "_src": "logic_generate_notes_llm",
+      "_tgt": "logic_extract_json",
+      "source": "logic_extract_json",
+      "target": "logic_generate_notes_llm",
       "confidence_score": 1.0
     },
     {
@@ -1718,33 +1811,9 @@
       "source_file": "Backend\\app\\services\\logic.py",
       "source_location": "L224",
       "weight": 1.0,
-      "_src": "logic_generate_explanation_llm",
-      "_tgt": "logic_call_ollama",
-      "source": "logic_call_ollama",
-      "target": "logic_generate_explanation_llm",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L131",
-      "weight": 1.0,
-      "_src": "logic_generate_notes_llm",
-      "_tgt": "logic_safe_json_parse",
-      "source": "logic_safe_json_parse",
-      "target": "logic_generate_notes_llm",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L187",
-      "weight": 1.0,
       "_src": "logic_generate_quiz_llm",
-      "_tgt": "logic_safe_json_parse",
-      "source": "logic_safe_json_parse",
+      "_tgt": "logic_extract_json",
+      "source": "logic_extract_json",
       "target": "logic_generate_quiz_llm",
       "confidence_score": 1.0
     },
@@ -1752,19 +1821,31 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L225",
+      "source_location": "L259",
       "weight": 1.0,
       "_src": "logic_generate_explanation_llm",
-      "_tgt": "logic_safe_json_parse",
-      "source": "logic_safe_json_parse",
+      "_tgt": "logic_extract_json",
+      "source": "logic_extract_json",
       "target": "logic_generate_explanation_llm",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend\\app\\services\\logic.py",
+      "source_location": "L69",
+      "weight": 1.0,
+      "_src": "logic_rationale_69",
+      "_tgt": "logic_extract_json",
+      "source": "logic_extract_json",
+      "target": "logic_rationale_69",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L98",
+      "source_location": "L114",
       "weight": 1.0,
       "_src": "logic_generate_notes_llm",
       "_tgt": "logic_chunk_text",
@@ -1776,7 +1857,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L155",
+      "source_location": "L195",
       "weight": 1.0,
       "_src": "logic_generate_quiz_llm",
       "_tgt": "logic_chunk_text",
@@ -1788,7 +1869,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L254",
+      "source_location": "L291",
       "weight": 1.0,
       "_src": "logic_process_pdf_pipeline",
       "_tgt": "logic_generate_notes_llm",
@@ -1797,10 +1878,22 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend\\app\\services\\logic.py",
+      "source_location": "L113",
+      "weight": 1.0,
+      "_src": "logic_rationale_113",
+      "_tgt": "logic_generate_notes_llm",
+      "source": "logic_generate_notes_llm",
+      "target": "logic_rationale_113",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L255",
+      "source_location": "L292",
       "weight": 1.0,
       "_src": "logic_process_pdf_pipeline",
       "_tgt": "logic_generate_quiz_llm",
@@ -1812,19 +1905,19 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L154",
+      "source_location": "L194",
       "weight": 1.0,
-      "_src": "logic_rationale_154",
+      "_src": "logic_rationale_194",
       "_tgt": "logic_generate_quiz_llm",
       "source": "logic_generate_quiz_llm",
-      "target": "logic_rationale_154",
+      "target": "logic_rationale_194",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L319",
+      "source_location": "L355",
       "weight": 1.0,
       "_src": "logic_get_deterministic_intelligence",
       "_tgt": "logic_generate_explanation_llm",
@@ -1833,10 +1926,22 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend\\app\\services\\logic.py",
+      "source_location": "L243",
+      "weight": 1.0,
+      "_src": "logic_rationale_243",
+      "_tgt": "logic_generate_explanation_llm",
+      "source": "logic_generate_explanation_llm",
+      "target": "logic_rationale_243",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L249",
+      "source_location": "L285",
       "weight": 1.0,
       "_src": "logic_process_pdf_pipeline",
       "_tgt": "logic_extract_pdf_text",
@@ -1848,24 +1953,12 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L281",
+      "source_location": "L318",
       "weight": 1.0,
-      "_src": "logic_rationale_281",
+      "_src": "logic_rationale_318",
       "_tgt": "logic_get_deterministic_intelligence",
       "source": "logic_get_deterministic_intelligence",
-      "target": "logic_rationale_281",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "rationale_for",
-      "confidence": "EXTRACTED",
-      "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L351",
-      "weight": 1.0,
-      "_src": "logic_rationale_351",
-      "_tgt": "logic_get_session_summary",
-      "source": "logic_get_session_summary",
-      "target": "logic_rationale_351",
+      "target": "logic_rationale_318",
       "confidence_score": 1.0
     },
     {
@@ -2292,7 +2385,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L113",
+      "source_location": "L114",
       "weight": 1.0,
       "_src": "frontend_src_services_zerofrictionapi_js",
       "_tgt": "zerofrictionapi_uploadlecture",
@@ -2304,7 +2397,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L127",
+      "source_location": "L128",
       "weight": 1.0,
       "_src": "frontend_src_services_zerofrictionapi_js",
       "_tgt": "zerofrictionapi_getnotes",
@@ -2316,7 +2409,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L137",
+      "source_location": "L138",
       "weight": 1.0,
       "_src": "frontend_src_services_zerofrictionapi_js",
       "_tgt": "zerofrictionapi_getquiz",
@@ -2328,7 +2421,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L147",
+      "source_location": "L148",
       "weight": 1.0,
       "_src": "frontend_src_services_zerofrictionapi_js",
       "_tgt": "zerofrictionapi_submitanswer",
@@ -2340,11 +2433,59 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L124",
+      "source_location": "L125",
       "weight": 1.0,
       "_src": "zerofrictionapi_uploadlecture",
       "_tgt": "zerofrictionapi_wrap",
       "source": "zerofrictionapi_wrap",
+      "target": "zerofrictionapi_uploadlecture",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
+      "source_location": "L135",
+      "weight": 1.0,
+      "_src": "zerofrictionapi_getnotes",
+      "_tgt": "zerofrictionapi_wrap",
+      "source": "zerofrictionapi_wrap",
+      "target": "zerofrictionapi_getnotes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
+      "source_location": "L145",
+      "weight": 1.0,
+      "_src": "zerofrictionapi_getquiz",
+      "_tgt": "zerofrictionapi_wrap",
+      "source": "zerofrictionapi_wrap",
+      "target": "zerofrictionapi_getquiz",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
+      "source_location": "L162",
+      "weight": 1.0,
+      "_src": "zerofrictionapi_submitanswer",
+      "_tgt": "zerofrictionapi_wrap",
+      "source": "zerofrictionapi_wrap",
+      "target": "zerofrictionapi_submitanswer",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
+      "source_location": "L123",
+      "weight": 1.0,
+      "_src": "zerofrictionapi_uploadlecture",
+      "_tgt": "zerofrictionapi_delay",
+      "source": "zerofrictionapi_delay",
       "target": "zerofrictionapi_uploadlecture",
       "confidence_score": 1.0
     },
@@ -2355,8 +2496,8 @@
       "source_location": "L134",
       "weight": 1.0,
       "_src": "zerofrictionapi_getnotes",
-      "_tgt": "zerofrictionapi_wrap",
-      "source": "zerofrictionapi_wrap",
+      "_tgt": "zerofrictionapi_delay",
+      "source": "zerofrictionapi_delay",
       "target": "zerofrictionapi_getnotes",
       "confidence_score": 1.0
     },
@@ -2367,54 +2508,6 @@
       "source_location": "L144",
       "weight": 1.0,
       "_src": "zerofrictionapi_getquiz",
-      "_tgt": "zerofrictionapi_wrap",
-      "source": "zerofrictionapi_wrap",
-      "target": "zerofrictionapi_getquiz",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L161",
-      "weight": 1.0,
-      "_src": "zerofrictionapi_submitanswer",
-      "_tgt": "zerofrictionapi_wrap",
-      "source": "zerofrictionapi_wrap",
-      "target": "zerofrictionapi_submitanswer",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L122",
-      "weight": 1.0,
-      "_src": "zerofrictionapi_uploadlecture",
-      "_tgt": "zerofrictionapi_delay",
-      "source": "zerofrictionapi_delay",
-      "target": "zerofrictionapi_uploadlecture",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L133",
-      "weight": 1.0,
-      "_src": "zerofrictionapi_getnotes",
-      "_tgt": "zerofrictionapi_delay",
-      "source": "zerofrictionapi_delay",
-      "target": "zerofrictionapi_getnotes",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L143",
-      "weight": 1.0,
-      "_src": "zerofrictionapi_getquiz",
       "_tgt": "zerofrictionapi_delay",
       "source": "zerofrictionapi_delay",
       "target": "zerofrictionapi_getquiz",
@@ -2424,7 +2517,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L158",
+      "source_location": "L159",
       "weight": 1.0,
       "_src": "zerofrictionapi_submitanswer",
       "_tgt": "zerofrictionapi_delay",
@@ -2436,7 +2529,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L124",
+      "source_location": "L125",
       "weight": 1.0,
       "_src": "zerofrictionapi_uploadlecture",
       "_tgt": "zerofrictionapi_generateuuid",
@@ -2448,7 +2541,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L55",
+      "source_location": "L56",
       "weight": 1.0,
       "_src": "zerofrictionapi_request",
       "_tgt": "zerofrictionapi_logtiming",
@@ -2460,7 +2553,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L119",
+      "source_location": "L120",
       "weight": 1.0,
       "_src": "zerofrictionapi_uploadlecture",
       "_tgt": "zerofrictionapi_assertsuccess",
@@ -2472,7 +2565,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L130",
+      "source_location": "L131",
       "weight": 1.0,
       "_src": "zerofrictionapi_getnotes",
       "_tgt": "zerofrictionapi_assertsuccess",
@@ -2484,7 +2577,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L140",
+      "source_location": "L141",
       "weight": 1.0,
       "_src": "zerofrictionapi_getquiz",
       "_tgt": "zerofrictionapi_assertsuccess",
@@ -2496,7 +2589,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L155",
+      "source_location": "L156",
       "weight": 1.0,
       "_src": "zerofrictionapi_submitanswer",
       "_tgt": "zerofrictionapi_assertsuccess",
@@ -2508,7 +2601,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L118",
+      "source_location": "L119",
       "weight": 1.0,
       "_src": "zerofrictionapi_uploadlecture",
       "_tgt": "zerofrictionapi_request",
@@ -2520,7 +2613,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L129",
+      "source_location": "L130",
       "weight": 1.0,
       "_src": "zerofrictionapi_getnotes",
       "_tgt": "zerofrictionapi_request",
@@ -2532,7 +2625,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L139",
+      "source_location": "L140",
       "weight": 1.0,
       "_src": "zerofrictionapi_getquiz",
       "_tgt": "zerofrictionapi_request",
@@ -2544,7 +2637,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L149",
+      "source_location": "L150",
       "weight": 1.0,
       "_src": "zerofrictionapi_submitanswer",
       "_tgt": "zerofrictionapi_request",

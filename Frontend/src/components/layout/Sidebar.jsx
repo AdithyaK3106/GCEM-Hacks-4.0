@@ -35,10 +35,8 @@ const Sidebar = () => {
       </nav>
       
       <div className="sidebar-footer">
-        <div className="pro-banner">
-          <div className="pro-glow"></div>
-          <h4>Upgrade to Pro</h4>
-          <p>Get unlimited AI credits</p>
+        <div className="text-[10px] text-text-muted text-center py-4 border-t border-white/5">
+          NexLearn AI v1.0
         </div>
       </div>
     </aside>
