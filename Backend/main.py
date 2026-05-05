@@ -1,55 +1,62 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
 from app.schemas import pydantic_schemas as schemas
 from app.services import logic
 from typing import List
-from uuid import UUID
+from uuid import uuid4
 
 app = FastAPI(title="Gopalan Hackathon AI Learning API")
 
+# Enable CORS for frontend integration
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.get("/")
 def read_root():
-    return {"status": "success", "message": "API is LIVE and Deterministic"}
+    return {"status": "success", "message": "Anti-Gravity API is LIVE", "mode": "REAL_PDF_PIPELINE"}
 
 @app.post("/upload", response_model=schemas.ResponseWrapper[schemas.TranscriptData])
-def upload_video():
-    asset = logic.load_demo_asset("transcript")
-    if not asset:
-        raise HTTPException(status_code=404, detail="Asset not found")
+async def upload_file(file: UploadFile = File(...)):
+    session_id = str(uuid4())
+    print(f"[API] Received upload: {file.filename}")
     
-    data = {
-        "session_id": asset["session_id"],
-        "transcript_text": asset["raw_text"],
-        "processing_time_ms": 1200
-    }
-    return {"data": data}
+    try:
+        # Reset file pointer just in case
+        file.file.seek(0)
+        
+        # Process the file directly through the new pipeline
+        session_data = logic.process_pdf_pipeline(session_id, file.file)
+        print(f"[API] Pipeline complete for {session_id}")
+        
+        data = {
+            "session_id": session_id,
+            "transcript_text": session_data.get("transcript", "Extraction successful."),
+            "processing_time_ms": 1500
+        }
+        return {"data": data}
+    except Exception as e:
+        print(f"[API_CRITICAL_ERROR] {str(e)}")
+        return {
+            "data": {
+                "session_id": session_id,
+                "transcript_text": "Content analysis failed. Using demo recovery mode.",
+                "processing_time_ms": 500
+            }
+        }
 
 @app.get("/notes/{session_id}", response_model=schemas.ResponseWrapper[schemas.NotesData])
 def get_notes(session_id: str):
-    asset = logic.load_demo_asset("notes")
-    if not asset:
-        raise HTTPException(status_code=404, detail="Asset not found")
-    
-    data = {
-        "note_id": asset["note_id"],
-        "topic_title": asset["topic"],
-        "content_markdown": asset["summary_md"],
-        "key_highlights": asset["key_concepts"]
-    }
+    data = logic.get_cached_notes(session_id)
     return {"data": data}
 
 @app.get("/quiz/{session_id}", response_model=schemas.ResponseWrapper[List[schemas.QuizQuestionData]])
 def get_quiz(session_id: str):
-    asset = logic.load_demo_asset("quiz")
-    if not asset:
-        raise HTTPException(status_code=404, detail="Asset not found")
-    
-    data = [
-        {
-            "q_id": q["q_id"],
-            "question_text": q["question"],
-            "options": q["options"]
-        } for q in asset
-    ]
+    data = logic.get_cached_quiz(session_id)
     return {"data": data}
 
 @app.post("/submit/{session_id}", response_model=schemas.ResponseWrapper[schemas.SubmitResponseData])

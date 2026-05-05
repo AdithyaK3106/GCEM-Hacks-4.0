@@ -24,13 +24,16 @@ export const AppProvider = ({ children }) => {
   const [quizQuestions, setQuizQuestionsState] = useState(() => getStorageItem('demo_quiz_questions', []));
   const [quizData, setQuizDataState] = useState(() => getStorageItem('demo_quiz_data', null));
   
+  // Pipeline Step: 0: Upload, 1: Notes, 2: Quiz, 3: Results
+  const [pipelineStep, setPipelineStepState] = useState(() => getStorageItem('demo_pipeline_step', 0));
+
   const [userProgress, setUserProgress] = useState(() => getStorageItem('demo_user_progress', {
     xp: 1250,
     level: 5,
     streak: 12,
     completedModules: 4,
   }));
-  
+
   const [weakTopics, setWeakTopics] = useState(() => getStorageItem('demo_weak_topics', [
     { topic: 'Neural Networks Backpropagation', score: 45 },
     { topic: 'Gradient Descent Optimization', score: 60 }
@@ -45,8 +48,14 @@ export const AppProvider = ({ children }) => {
       localStorage.removeItem('demo_notes');
       localStorage.removeItem('demo_quiz_questions');
       localStorage.removeItem('demo_quiz_data');
+      localStorage.removeItem('demo_pipeline_step');
     }
     setSessionIdState(id);
+  };
+
+  const setPipelineStep = (step) => {
+    setStorageItem('demo_pipeline_step', step);
+    setPipelineStepState(step);
   };
 
   const setTranscript = (data) => {
@@ -85,6 +94,7 @@ export const AppProvider = ({ children }) => {
     notes, setNotes,
     quizQuestions, setQuizQuestions,
     quizData, setQuizData,
+    pipelineStep, setPipelineStep,
     userProgress, updateProgress,
     weakTopics, setWeakTopics
   };

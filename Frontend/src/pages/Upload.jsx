@@ -13,7 +13,7 @@ const Upload = () => {
   const [file, setFile] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState('');
-  const { setSessionId, setTranscript, setNotes, setQuizQuestions, setQuizData, updateProgress } = useAppContext();
+  const { setSessionId, setTranscript, setNotes, setQuizQuestions, setQuizData, updateProgress, setPipelineStep } = useAppContext();
   const navigate = useNavigate();
 
   const handleDrag = (e) => {
@@ -58,6 +58,7 @@ const Upload = () => {
       setQuizQuestions([]);
       setQuizData(null);
       updateProgress(10);
+      setPipelineStep(1); // Ready for Notes
       navigate('/notes');
     } catch (err) {
       setError(err.message || 'Upload failed. Please try again.');

@@ -59,16 +59,45 @@
   color: var(--accent-primary);
 }
 
-/* Notes Page */
 .notes-container {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 2.5fr 1fr;
   gap: 2rem;
+}
+
+.tab-btn {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: var(--text-secondary) !important;
+  border: 1px solid var(--border-color) !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: var(--border-radius-md) !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  font-weight: 500 !important;
+}
+
+.tab-btn:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.tab-btn.active {
+  background: rgba(138, 43, 226, 0.2) !important;
+  color: var(--accent-primary) !important;
+  border-color: var(--accent-primary) !important;
+  box-shadow: 0 0 15px var(--accent-glow) !important;
 }
 
 .note-content {
   font-size: 1.1rem;
   line-height: 1.8;
+  white-space: normal !important;
+  overflow: visible !important;
+}
+
+h4 {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
 }
 
 /* Quiz Page */

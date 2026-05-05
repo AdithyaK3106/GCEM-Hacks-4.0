@@ -26,16 +26,17 @@ const Quiz = () => {
     return saved ? JSON.parse(saved) : [];
   });
   const [error, setError] = useState('');
-  const { sessionId, quizQuestions, updateProgress, setQuizData } = useAppContext();
+  const { sessionId, quizQuestions, updateProgress, setQuizData, pipelineStep, setPipelineStep } = useAppContext();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!sessionId || quizQuestions.length === 0) {
+    // Sequential Guard: Must have completed notes to be here
+    if (!sessionId || quizQuestions.length === 0 || pipelineStep < 1) {
       navigate('/notes');
     }
-  }, [sessionId, quizQuestions.length, navigate]);
+  }, [sessionId, quizQuestions.length, navigate, pipelineStep]);
 
-  if (!sessionId || quizQuestions.length === 0) {
+  if (!sessionId || quizQuestions.length === 0 || pipelineStep < 1) {
     return null;
   }
 
@@ -87,6 +88,7 @@ const Quiz = () => {
         latest_feedback: feedback,
       });
       updateProgress(50);
+      setPipelineStep(3); // Move to Results step
       
       // Clear quiz progress on completion
       localStorage.removeItem('quiz_current_idx');
@@ -183,19 +185,19 @@ const Quiz = () => {
               {feedback && (
                 <div className={`learner-feedback ${stateColorClass}`}>
                   <div className="flex items-start gap-3">
-                    {feedback.learner_state.state_label === 'MISCONCEPTION' && <AlertTriangle size={22} />}
+                    {feedback?.learner_state?.state_label === 'MISCONCEPTION' && <AlertTriangle size={22} />}
                     <div>
                       <div className="flex items-center gap-3 mb-2">
-                        <span className="status-badge">{feedback.learner_state.state_label}</span>
-                        <strong>{feedback.learner_state.message}</strong>
+                        <span className="status-badge">{feedback?.learner_state?.state_label || 'ANALYSED'}</span>
+                        <strong>{feedback?.learner_state?.message || 'Processing response...'}</strong>
                       </div>
-                      <p>{feedback.explanation.text}</p>
-                      {feedback.explanation.misconception_warning && (
+                      <p>{feedback?.explanation?.text || 'No explanation provided.'}</p>
+                      {feedback?.explanation?.misconception_warning && (
                         <p className="mt-2 font-medium">{feedback.explanation.misconception_warning}</p>
                       )}
-                      {feedback.recommendation && (
+                      {feedback?.recommendation && (
                         <div className="mt-4 p-3 bg-white/5 rounded-md border border-white/10">
-                          <p className="text-sm font-medium text-accent-primary">Recommendation: {feedback.recommendation.label}</p>
+                          <p className="text-sm font-medium text-accent-primary">Recommendation: {feedback.recommendation.label || 'Review content'}</p>
                         </div>
                       )}
                     </div>

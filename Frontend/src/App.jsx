@@ -11,6 +11,7 @@ import Results from './pages/Results';
 import Dashboard from './pages/Dashboard';
 import Leaderboard from './pages/Leaderboard';
 import LearningPath from './pages/LearningPath';
+import DebugPanel from './components/debug/DebugPanel';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        <DebugPanel />
       </Router>
     </AppProvider>
   );

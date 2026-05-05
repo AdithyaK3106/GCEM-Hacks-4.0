@@ -1,196 +1,162 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Play, Languages, Save, Target } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { BookOpen, CheckCircle, Clock, Zap, ArrowRight, Info, FileText, List, ChevronDown, ChevronUp } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 import { useAppContext } from '../context/AppContext';
 import { getNotes, getQuiz } from '../services/zeroFrictionApi';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import './pages.css';
 
-const renderMarkdown = (markdown) => {
-  const elements = [];
-  let listItems = [];
-
-  const flushList = () => {
-    if (listItems.length) {
-      elements.push(
-        <ul key={`list-${elements.length}`} className="list-disc pl-6 space-y-2 text-text-secondary mb-4">
-          {listItems}
-        </ul>,
-      );
-      listItems = [];
-    }
-  };
-
-  markdown.split('\n').forEach((line, index) => {
-    if (line.startsWith('- ')) {
-      listItems.push(<li key={index}>{line.slice(2)}</li>);
-      return;
-    }
-
-    flushList();
-
-    if (line.startsWith('# ')) {
-      elements.push(<h2 key={index} className="text-2xl font-bold mb-4">{line.slice(2)}</h2>);
-    } else if (line.startsWith('## ')) {
-      elements.push(<h3 key={index} className="text-xl font-semibold mt-6 mb-3 text-white">{line.slice(3)}</h3>);
-    } else if (line.trim()) {
-      elements.push(<p key={index} className="text-text-secondary mb-4">{line}</p>);
-    }
-  });
-
-  flushList();
-  return elements;
-};
-
 const Notes = () => {
-  const { sessionId, transcript, notes, setNotes, setQuizQuestions, updateProgress } = useAppContext();
+  const { sessionId: contextSessionId, transcript, notes, setNotes, setQuizQuestions, setPipelineStep, pipelineStep } = useAppContext();
+  const { sessionId: paramSessionId } = useParams();
+  const sessionId = contextSessionId || paramSessionId;
   const navigate = useNavigate();
+  
   const [activeTab, setActiveTab] = useState('summary');
-  const [isLoading, setIsLoading] = useState(true);
-  const [isQuizLoading, setIsQuizLoading] = useState(false);
+  const [loading, setLoading] = useState(!notes);
   const [error, setError] = useState('');
+  const [expandedTopic, setExpandedTopic] = useState(0);
 
   useEffect(() => {
-    if (!sessionId || !transcript) {
+    if (pipelineStep < 1 && !notes) {
       navigate('/upload');
       return;
     }
 
-    let ignore = false;
-    getNotes(sessionId)
-      .then((data) => {
-        if (!ignore) {
-          setNotes(data);
-        }
-      })
-      .catch((err) => {
-        if (!ignore) {
-          setError(err.message || 'Unable to load notes.');
-        }
-      })
-      .finally(() => {
-        if (!ignore) {
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      ignore = true;
+    const loadData = async () => {
+      if (notes) return;
+      try {
+        setLoading(true);
+        const notesData = await getNotes(sessionId);
+        setNotes(notesData);
+        const quizData = await getQuiz(sessionId);
+        setQuizQuestions(quizData);
+      } catch (err) {
+        setError('Failed to load notes.');
+      } finally {
+        setLoading(false);
+      }
     };
-  }, [sessionId, transcript, navigate, setNotes]);
 
-  const handleStartQuiz = async () => {
-    setIsQuizLoading(true);
-    setError('');
+    if (sessionId) loadData();
+  }, [sessionId, notes, setNotes, setQuizQuestions, navigate, pipelineStep]);
 
-    try {
-      const questions = await getQuiz(sessionId);
-      setQuizQuestions(questions);
-      updateProgress(15);
-      navigate('/quiz');
-    } catch (err) {
-      setError(err.message || 'Unable to load quiz.');
-    } finally {
-      setIsQuizLoading(false);
-    }
+  const handleProceedToQuiz = () => {
+    setPipelineStep(2);
+    navigate(`/quiz/${sessionId}`);
   };
 
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <div className="w-16 h-16 border-4 border-accent-primary/20 border-t-accent-primary rounded-full animate-spin mb-6"></div>
+        <h2 className="text-2xl font-bold">Structuring Your Learning...</h2>
+      </div>
+    );
+  }
+
+  const topics = notes?.topics || [];
+
   return (
-    <div className="page-transition">
-      <div className="flex justify-between items-center mb-8">
+    <div className="page-transition max-w-6xl mx-auto">
+      <div className="flex justify-between items-end mb-8">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Lecture Notes</h1>
-          <p className="text-text-secondary">{notes?.topic_title || 'AI-generated structured notes from your upload.'}</p>
-        </div>
-        <div className="flex gap-4">
-          <Button variant="secondary"><Save size={18} /> Save PDF</Button>
-          <Button onClick={handleStartQuiz} disabled={isLoading || isQuizLoading}>
-            <Target size={18} /> {isQuizLoading ? 'Loading Quiz...' : 'Take Quiz'}
-          </Button>
+          <h1 className="text-4xl font-bold mb-2">Lecture Insights</h1>
+          <p className="text-text-secondary">{notes?.topic_title || 'Structured Topic Breakdown'}</p>
         </div>
       </div>
 
-      {error && <p className="text-danger mb-4">{error}</p>}
-
       <div className="notes-container">
-        <Card className="h-full">
-          <div className="flex gap-6 border-b border-white/10 pb-4 mb-6">
-            <button
-              className={`font-medium pb-4 -mb-4 border-b-2 transition-colors ${activeTab === 'summary' ? 'text-accent-primary border-accent-primary' : 'text-text-secondary border-transparent hover:text-text-primary'}`}
-              onClick={() => setActiveTab('summary')}
-            >
-              Summary
-            </button>
-            <button
-              className={`font-medium pb-4 -mb-4 border-b-2 transition-colors ${activeTab === 'transcript' ? 'text-accent-primary border-accent-primary' : 'text-text-secondary border-transparent hover:text-text-primary'}`}
-              onClick={() => setActiveTab('transcript')}
-            >
-              Full Transcript
-            </button>
-            <button
-              className={`font-medium pb-4 -mb-4 border-b-2 transition-colors ${activeTab === 'keypoints' ? 'text-accent-primary border-accent-primary' : 'text-text-secondary border-transparent hover:text-text-primary'}`}
-              onClick={() => setActiveTab('keypoints')}
-            >
-              Key Points
-            </button>
-          </div>
-
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="note-content prose prose-invert max-w-none"
-          >
-            {isLoading && <p className="text-text-secondary">Loading notes...</p>}
-            {!isLoading && notes && activeTab === 'summary' && <div>{renderMarkdown(notes.content_markdown)}</div>}
-            {!isLoading && activeTab === 'transcript' && (
-              <div className="text-text-secondary">
-                <p>{transcript}</p>
-              </div>
-            )}
-            {!isLoading && notes && activeTab === 'keypoints' && (
-              <ul className="space-y-4">
-                {notes.key_highlights.map((highlight) => (
-                  <li key={highlight} className="flex gap-4 items-start p-4 glass-card rounded-lg">
-                    <div className="text-accent-primary mt-1"><Target size={20} /></div>
-                    <div>
-                      <h4 className="font-bold text-white">{highlight}</h4>
-                      <p className="text-text-secondary text-sm">Key concept extracted from the uploaded lecture notes.</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </motion.div>
-        </Card>
-
-        <div className="flex flex-col gap-6">
-          <Card className="p-5">
-            <h3 className="font-bold mb-4 flex items-center gap-2"><Play size={18} className="text-accent-primary"/> Audio Player</h3>
-            <div className="h-12 bg-white/5 rounded-full flex items-center px-4 mb-2">
-              <div className="w-full bg-white/20 h-1 rounded-full relative">
-                <div className="absolute left-0 top-0 h-full bg-accent-primary w-1/3 rounded-full"></div>
-                <div className="absolute left-1/3 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow"></div>
-              </div>
+        <div className="space-y-6">
+          <Card className="overflow-hidden">
+            <div className="flex gap-4 p-4 border-b border-white/5 bg-white/2">
+              <button 
+                onClick={() => setActiveTab('summary')}
+                className={`tab-btn ${activeTab === 'summary' ? 'active' : ''}`}
+              >
+                <FileText size={18} /> Structured Notes
+              </button>
+              <button 
+                onClick={() => setActiveTab('transcript')}
+                className={`tab-btn ${activeTab === 'transcript' ? 'active' : ''}`}
+              >
+                <BookOpen size={18} /> Source Text
+              </button>
             </div>
-            <div className="flex justify-between text-xs text-text-secondary">
-              <span>12:45</span>
-              <span>45:20</span>
+            
+            <div className="p-8 min-h-[500px]">
+              <AnimatePresence mode="wait">
+                {activeTab === 'summary' && (
+                  <motion.div key="summary" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+                    {topics.length > 0 ? (
+                      topics.map((topic, index) => (
+                        <div key={index} className="border border-white/10 rounded-xl overflow-hidden bg-white/2 transition-all hover:border-accent-primary/30">
+                          <button 
+                            onClick={() => setExpandedTopic(expandedTopic === index ? -1 : index)}
+                            className="w-full p-6 flex justify-between items-center text-left hover:bg-white/5"
+                          >
+                            <div>
+                              <h3 className="text-xl font-bold text-accent-primary mb-1">{topic.name}</h3>
+                              <p className="text-text-secondary text-sm line-clamp-1">{topic.summary}</p>
+                            </div>
+                            {expandedTopic === index ? <ChevronUp /> : <ChevronDown />}
+                          </button>
+                          
+                          <AnimatePresence>
+                            {expandedTopic === index && (
+                              <motion.div 
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                className="px-6 pb-6 border-t border-white/5 pt-4"
+                              >
+                                <p className="text-text-primary mb-6 leading-relaxed">{topic.summary}</p>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                  {topic.key_concepts.map((concept, cIdx) => (
+                                    <div key={cIdx} className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/5">
+                                      <CheckCircle size={14} className="text-success shrink-0" />
+                                      <span className="text-sm">{concept}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="prose prose-invert max-w-none note-content !overflow-visible !whitespace-normal">
+                        <ReactMarkdown>{notes?.content_markdown || 'No summary available.'}</ReactMarkdown>
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+                
+                {activeTab === 'transcript' && (
+                  <motion.div key="transcript" initial={{ opacity: 0 }} className="text-text-secondary leading-relaxed whitespace-pre-wrap font-mono text-sm opacity-80">
+                    {transcript || 'Full transcript not available.'}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </Card>
+        </div>
 
-          <Card className="p-5">
-            <h3 className="font-bold mb-4 flex items-center gap-2"><Languages size={18} className="text-accent-primary"/> Translation</h3>
-            <select className="w-full bg-white/5 border border-white/10 rounded-md p-2 text-white outline-none focus:border-accent-primary transition-colors mb-4">
-              <option value="en">English</option>
-              <option value="es">Spanish</option>
-              <option value="fr">French</option>
-              <option value="de">German</option>
-              <option value="hi">Hindi</option>
-            </select>
-            <Button variant="outline" className="w-full justify-center">Translate Notes</Button>
+        <div className="space-y-6">
+          <Card className="bg-accent-primary/5 border-accent-primary/20 sticky top-24">
+            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+              <Zap className="text-warning" size={20} />
+              Verify Mastery
+            </h3>
+            <p className="text-text-secondary mb-6 text-sm">
+              Ready to test your understanding of these {topics.length} topics?
+            </p>
+            <Button onClick={handleProceedToQuiz} className="w-full">
+              Start Quiz <ArrowRight size={18} />
+            </Button>
           </Card>
         </div>
       </div>

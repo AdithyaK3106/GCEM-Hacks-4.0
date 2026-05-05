@@ -21,16 +21,24 @@ class TranscriptData(BaseModel):
     transcript_text: str
     processing_time_ms: int
 
+class Topic(BaseModel):
+    name: str
+    summary: str
+    key_concepts: List[str]
+
 class NotesData(BaseModel):
     note_id: int
     topic_title: str
-    content_markdown: str
-    key_highlights: List[str]
+    topics: List[Topic] = []
+    # Legacy fields for backward compatibility
+    content_markdown: str = ""
+    key_highlights: List[str] = []
 
 class QuizQuestionData(BaseModel):
     q_id: int
     question_text: str
     options: List[str]
+    source_text: Optional[str] = None
 
 class LearnerStateSchema(BaseModel):
     state_label: str  # MASTERED, MISCONCEPTION, etc.
