@@ -25,12 +25,13 @@ class Topic(BaseModel):
     name: str
     summary: str
     key_concepts: List[str]
+    examples: List[str] = []
+    intuition: str = "" # Added for enhanced pedagogy
 
 class NotesData(BaseModel):
     note_id: int
     topic_title: str
     topics: List[Topic] = []
-    # Legacy fields for backward compatibility
     content_markdown: str = ""
     key_highlights: List[str] = []
 
@@ -39,21 +40,27 @@ class QuizQuestionData(BaseModel):
     question_text: str
     options: List[str]
     source_text: Optional[str] = None
+    concept_tested: Optional[str] = None
+    is_trap: bool = False # Identifies questions targeting common pitfalls
 
 class LearnerStateSchema(BaseModel):
-    state_label: str  # MASTERED, MISCONCEPTION, etc.
-    state_color: str  # green, red, etc.
+    state_label: str
+    state_color: str
     message: str
     action_label: str
 
 class ExplanationSchema(BaseModel):
     text: str
     misconception_warning: Optional[str] = None
+    wrong_belief: Optional[str] = None
+    why_wrong: Optional[str] = None
+    correct_concept: Optional[str] = None
+    simple_analogy: Optional[str] = None
 
 class RecommendationData(BaseModel):
-    next_step: str  # ADVANCE, RETEACH, etc.
+    next_step: str
     label: str
-    type: str  # challenge, practice, etc.
+    type: str
 
 class SubmitRequest(BaseModel):
     q_id: int

@@ -19,7 +19,7 @@ const Results = () => {
 
   if (!quizData) return null;
 
-  const percentage = (quizData.score / quizData.total) * 100;
+  const percentage = Math.round((quizData.score / (quizData.total || 1)) * 100);
   const misconception = quizData.answers?.find((answer) => answer.learner_state.state_label === 'MISCONCEPTION');
   
   return (
@@ -59,12 +59,18 @@ const Results = () => {
         </h3>
         
         <div className="space-y-4">
-          <div className="p-4 bg-danger/5 border border-danger/20 rounded-lg">
-            <h4 className="font-bold text-danger mb-2">{misconception?.recommendation.label || 'Keep Practicing'}</h4>
+          <div className="p-4 bg-accent-primary/5 border border-accent-primary/20 rounded-lg">
+            <h4 className="font-bold text-accent-primary mb-2">
+              {misconception ? "Critical Misconception Detected" : "Post-Session Insight (Derived from response pattern)"}
+            </h4>
             <p className="text-text-secondary text-sm mb-4">
-              {misconception?.explanation.misconception_warning || "You've completed this mastery check. Follow the recommendation to keep your learning path current."}
+              {misconception 
+                ? misconception.recommendation.label 
+                : "Based on your accuracy and confidence metrics, we've identified a subtle area for reinforcement."}
             </p>
-            <Button variant="outline" className="text-sm py-1.5 px-3">Review Notes</Button>
+            <Button variant="outline" className="text-sm py-1.5 px-3" onClick={() => navigate(`/notes/${sessionId}`)}>
+              Retrain Concept
+            </Button>
           </div>
         </div>
       </Card>

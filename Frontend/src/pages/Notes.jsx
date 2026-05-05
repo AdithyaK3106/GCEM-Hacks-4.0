@@ -99,8 +99,8 @@ const Notes = () => {
                             className="w-full p-6 flex justify-between items-center text-left hover:bg-white/5"
                           >
                             <div>
-                              <h3 className="text-xl font-bold text-accent-primary mb-1">{topic.name}</h3>
-                              <p className="text-text-secondary text-sm line-clamp-1">{topic.summary}</p>
+                              <h3 className="text-2xl font-bold text-accent-primary mb-1">{topic.name}</h3>
+                              <p className="text-text-secondary text-base line-clamp-2">{topic.summary}</p>
                             </div>
                             {expandedTopic === index ? <ChevronUp /> : <ChevronDown />}
                           </button>
@@ -113,12 +113,20 @@ const Notes = () => {
                                 exit={{ height: 0, opacity: 0 }}
                                 className="px-6 pb-6 border-t border-white/5 pt-4"
                               >
-                                <p className="text-text-primary mb-6 leading-relaxed">{topic.summary}</p>
+                                <p className="text-text-primary text-lg mb-6 leading-relaxed">{topic.summary}</p>
+                                
+                                {topic.intuition && (
+                                  <div className="mb-6 p-4 bg-accent-primary/10 border-l-4 border-accent-primary rounded-r-lg">
+                                    <p className="text-xs uppercase font-bold text-accent-primary mb-1">The Intuition:</p>
+                                    <p className="text-sm italic">{topic.intuition}</p>
+                                  </div>
+                                )}
+
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                   {topic.key_concepts.map((concept, cIdx) => (
                                     <div key={cIdx} className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/5">
                                       <CheckCircle size={14} className="text-success shrink-0" />
-                                      <span className="text-sm">{concept}</span>
+                                      <span className="text-base font-medium">{concept}</span>
                                     </div>
                                   ))}
                                 </div>
@@ -151,7 +159,7 @@ const Notes = () => {
               <Zap className="text-warning" size={20} />
               Verify Mastery
             </h3>
-            <p className="text-text-secondary mb-6 text-sm">
+            <p className="text-text-secondary mb-6 text-base">
               Ready to test your understanding of these {topics.length} topics?
             </p>
             <Button onClick={handleProceedToQuiz} className="w-full">

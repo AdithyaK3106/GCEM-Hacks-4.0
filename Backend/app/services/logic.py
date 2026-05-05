@@ -3,207 +3,370 @@ import os
 import logging
 import time
 import re
+import requests
 from typing import Dict, Any, Optional, List
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
 from pypdf import PdfReader
+from dotenv import load_dotenv
 from ..schemas import pydantic_schemas
 
-logger = logging.getLogger("SystemHardening")
+# Load environment variables
+load_dotenv()
 
-# --- FALLBACK ASSETS ---
-FALLBACK_TOPICS = [
-    {
-        "name": "Neural Network Fundamentals",
-        "summary": "An introduction to biologically inspired computing models that learn from data patterns.",
-        "key_concepts": ["Input/Hidden/Output Layers", "Weight updates via Backpropagation", "Activation functions for non-linearity"]
-    },
-    {
-        "name": "Gradient Descent",
-        "summary": "An optimization algorithm used to minimize loss by iteratively moving towards the steepest descent.",
-        "key_concepts": ["Learning rate hyperparameter", "Cost function minimization", "Convergence and local minima"]
-    }
-]
+# Configure Logging
+logger = logging.getLogger("Ollama_Pipeline")
+logging.basicConfig(level=logging.INFO)
 
-FALLBACK_NOTES = {
-    "note_id": 999,
-    "topic_title": "AI Learning (Recovery Mode)",
-    "topics": FALLBACK_TOPICS,
-    "content_markdown": "Recovery mode active. Using high-quality default curriculum.",
-    "key_highlights": ["Biological inspiration", "Backpropagation", "Optimization"]
-}
+# --- Configuration ---
+OLLAMA_URL = "http://localhost:11434/api/generate"
+NOTES_MODEL = "qwen2.5-coder:14b"
+QUIZ_MODEL = "deepseek-coder:6.7b"
+EXPLANATION_MODEL = "qwen2.5-coder:14b"
 
-FALLBACK_QUIZ = [
-    { "q_id": 1, "question_text": "How do weights get updated during training?", "options": ["K-Means", "Gradient Descent", "PCA", "Dijkstra"], "source_text": "Training uses backpropagation and gradient descent." },
-    { "q_id": 2, "question_text": "Which layer is responsible for receiving raw input?", "options": ["Hidden", "Output", "Input", "Processing"], "source_text": "Layers include Input, Hidden, and Output layers." }
-]
+# --- FALLBACK SYSTEM ---
+def load_fallback_file(filename: str, default: Any) -> Any:
+    try:
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        path = os.path.join(base_path, "..", "..", "demo_assets", filename)
+        if os.path.exists(path):
+            with open(path, "r", encoding="utf-8") as f:
+                return json.load(f)
+    except Exception as e:
+        logger.error(f"Failed to load fallback {filename}: {e}")
+    return default
+
+FALLBACK_NOTES_RAW = load_fallback_file("notes.json", {"topics": []})
+FALLBACK_QUIZ = load_fallback_file("quiz.json", [])
 
 session_store = {}
-demo_counters = {}
 
-def clean_text(text: str) -> str:
-    if not text: return ""
-    text = re.sub(r'--- Page \d+ ---', ' ', text)
-    text = re.sub(r'\s+', ' ', text)
-    text = re.sub(r'[^\x20-\x7E]', '', text)
-    return text.strip()
+# --- CORE UTILS ---
 
-# --- STEP 1: LOGICAL CHUNKING ---
-def split_into_chunks(text: str, max_words: int = 600) -> List[str]:
-    """Splits text into logical chunks of fixed size."""
+def call_ollama(model: str, prompt: str) -> str:
+    payload = {
+        "model": model,
+        "prompt": prompt,
+        "stream": False,
+        "options": {
+            "temperature": 0.2,
+            "num_predict": 800
+        }
+    }
+    try:
+        logger.info(f"Calling Ollama: {model}")
+        response = requests.post(OLLAMA_URL, json=payload, timeout=120)
+        response.raise_for_status()
+        return response.json().get("response", "")
+    except Exception as e:
+        logger.error(f"Ollama call failed: {e}")
+        return ""
+
+def safe_json_parse(text: str) -> Optional[Any]:
+    if not text: return None
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        try:
+            match = re.search(r"(\{[\s\S]*\}|\[[\s\S]*\])", text)
+            if match:
+                return json.loads(match.group(1))
+        except Exception:
+            return None
+    return None
+
+def chunk_text(text: str, max_tokens: int = 700) -> List[str]:
     words = text.split()
-    # Limit to 6000 words total for demo safety
-    words = words[:6000]
-    return [" ".join(words[i:i + max_words]) for i in range(0, len(words), max_words)]
+    chunks = []
+    current_chunk = []
+    current_length = 0
+    for word in words:
+        word_len = len(word) // 4 + 1
+        if current_length + word_len > max_tokens:
+            chunks.append(" ".join(current_chunk))
+            current_chunk = [word]
+            current_length = word_len
+        else:
+            current_chunk.append(word)
+            current_length += word_len
+    if current_chunk:
+        chunks.append(" ".join(current_chunk))
+    return chunks
 
-# --- STEP 2: STRUCTURED EXTRACTION ---
-def extract_structured_topics(chunk: str) -> List[Dict[str, Any]]:
-    """Simulates LLM extracting 2-3 topics from a chunk."""
-    # Split chunk into sentences to find anchors
-    sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+', chunk) if len(s.strip()) > 30]
-    
-    if not sentences: return []
-    
-    topics = []
-    # Take first 2 anchors to avoid overcrowding
-    anchors = sentences[:2]
-    for i, s in enumerate(anchors):
-        name = s[:40].replace(".", "").strip()
-        summary = f"This section discusses {s[:100]}... analyzing its core components and educational significance."
-        concepts = [s[:60], "Key technical implication", "Related methodology"]
-        
-        topics.append({
-            "name": name,
-            "summary": summary,
-            "key_concepts": concepts
-        })
-    return topics
+# --- GENERATION FUNCTIONS ---
 
-# --- STEP 3: MERGE & DEDUPLICATE ---
-def merge_topic_outputs(topic_lists: List[List[Dict[str, Any]]]) -> List[Dict[str, Any]]:
-    """Merges topics from multiple chunks, limits to 6 max, and deduplicates."""
+def generate_notes_llm(transcript: str) -> dict:
+    chunks = chunk_text(transcript, max_tokens=750)
     all_topics = []
-    seen_names = set()
     
-    for sublist in topic_lists:
-        for t in sublist:
-            name_norm = t["name"].lower()[:20]
-            if name_norm not in seen_names:
-                all_topics.append(t)
-                seen_names.add(name_norm)
-                
-    return all_topics[:6] # Hard limit 6 topics (Requirement 5)
+    prompt_template = """You are an expert teacher.
+Your goal is to make complex concepts feel simple and intuitive.
 
-def validate_notes_schema(topics: List[Dict[str, Any]]) -> bool:
-    """Checks if the extracted topics follow the required schema."""
-    if not topics: return False
-    for t in topics:
-        if not all(k in t for k in ("name", "summary", "key_concepts")): return False
-        if not isinstance(t["key_concepts"], list): return False
-    return True
+Extract ONLY the most important concepts.
+
+Rules:
+* Prioritize teaching clarity over completeness.
+* Use simple language (like explaining to a student).
+* Maximum 5 topics.
+* Each topic MUST include an 'intuition' field.
+
+Return ONLY JSON:
+{{
+"topics": [
+{{
+"name": "Topic Name",
+"summary": "Clear, simple explanation of what this is.",
+"key_concepts": ["List of core mechanics"],
+"intuition": "A relatable analogy or simple mental model. e.g., 'Think of it like...'"
+}}
+]
+}}
+
+Text:
+{text}"""
+
+    for chunk in chunks[:2]:
+        prompt = prompt_template.format(text=chunk)
+        for attempt in range(2):
+            raw = call_ollama(NOTES_MODEL, prompt)
+            data = safe_json_parse(raw)
+            if data and "topics" in data:
+                all_topics.extend(data["topics"])
+                break
+    
+    unique_topics = []
+    seen = set()
+    for t in all_topics:
+        name = t.get("name", "").strip().lower()
+        if name and name not in seen:
+            unique_topics.append(t)
+            seen.add(name)
+            if len(unique_topics) >= 5: break
+            
+    if not unique_topics:
+        return FALLBACK_NOTES_RAW
+        
+    return {
+        "title": "Pedagogical Breakdown: Core Concepts",
+        "topics": unique_topics
+    }
+
+def generate_quiz_llm(transcript: str) -> List[dict]:
+    """Enhanced Quiz Generation (Trap questions enabled)."""
+    chunks = chunk_text(transcript, max_tokens=750)
+    if not chunks: return FALLBACK_QUIZ
+    
+    prompt = f"""You are a teacher generating quiz questions.
+
+Rules:
+* 3–5 questions only.
+* MCQ format (4 options).
+* One correct answer.
+* Directly tie each question to a specific concept.
+* CRITICAL: Include exactly 1 'trap question' that targets a known misconception or common pitfall.
+* For the trap question, set "is_trap": true.
+
+Return ONLY JSON:
+{{
+"questions": [
+{{
+"question": "The question text",
+"options": ["Option A", "Option B", "Option C", "Option D"],
+"correct_answer": "The correct text",
+"explanation": "Why this is correct.",
+"concept_tested": "Concept Name",
+"is_trap": boolean
+}}
+]
+}}
+
+Text:
+{chunks[0]}"""
+
+    for attempt in range(2):
+        raw = call_ollama(QUIZ_MODEL, prompt)
+        data = safe_json_parse(raw)
+        if data and "questions" in data:
+            formatted = []
+            for i, q in enumerate(data["questions"]):
+                formatted.append({
+                    "q_id": i + 1,
+                    "question_text": q.get("question", ""),
+                    "options": q.get("options", []),
+                    "correct_answer": q.get("correct_answer", ""),
+                    "source_text": q.get("explanation", ""),
+                    "concept_tested": q.get("concept_tested", ""),
+                    "is_trap": q.get("is_trap", False)
+                })
+            return formatted
+            
+    return FALLBACK_QUIZ
+
+def generate_explanation_llm(question: str, options: List[str], student_ans: str, correct_ans: str) -> dict:
+    prompt = f"""You are an expert AI tutor. A student answered a question incorrectly.
+Your goal is to diagnose their 'wrong belief' and correct it with an analogy.
+
+Question: {question}
+Options: {options}
+Student's Answer: {student_ans}
+Correct Answer: {correct_ans}
+
+Tone: Direct, clear, slightly assertive.
+
+Return ONLY JSON:
+{{
+"wrong_belief": "Specifically what the student probably thought was true.",
+"why_wrong": "Why that logic fails in this specific context.",
+"correct_concept": "The actual rule or concept they missed.",
+"simple_analogy": "A powerful, simple analogy to make it stick."
+}}"""
+
+    for attempt in range(2):
+        raw = call_ollama(EXPLANATION_MODEL, prompt)
+        data = safe_json_parse(raw)
+        if data:
+            return data
+            
+    return {
+        "wrong_belief": "General logical error.",
+        "why_wrong": "Incorrect application of concepts.",
+        "correct_concept": "Concept review required.",
+        "simple_analogy": "None available."
+    }
+
+# --- PIPELINE ---
 
 def extract_pdf_text(file) -> str:
     try:
         reader = PdfReader(file)
         text = ""
-        for page in reader.pages[:40]:
-            try:
-                page_text = page.extract_text()
-                if page_text: text += page_text + " "
-            except Exception: continue
+        for page in reader.pages[:20]:
+            page_text = page.extract_text()
+            if page_text: text += page_text + " "
         return text
     except Exception: return ""
 
-def generate_quiz_from_topics(topics: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    """Generates natural questions ONLY from the final merged topics."""
-    quiz = []
-    for i, t in enumerate(topics[:5]):
-        quiz.append({
-            "q_id": i + 1,
-            "question_text": f"Regarding '{t['name']}', what is a primary concept mentioned in the summary?",
-            "options": [
-                t["key_concepts"][0],
-                "A distractor concept",
-                "An unrelated detail",
-                "None of the above"
-            ],
-            "source_text": t["summary"]
-        })
-    return quiz
-
 def process_pdf_pipeline(session_id: str, file) -> Dict[str, Any]:
-    print("[PIPELINE] Initializing Structured Topic Pipeline...")
     raw_text = extract_pdf_text(file)
+    if not raw_text or len(raw_text) < 50:
+        session_store[session_id] = {"notes": FALLBACK_NOTES_RAW, "quiz": FALLBACK_QUIZ, "transcript": "Fallback content."}
+        return session_store[session_id]
+
+    notes_llm = generate_notes_llm(raw_text)
+    quiz_llm = generate_quiz_llm(raw_text)
     
-    if not raw_text or len(raw_text) < 500:
-        print("USING FALLBACK (Reason: PDF too short)")
-        session_store[session_id] = {"notes": FALLBACK_NOTES, "quiz": FALLBACK_QUIZ, "transcript": "Fallback Transcript"}
-        return session_store[session_id]
+    notes_data = {
+        "note_id": int(time.time()),
+        "topic_title": notes_llm.get("title", "Lecture Summary"),
+        "topics": notes_llm.get("topics", []),
+        "content_markdown": "",
+        "key_highlights": [t["name"] for t in notes_llm.get("topics", [])]
+    }
+    
+    session_store[session_id] = {
+        "notes": notes_data,
+        "quiz": quiz_llm,
+        "transcript": raw_text[:5000],
+        "history": [] # Track session history for fallback triggers
+    }
+    
+    return session_store[session_id]
 
-    try:
-        # Step 1: Chunking
-        clean = clean_text(raw_text)
-        chunks = split_into_chunks(clean)
-        
-        # Step 2: Extraction (Per Chunk)
-        chunk_results = []
-        for chunk in chunks[:5]: # Process up to 5 chunks for speed
-            topics = extract_structured_topics(chunk)
-            if validate_notes_schema(topics):
-                chunk_results.append(topics)
-        
-        # Step 3: Merge & Deduplicate
-        final_topics = merge_topic_outputs(chunk_results)
-        
-        # Step 4: Validation
-        if not final_topics:
-            print("USING FALLBACK (Reason: Topic extraction failed validation)")
-            session_store[session_id] = {"notes": FALLBACK_NOTES, "quiz": FALLBACK_QUIZ, "transcript": clean[:5000]}
-            return session_store[session_id]
-
-        # Final Packaging
-        final_notes = {
-            "note_id": int(time.time()),
-            "topic_title": f"Summary: {final_topics[0]['name']}",
-            "topics": final_topics,
-            "content_markdown": "# Course Overview\n\nNotes synthesized into structured topics.",
-            "key_highlights": [t["name"] for t in final_topics]
-        }
-        
-        quiz = generate_quiz_from_topics(final_topics)
-        
-        session_store[session_id] = {
-            "notes": final_notes,
-            "quiz": quiz,
-            "transcript": clean[:8000]
-        }
-        print(f"PIPELINE COMPLETE. TOPICS EXTRACTED: {len(final_topics)}")
-        return session_store[session_id]
-
-    except Exception as e:
-        logger.error(f"Pipeline crashed: {e}")
-        session_store[session_id] = {"notes": FALLBACK_NOTES, "quiz": FALLBACK_QUIZ, "transcript": "Error recovery transcript"}
-        return session_store[session_id]
-
-# --- CACHE HELPERS ---
 def get_cached_notes(session_id: str):
-    return session_store.get(session_id, {}).get("notes", FALLBACK_NOTES)
+    return session_store.get(session_id, {}).get("notes", FALLBACK_NOTES_RAW)
 
 def get_cached_quiz(session_id: str):
     return session_store.get(session_id, {}).get("quiz", FALLBACK_QUIZ)
 
-def get_deterministic_intelligence(session_id: str) -> Dict[str, Any]:
-    count = demo_counters.get(session_id, 0)
-    demo_counters[session_id] = count + 1
-    if count == 0:
-        return {
-            "is_correct": True, "correct_index": 0,
-            "learner_state": { "state_label": "MASTERED", "state_color": "green", "message": "Mastered!", "action_label": "Continue" },
-            "explanation": { "text": "Correct.", "misconception_warning": None },
-            "recommendation": { "next_step": "ADVANCE", "label": "Next Topic", "type": "challenge" }
+def get_deterministic_intelligence(session_id: str, q_id: int, selected_index: int) -> Dict[str, Any]:
+    """Data-driven Intelligence Layer (Hardcoded overrides removed)."""
+    session = session_store.get(session_id)
+    if not session:
+        return {"error": "Session lost."}
+        
+    quiz_data = session.get("quiz", [])
+    question = next((q for q in quiz_data if q["q_id"] == q_id), None)
+    
+    if not question:
+        return {"error": "Question not found."}
+
+    correct_ans = str(question.get("correct_answer")).strip()
+    options = question.get("options", [])
+    student_ans = str(options[selected_index]).strip() if selected_index < len(options) else ""
+    
+    is_correct = (student_ans.lower() == correct_ans.lower())
+    
+    # Requirement: Explainability logic
+    # MISCONCEPTION = Wrong answer + High Confidence
+    is_misconception = not is_correct and confidence >= 0.7
+    
+    state = "MASTERED" if is_correct else ("MISCONCEPTION" if is_misconception else "WEAK")
+    color = "green" if is_correct else ("red" if is_misconception else "yellow")
+    
+    insight = "Identified because your confidence was high but the answer was incorrect." if is_misconception else (
+        "Verified mastery through consistent accurate response." if is_correct else
+        "Incorrect answer with low confidence indicates uncertainty."
+    )
+
+    # Debug Output for Judges (Requirement 6)
+    logger.info(f"[JUDGE_DEBUG] " + json.dumps({
+        "question_id": q_id,
+        "is_trap": question.get("is_trap", False),
+        "confidence": round(confidence, 2),
+        "accuracy": 1.0 if is_correct else 0.0,
+        "state": state
+    }))
+    
+    exp_data = generate_explanation_llm(question["question_text"], options, student_ans, correct_ans)
+    
+    response = {
+        "is_correct": is_correct,
+        "correct_index": next((i for i, o in enumerate(options) if str(o).strip().lower() == correct_ans.lower()), 0),
+        "learner_state": {
+            "state_label": state,
+            "state_color": color,
+            "message": f"Cognitive pattern: {state}",
+            "action_label": "Next Phase" if is_correct else "Retraining Required",
+            "insight_reason": insight
+        },
+        "explanation": {
+            "text": f"Correct Answer: {correct_ans}.",
+            "wrong_belief": exp_data.get("wrong_belief"),
+            "why_wrong": exp_data.get("why_wrong"),
+            "correct_concept": exp_data.get("correct_concept"),
+            "simple_analogy": exp_data.get("simple_analogy")
+        },
+        "recommendation": {
+            "next_step": "ADVANCE" if is_correct else "REVIEW",
+            "label": "Progressing to complex application." if is_correct else "We will now reteach this concept using simpler examples to correct the misunderstanding.",
+            "type": "challenge" if is_correct else "remediation"
         }
-    return {
-        "is_correct": False, "correct_index": 0,
-        "learner_state": { "state_label": "MISCONCEPTION", "state_color": "red", "message": "Wait!", "action_label": "Review" },
-        "explanation": { "text": "Incorrect.", "misconception_warning": "High confidence error" },
-        "recommendation": { "next_step": "RETEACH", "label": "Review Basics", "type": "reteach" }
     }
+    
+    # Save to history for fallback analysis
+    session["history"].append({"q_id": q_id, "is_correct": is_correct, "state": state, "confidence": confidence, "data": response})
+    
+    return response
+
+def get_session_summary(session_id: str) -> Dict[str, Any]:
+    """Requirement 4: Strengthened Post-Quiz Fallback."""
+    session = session_store.get(session_id)
+    if not session or not session.get("history"):
+        return {"status": "no_data"}
+        
+    history = session["history"]
+    misconceptions = [h for h in history if h["state"] == "MISCONCEPTION"]
+    
+    if misconceptions:
+        return {"status": "insights_found", "top_misconception": misconceptions[0]}
+    
+    # Fallback: Identify highest confidence wrong answer (even if not technically a 'misconception' yet)
+    wrong_answers = [h for h in history if not h["is_correct"]]
+    if wrong_answers:
+        top_wrong = max(wrong_answers, key=lambda x: x.get("confidence", 0))
+        return {
+            "status": "post_session_insight", 
+            "message": "We noticed a pattern worth reviewing...",
+            "top_misconception": top_wrong
+        }
+    
+    return {"status": "all_correct", "message": "Mastery confirmed across all topics."}

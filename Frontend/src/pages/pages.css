@@ -88,11 +88,18 @@
 }
 
 .note-content {
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   line-height: 1.8;
   white-space: normal !important;
   overflow: visible !important;
 }
+
+.note-content h1 { font-size: 2.5rem !important; margin-bottom: 1.5rem !important; font-weight: 800 !important; }
+.note-content h2 { font-size: 2rem !important; margin-top: 2.5rem !important; margin-bottom: 1.25rem !important; font-weight: 700 !important; }
+.note-content h3 { font-size: 1.5rem !important; margin-top: 2rem !important; margin-bottom: 1rem !important; font-weight: 600 !important; }
+.note-content p, .note-content li { font-size: 1.15rem !important; margin-bottom: 1.25rem !important; color: var(--text-primary) !important; opacity: 0.9; }
+.note-content ul, .note-content ol { margin-bottom: 1.5rem !important; padding-left: 1.5rem !important; }
+.note-content strong { color: var(--accent-primary) !important; }
 
 h4 {
   white-space: normal !important;
