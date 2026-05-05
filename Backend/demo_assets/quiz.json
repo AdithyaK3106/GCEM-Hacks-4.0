@@ -1,0 +1,23 @@
+[
+  {
+    "q_id": 1,
+    "question_text": "Where do the light-dependent reactions of photosynthesis take place?",
+    "options": ["Stroma", "Cytoplasm", "Thylakoid membranes", "Mitochondria"],
+    "correct_answer": "Thylakoid membranes",
+    "explanation": "Light-dependent reactions occur in the thylakoid membranes where chlorophyll is located."
+  },
+  {
+    "q_id": 2,
+    "question_text": "What is the primary byproduct of photosynthesis that is released into the atmosphere?",
+    "options": ["Carbon Dioxide", "Oxygen", "Glucose", "Water"],
+    "correct_answer": "Oxygen",
+    "explanation": "Oxygen is produced as a byproduct of water photolysis during the light reactions."
+  },
+  {
+    "q_id": 3,
+    "question_text": "Which enzyme is responsible for fixing CO2 during the Calvin cycle?",
+    "options": ["ATP Synthase", "Rubisco", "PEP Carboxylase", "Amylase"],
+    "correct_answer": "Rubisco",
+    "explanation": "Rubisco (Ribulose-1,5-bisphosphate carboxylase/oxygenase) is the enzyme that catalyzes the first step of carbon fixation."
+  }
+]

@@ -1,0 +1,265 @@
+/* Page Animations & Transitions */
+.page-transition {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Landing Page */
+.landing-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: calc(100vh - 120px);
+}
+
+.hero-title {
+  font-size: 4rem;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin-bottom: 3rem;
+}
+
+/* Upload Page */
+.upload-area {
+  border: 2px dashed var(--border-color);
+  border-radius: var(--border-radius-lg);
+  padding: 4rem 2rem;
+  text-align: center;
+  transition: all var(--transition-normal);
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+}
+
+.upload-area:hover, .upload-area.drag-active {
+  border-color: var(--accent-primary);
+  background: rgba(138, 43, 226, 0.05);
+}
+
+.upload-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(138, 43, 226, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  color: var(--accent-primary);
+}
+
+.notes-container {
+  display: grid;
+  grid-template-columns: 2.5fr 1fr;
+  gap: 2rem;
+}
+
+.tab-btn {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: var(--text-secondary) !important;
+  border: 1px solid var(--border-color) !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: var(--border-radius-md) !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  font-weight: 500 !important;
+}
+
+.tab-btn:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.tab-btn.active {
+  background: rgba(138, 43, 226, 0.2) !important;
+  color: var(--accent-primary) !important;
+  border-color: var(--accent-primary) !important;
+  box-shadow: 0 0 15px var(--accent-glow) !important;
+}
+
+.note-content {
+  font-size: 1.25rem;
+  line-height: 1.8;
+  white-space: normal !important;
+  overflow: visible !important;
+}
+
+.note-content h1 { font-size: 2.5rem !important; margin-bottom: 1.5rem !important; font-weight: 800 !important; }
+.note-content h2 { font-size: 2rem !important; margin-top: 2.5rem !important; margin-bottom: 1.25rem !important; font-weight: 700 !important; }
+.note-content h3 { font-size: 1.5rem !important; margin-top: 2rem !important; margin-bottom: 1rem !important; font-weight: 600 !important; }
+.note-content p, .note-content li { font-size: 1.15rem !important; margin-bottom: 1.25rem !important; color: var(--text-primary) !important; opacity: 0.9; }
+.note-content ul, .note-content ol { margin-bottom: 1.5rem !important; padding-left: 1.5rem !important; }
+.note-content strong { color: var(--accent-primary) !important; }
+
+h4 {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+/* Quiz Page */
+.quiz-card {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.option-btn {
+  width: 100%;
+  text-align: left;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.option-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.option-btn.selected {
+  background: rgba(138, 43, 226, 0.1);
+  border-color: var(--accent-primary);
+}
+
+.learner-feedback {
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: 1rem;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--border-radius-full);
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.state-green {
+  border-color: var(--success);
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.state-red {
+  border-color: var(--danger);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.state-blue {
+  border-color: var(--accent-primary);
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.state-yellow {
+  border-color: var(--warning);
+  background: rgba(234, 179, 8, 0.1);
+}
+
+.state-orange {
+  border-color: #f97316;
+  background: rgba(249, 115, 22, 0.1);
+}
+
+.state-green .status-badge { background: var(--success); color: var(--bg-primary); }
+.state-red .status-badge { background: var(--danger); color: white; }
+.state-blue .status-badge { background: var(--accent-primary); color: white; }
+.state-yellow .status-badge { background: var(--warning); color: var(--bg-primary); }
+.state-orange .status-badge { background: #f97316; color: white; }
+
+/* Dashboard */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.stat-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+/* Learning Path */
+.path-node {
+  position: relative;
+  padding-left: 3rem;
+  margin-bottom: 2rem;
+}
+
+.path-node::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 30px;
+  bottom: -30px;
+  width: 2px;
+  background: var(--border-color);
+}
+
+.path-node:last-child::before {
+  display: none;
+}
+
+.node-icon {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--bg-primary);
+  border: 2px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.path-node.completed .node-icon {
+  border-color: var(--success);
+  background: var(--success);
+  color: var(--bg-primary);
+}
+
+.path-node.completed::before {
+  background: var(--success);
+}
+
+.path-node.active .node-icon {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 10px var(--accent-glow);
+}

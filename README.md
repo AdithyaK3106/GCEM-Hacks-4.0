@@ -1,16 +1,63 @@
-# React + Vite
+# AI-Powered Personalized Learning System (MVP)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A frictionless, intelligence-driven learning platform designed for hackathons. This system transforms raw educational content into a personalized learning loop that detects misconceptions in real-time.
 
-Currently, two official plugins are available:
+## 🚀 Core Features
+- **Deterministic Intelligence**: Uses the ACT (Accuracy, Confidence, Time) model to determine learner state.
+- **Zero-Friction API**: UI-ready responses with pre-defined colors, labels, and actions.
+- **Misconception Detection**: Specifically identifies when a user is wrong but highly confident, triggering a "Reality Check" correction.
+- **Adaptive Recommendations**: Dynamically suggests next steps (Reteach, Practice, or Advance) based on proficiency.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🛠️ Tech Stack
+### Backend
+- **Framework**: FastAPI (Python)
+- **Database**: SQLite (SQLAlchemy)
+- **Schema**: Pydantic
 
-## React Compiler
+### Frontend
+- **Framework**: React 19 + Vite
+- **Animations**: Framer Motion
+- **Icons**: Lucide React
+- **Styling**: Tailwind CSS
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 📂 Project Structure
+```text
+/Backend
+  /app         # FastAPI core logic
+  /data        # Persistent storage
+  /demo_assets # Mock data for demo
+  main.py      # Entry point
+/Frontend
+  /src         # React components & logic
+  /public      # Static assets
+  package.json # Dependencies
+```
 
-## Expanding the ESLint configuration
+## 🚦 Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 1. Backend Setup
+```bash
+cd Backend
+pip install -r requirements.txt
+uvicorn main:app --reload
+```
+
+### 2. Frontend Setup
+```bash
+cd Frontend
+npm install
+npm run dev
+```
+
+### 3. API Documentation
+Once running, visit:
+- **Swagger UI**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+- **Redoc**: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
+
+## 🎯 Demo Mode
+The system is hard-wired for a perfect demo:
+1. First Submission -> **MASTERED** (Green UI)
+2. Second Submission -> **MISCONCEPTION** (Red UI + Detailed Explanation)
+
+## 📜 API Contract
+Refer to `artifacts/zero_friction_api_contract.md` for full frontend integration details.
