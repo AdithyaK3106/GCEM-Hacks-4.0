@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Award, Target, BookOpen, ArrowRight, TrendingUp } from 'lucide-react';
+import { Award, Target, ArrowRight } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
@@ -20,6 +20,7 @@ const Results = () => {
   if (!quizData) return null;
 
   const percentage = (quizData.score / quizData.total) * 100;
+  const misconception = quizData.answers?.find((answer) => answer.learner_state.state_label === 'MISCONCEPTION');
   
   return (
     <div className="page-transition max-w-4xl mx-auto py-8">
@@ -59,8 +60,10 @@ const Results = () => {
         
         <div className="space-y-4">
           <div className="p-4 bg-danger/5 border border-danger/20 rounded-lg">
-            <h4 className="font-bold text-danger mb-2">Backpropagation Algorithm</h4>
-            <p className="text-text-secondary text-sm mb-4">You missed a question related to weight updates during backpropagation. We've added this to your focus areas.</p>
+            <h4 className="font-bold text-danger mb-2">{misconception?.recommendation.label || 'Keep Practicing'}</h4>
+            <p className="text-text-secondary text-sm mb-4">
+              {misconception?.explanation.misconception_warning || "You've completed this mastery check. Follow the recommendation to keep your learning path current."}
+            </p>
             <Button variant="outline" className="text-sm py-1.5 px-3">Review Notes</Button>
           </div>
         </div>

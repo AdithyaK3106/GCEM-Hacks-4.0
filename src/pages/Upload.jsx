@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Upload as UploadIcon, FileText, CheckCircle, ArrowRight } from 'lucide-react';
+import { Upload as UploadIcon, FileText, ArrowRight } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
+import { uploadLecture } from '../services/zeroFrictionApi';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import './pages.css';
@@ -11,7 +12,8 @@ const Upload = () => {
   const [dragActive, setDragActive] = useState(false);
   const [file, setFile] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const { setTranscript, updateProgress } = useAppContext();
+  const [error, setError] = useState('');
+  const { setSessionId, setTranscript, setNotes, setQuizQuestions, setQuizData, updateProgress } = useAppContext();
   const navigate = useNavigate();
 
   const handleDrag = (e) => {
@@ -44,15 +46,24 @@ const Upload = () => {
     setFile(selectedFile);
   };
 
-  const processUpload = () => {
+  const processUpload = async () => {
     setIsProcessing(true);
-    // Mock processing time
-    setTimeout(() => {
-      setTranscript("This is a mock transcript of the lecture covering Neural Networks...");
-      setIsProcessing(false);
-      updateProgress(10); // Reward XP for upload
+    setError('');
+
+    try {
+      const data = await uploadLecture(file);
+      setSessionId(data.session_id);
+      setTranscript(data.transcript_text);
+      setNotes(null);
+      setQuizQuestions([]);
+      setQuizData(null);
+      updateProgress(10);
       navigate('/notes');
-    }, 2000);
+    } catch (err) {
+      setError(err.message || 'Upload failed. Please try again.');
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -102,6 +113,7 @@ const Upload = () => {
               <FileText size={40} />
             </div>
             <h3 className="text-2xl font-bold mb-2">{file.name}</h3>
+            {error && <p className="text-danger mb-4">{error}</p>}
             <p className="text-text-secondary mb-8">{(file.size / (1024 * 1024)).toFixed(2)} MB • Ready to process</p>
             
             <div className="flex justify-center gap-4">

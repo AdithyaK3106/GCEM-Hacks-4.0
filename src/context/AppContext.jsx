@@ -1,12 +1,14 @@
-import React, { createContext, useState, useContext } from 'react';
+import { createContext, useState, useContext } from 'react';
 
 const AppContext = createContext();
 
 export const useAppContext = () => useContext(AppContext);
 
 export const AppProvider = ({ children }) => {
+  const [sessionId, setSessionId] = useState(null);
   const [transcript, setTranscript] = useState(null);
   const [notes, setNotes] = useState(null);
+  const [quizQuestions, setQuizQuestions] = useState([]);
   const [quizData, setQuizData] = useState(null);
   const [userProgress, setUserProgress] = useState({
     xp: 1250,
@@ -28,8 +30,10 @@ export const AppProvider = ({ children }) => {
   };
 
   const value = {
+    sessionId, setSessionId,
     transcript, setTranscript,
     notes, setNotes,
+    quizQuestions, setQuizQuestions,
     quizData, setQuizData,
     userProgress, updateProgress,
     weakTopics, setWeakTopics

@@ -1,28 +1,100 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FileText, Play, Languages, Save, Target } from 'lucide-react';
+import { Play, Languages, Save, Target } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
+import { getNotes, getQuiz } from '../services/zeroFrictionApi';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import './pages.css';
 
+const renderMarkdown = (markdown) => {
+  const elements = [];
+  let listItems = [];
+
+  const flushList = () => {
+    if (listItems.length) {
+      elements.push(
+        <ul key={`list-${elements.length}`} className="list-disc pl-6 space-y-2 text-text-secondary mb-4">
+          {listItems}
+        </ul>,
+      );
+      listItems = [];
+    }
+  };
+
+  markdown.split('\n').forEach((line, index) => {
+    if (line.startsWith('- ')) {
+      listItems.push(<li key={index}>{line.slice(2)}</li>);
+      return;
+    }
+
+    flushList();
+
+    if (line.startsWith('# ')) {
+      elements.push(<h2 key={index} className="text-2xl font-bold mb-4">{line.slice(2)}</h2>);
+    } else if (line.startsWith('## ')) {
+      elements.push(<h3 key={index} className="text-xl font-semibold mt-6 mb-3 text-white">{line.slice(3)}</h3>);
+    } else if (line.trim()) {
+      elements.push(<p key={index} className="text-text-secondary mb-4">{line}</p>);
+    }
+  });
+
+  flushList();
+  return elements;
+};
+
 const Notes = () => {
-  const { transcript, setNotes, updateProgress } = useAppContext();
+  const { sessionId, transcript, notes, setNotes, setQuizQuestions, updateProgress } = useAppContext();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('summary');
+  const [isLoading, setIsLoading] = useState(true);
+  const [isQuizLoading, setIsQuizLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  // Mock notes generation
   useEffect(() => {
-    if (!transcript) {
+    if (!sessionId || !transcript) {
       navigate('/upload');
+      return;
     }
-  }, [transcript, navigate]);
 
-  const handleStartQuiz = () => {
-    setNotes("Generated Notes Payload...");
-    updateProgress(15);
-    navigate('/quiz');
+    let ignore = false;
+    getNotes(sessionId)
+      .then((data) => {
+        if (!ignore) {
+          setNotes(data);
+        }
+      })
+      .catch((err) => {
+        if (!ignore) {
+          setError(err.message || 'Unable to load notes.');
+        }
+      })
+      .finally(() => {
+        if (!ignore) {
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      ignore = true;
+    };
+  }, [sessionId, transcript, navigate, setNotes]);
+
+  const handleStartQuiz = async () => {
+    setIsQuizLoading(true);
+    setError('');
+
+    try {
+      const questions = await getQuiz(sessionId);
+      setQuizQuestions(questions);
+      updateProgress(15);
+      navigate('/quiz');
+    } catch (err) {
+      setError(err.message || 'Unable to load quiz.');
+    } finally {
+      setIsQuizLoading(false);
+    }
   };
 
   return (
@@ -30,31 +102,34 @@ const Notes = () => {
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold mb-2">Lecture Notes</h1>
-          <p className="text-text-secondary">AI-generated structured notes from your upload.</p>
+          <p className="text-text-secondary">{notes?.topic_title || 'AI-generated structured notes from your upload.'}</p>
         </div>
         <div className="flex gap-4">
           <Button variant="secondary"><Save size={18} /> Save PDF</Button>
-          <Button onClick={handleStartQuiz}><Target size={18} /> Take Quiz</Button>
+          <Button onClick={handleStartQuiz} disabled={isLoading || isQuizLoading}>
+            <Target size={18} /> {isQuizLoading ? 'Loading Quiz...' : 'Take Quiz'}
+          </Button>
         </div>
       </div>
 
+      {error && <p className="text-danger mb-4">{error}</p>}
+
       <div className="notes-container">
-        {/* Main Content Area */}
         <Card className="h-full">
           <div className="flex gap-6 border-b border-white/10 pb-4 mb-6">
-            <button 
+            <button
               className={`font-medium pb-4 -mb-4 border-b-2 transition-colors ${activeTab === 'summary' ? 'text-accent-primary border-accent-primary' : 'text-text-secondary border-transparent hover:text-text-primary'}`}
               onClick={() => setActiveTab('summary')}
             >
               Summary
             </button>
-            <button 
+            <button
               className={`font-medium pb-4 -mb-4 border-b-2 transition-colors ${activeTab === 'transcript' ? 'text-accent-primary border-accent-primary' : 'text-text-secondary border-transparent hover:text-text-primary'}`}
               onClick={() => setActiveTab('transcript')}
             >
               Full Transcript
             </button>
-            <button 
+            <button
               className={`font-medium pb-4 -mb-4 border-b-2 transition-colors ${activeTab === 'keypoints' ? 'text-accent-primary border-accent-primary' : 'text-text-secondary border-transparent hover:text-text-primary'}`}
               onClick={() => setActiveTab('keypoints')}
             >
@@ -62,56 +137,35 @@ const Notes = () => {
             </button>
           </div>
 
-          <motion.div 
+          <motion.div
             key={activeTab}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             className="note-content prose prose-invert max-w-none"
           >
-            {activeTab === 'summary' && (
-              <div>
-                <h2 className="text-2xl font-bold mb-4">Introduction to Neural Networks</h2>
-                <p className="text-text-secondary mb-6">This lecture covers the fundamental concepts of artificial neural networks, focusing on their structure, forward propagation, and an introduction to backpropagation.</p>
-                
-                <h3 className="text-xl font-semibold mt-6 mb-3 text-white">1. Biological Inspiration</h3>
-                <p className="text-text-secondary mb-4">Neural networks are loosely inspired by the human brain. We discussed how artificial neurons (perceptrons) mimic biological neurons by taking inputs, applying weights, and passing the result through an activation function.</p>
-
-                <h3 className="text-xl font-semibold mt-6 mb-3 text-white">2. Network Architecture</h3>
-                <ul className="list-disc pl-6 space-y-2 text-text-secondary mb-4">
-                  <li><strong>Input Layer:</strong> Receives raw data features.</li>
-                  <li><strong>Hidden Layers:</strong> Perform transformations and extract patterns. Deep networks have multiple hidden layers.</li>
-                  <li><strong>Output Layer:</strong> Produces the final prediction or classification.</li>
-                </ul>
-              </div>
-            )}
-            {activeTab === 'transcript' && (
+            {isLoading && <p className="text-text-secondary">Loading notes...</p>}
+            {!isLoading && notes && activeTab === 'summary' && <div>{renderMarkdown(notes.content_markdown)}</div>}
+            {!isLoading && activeTab === 'transcript' && (
               <div className="text-text-secondary">
-                <p>[00:00] Welcome everyone to week 3. Today we're diving into the core of deep learning: neural networks...</p>
-                <p className="mt-4">[02:15] Let's start by looking at a single neuron. Imagine you have a set of inputs x1, x2, x3...</p>
+                <p>{transcript}</p>
               </div>
             )}
-            {activeTab === 'keypoints' && (
+            {!isLoading && notes && activeTab === 'keypoints' && (
               <ul className="space-y-4">
-                <li className="flex gap-4 items-start p-4 glass-card rounded-lg">
-                  <div className="text-accent-primary mt-1"><Target size={20} /></div>
-                  <div>
-                    <h4 className="font-bold text-white">Activation Functions</h4>
-                    <p className="text-text-secondary text-sm">Non-linear functions applied to node outputs (e.g., ReLU, Sigmoid). Essential for learning complex patterns.</p>
-                  </div>
-                </li>
-                <li className="flex gap-4 items-start p-4 glass-card rounded-lg">
-                  <div className="text-accent-primary mt-1"><Target size={20} /></div>
-                  <div>
-                    <h4 className="font-bold text-white">Forward Propagation</h4>
-                    <p className="text-text-secondary text-sm">The process of moving input data through the network layers to calculate the output.</p>
-                  </div>
-                </li>
+                {notes.key_highlights.map((highlight) => (
+                  <li key={highlight} className="flex gap-4 items-start p-4 glass-card rounded-lg">
+                    <div className="text-accent-primary mt-1"><Target size={20} /></div>
+                    <div>
+                      <h4 className="font-bold text-white">{highlight}</h4>
+                      <p className="text-text-secondary text-sm">Key concept extracted from the uploaded lecture notes.</p>
+                    </div>
+                  </li>
+                ))}
               </ul>
             )}
           </motion.div>
         </Card>
 
-        {/* Sidebar Actions */}
         <div className="flex flex-col gap-6">
           <Card className="p-5">
             <h3 className="font-bold mb-4 flex items-center gap-2"><Play size={18} className="text-accent-primary"/> Audio Player</h3>
