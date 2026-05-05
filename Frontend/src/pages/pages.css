@@ -406,3 +406,23 @@ h4 {
   color: var(--text-secondary);
   letter-spacing: 0.05em;
 }
+/* Robust Glassmorphism Utilities */
+.bg-white-op-2 { background-color: rgba(255, 255, 255, 0.02) !important; }
+.bg-white-op-5 { background-color: rgba(255, 255, 255, 0.05) !important; }
+.bg-white-op-10 { background-color: rgba(255, 255, 255, 0.1) !important; }
+.border-white-op-5 { border-color: rgba(255, 255, 255, 0.05) !important; }
+.border-white-op-10 { border-color: rgba(255, 255, 255, 0.1) !important; }
+.hover-bg-white-op-10:hover { background-color: rgba(255, 255, 255, 0.1) !important; }
+
+/* Notes Fixes */
+.notes-container {
+  color: var(--text-primary);
+}
+
+.notes-container h3 {
+  color: var(--accent-primary) !important;
+}
+
+.notes-container .bg-transparent {
+  background-color: transparent !important;
+}

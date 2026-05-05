@@ -63,8 +63,10 @@ def call_ollama(model: str, prompt: str) -> str:
         "stream": False,
         "options": {
             "temperature": 0.1,
-            "num_predict": 1000 
-        }
+            "num_predict": 600,
+            "num_thread": 4
+        },
+        "keep_alive": "10m"
     }
     try:
         logger.info(f"Calling Ollama Model: {model}")
@@ -135,8 +137,8 @@ def chunk_text(text: str, max_tokens: int = 700) -> List[str]:
 # --- GENERATION FUNCTIONS ---
 
 def generate_notes_llm(transcript: str, target_language: str = "English") -> dict:
-    """Robust Notes Generation with chunk-level fault tolerance."""
-    chunks = chunk_text(transcript, max_tokens=750)
+    """Robust Notes Generation optimized for 8GB VRAM speed."""
+    chunks = chunk_text(transcript, max_tokens=500)
     all_topics = []
     
     prompt_template = f"""You are an expert teacher explaining concepts clearly and practically. Extract core concepts as JSON.
@@ -187,10 +189,11 @@ Text to analyze:
                 return data["topics"]
         return []
 
-    # Process first 2 substantive chunks in parallel (Sweet spot for 8GB VRAM)
-    with ThreadPoolExecutor(max_workers=2) as executor:
-        results = list(executor.map(process_chunk, enumerate(chunks[:2])))
-        for topics in results:
+    # Sequential Processing for 8GB VRAM (More stable than parallel)
+    for i, chunk in enumerate(chunks[:2]):
+        logger.info(f"Processing Chunk {i+1}/2...")
+        topics = process_chunk((i, chunk))
+        if topics:
             all_topics.extend(topics)
 
     # Merge and Deduplicate

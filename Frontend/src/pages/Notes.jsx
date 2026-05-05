@@ -7,6 +7,7 @@ import { useAppContext } from '../context/AppContext';
 import { getNotes, getQuiz } from '../services/zeroFrictionApi';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
+import ExamModeButton from '../features/examMode/ExamModeButton';
 import './pages.css';
 
 const Notes = () => {
@@ -67,12 +68,15 @@ const Notes = () => {
           <h1 className="text-4xl font-bold mb-2">Lecture Insights</h1>
           <p className="text-text-secondary">{notes?.topic_title || 'Structured Topic Breakdown'}</p>
         </div>
+        <div className="flex gap-4">
+          <ExamModeButton />
+        </div>
       </div>
 
       <div className="notes-container">
         <div className="space-y-6">
           <Card className="overflow-hidden">
-            <div className="flex gap-4 p-4 border-b border-white/5 bg-white/2">
+            <div className="flex gap-4 p-4 border-b border-white-op-10 bg-white-op-5">
               <button 
                 onClick={() => setActiveTab('summary')}
                 className={`tab-btn ${activeTab === 'summary' ? 'active' : ''}`}
@@ -93,10 +97,10 @@ const Notes = () => {
                   <motion.div key="summary" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
                     {topics.length > 0 ? (
                       topics.map((topic, index) => (
-                        <div key={index} className="border border-white/10 rounded-xl overflow-hidden bg-white/2 transition-all hover:border-accent-primary/30">
+                        <div key={index} className="border border-white-op-10 rounded-xl overflow-hidden bg-white-op-2 transition-all hover:border-accent-primary/30">
                           <button 
                             onClick={() => setExpandedTopic(expandedTopic === index ? -1 : index)}
-                            className="w-full p-6 flex justify-between items-center text-left hover:bg-white/5"
+                            className="w-full p-6 flex justify-between items-center text-left hover-bg-white-op-10 bg-transparent"
                           >
                             <div>
                               <h3 className="text-2xl font-bold text-accent-primary mb-1">{topic.name}</h3>
@@ -111,7 +115,7 @@ const Notes = () => {
                                 initial={{ height: 0, opacity: 0 }}
                                 animate={{ height: 'auto', opacity: 1 }}
                                 exit={{ height: 0, opacity: 0 }}
-                                className="px-6 pb-6 border-t border-white/5 pt-4"
+                                className="px-6 pb-6 border-t border-white-op-10 pt-4"
                               >
                                 <p className="text-text-primary text-lg mb-6 leading-relaxed">{topic.summary}</p>
                                 
@@ -124,7 +128,7 @@ const Notes = () => {
 
                                 {topic.when_to_use && topic.when_to_use.length > 0 && (
                                   <div className="mb-6">
-                                    <p className="text-sm uppercase font-bold text-text-secondary mb-3 border-b border-white/10 pb-1">When to Use</p>
+                                    <p className="text-sm uppercase font-bold text-text-secondary mb-3 border-b border-white-op-10 pb-1">When to Use</p>
                                     <ul className="list-disc pl-5 space-y-2 text-text-primary">
                                       {topic.when_to_use.map((item, idx) => (
                                         <li key={idx} className="pl-1">{item}</li>
@@ -150,10 +154,10 @@ const Notes = () => {
                                 </div>
 
                                 <div className="mb-2">
-                                  <p className="text-sm uppercase font-bold text-text-secondary mb-3 border-b border-white/10 pb-1">Key Concepts</p>
+                                  <p className="text-sm uppercase font-bold text-text-secondary mb-3 border-b border-white-op-10 pb-1">Key Concepts</p>
                                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                     {topic.key_concepts && topic.key_concepts.map((concept, cIdx) => (
-                                      <div key={cIdx} className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/5">
+                                      <div key={cIdx} className="flex items-center gap-3 p-3 bg-white-op-5 rounded-lg border border-white-op-5">
                                         <CheckCircle size={14} className="text-success shrink-0" />
                                         <span className="text-base font-medium">{concept}</span>
                                       </div>

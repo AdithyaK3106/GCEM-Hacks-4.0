@@ -11,6 +11,7 @@ import Results from './pages/Results';
 import Dashboard from './pages/Dashboard';
 import Leaderboard from './pages/Leaderboard';
 import LearningPath from './pages/LearningPath';
+import ExamModePage from './pages/ExamModePage';
 import DebugPanel from './components/debug/DebugPanel';
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
             <Route path="/results/:sessionId" element={<Results />} />
             <Route path="/learning-path" element={<LearningPath />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
+            <Route path="/exam/:sessionId" element={<ExamModePage />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

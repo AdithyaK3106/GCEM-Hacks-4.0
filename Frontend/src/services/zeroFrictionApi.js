@@ -263,3 +263,52 @@ export const setDemoConfig = async (status) => {
   const payload = await request(`/config?status=${status}`, { method: 'POST' });
   return payload || { demo_mode: status };
 };
+
+export const getExamData = async (sessionId) => {
+  // Simulate network delay
+  await delay(1800);
+  
+  const isHindi = currentLang === 'Hindi';
+  
+  if (isHindi) {
+    return {
+      topic_title: "परीक्षा संशोधन पैकेज",
+      key_concepts: ["सुपरवाइज्ड लर्निंग", "वर्गीकरण", "प्रतिगमन"],
+      definitions: [
+        { term: "सुपरवाइज्ड लर्निंग", definition: "मशीन लर्निंग का एक प्रकार जहाँ मॉडल लेबल किए गए डेटा पर प्रशिक्षित होता है।" },
+        { term: "लेबल", definition: "डेटा का वह हिस्सा जिसे हम भविष्यवाणी करना चाहते हैं।" }
+      ],
+      formulas: ["Accuracy = (TP + TN) / Total"],
+      memory_shortcuts: [
+        { concept: "सुपरवाइज्ड", trick: "S for Supervisor (टीचर) - टीचर की देखरेख में सीखना।" }
+      ],
+      exam_questions: [
+        { question: "सुपरवाइज्ड और अनसुपरवाइज्ड लर्निंग के बीच मुख्य अंतर क्या है?", answer_hint: "लेबल किए गए डेटा की उपस्थिति के बारे में सोचें।" }
+      ],
+      last_minute_tips: ["ओवरफिटिंग से सावधान रहें", "हमेशा डेटा को विभाजित करें"]
+    };
+  }
+
+  return {
+    topic_title: "Exam Mastery Package",
+    key_concepts: ["Supervised Learning", "Gradient Descent", "Loss Functions"],
+    definitions: [
+      { term: "Overfitting", definition: "When a model learns the training data too well, including the noise, and fails to generalize." },
+      { term: "Hyperparameter", definition: "A configuration external to the model whose value cannot be estimated from data." }
+    ],
+    formulas: ["w = w - \u03b7 * \u2207J(w)", "Loss = (1/n) * \u03a3(y - \u0177)\u00b2"],
+    memory_shortcuts: [
+      { concept: "Gradient Descent", trick: "Going down a hill in the dark - you feel the slope with your feet (gradient) and take a step (learning rate)." },
+      { concept: "Bias vs Variance", trick: "Bias is like a systematic error (consistently missing the target), Variance is like being inconsistent." }
+    ],
+    exam_questions: [
+      { question: "Explain the role of a learning rate in optimization.", answer_hint: "Think about the step size in gradient descent." },
+      { question: "What happens if the learning rate is too high?", answer_hint: "Consider the possibility of overshooting the minimum." }
+    ],
+    last_minute_tips: [
+      "Check for class imbalance before choosing accuracy as a metric.",
+      "Don't forget to normalize your features!",
+      "Regularization helps prevent overfitting."
+    ]
+  };
+};

@@ -9,7 +9,7 @@
       "source_file": "Backend\\main.py",
       "source_location": "L1",
       "id": "backend_main_py",
-      "community": 4,
+      "community": 3,
       "norm_label": "main.py"
     },
     {
@@ -18,7 +18,7 @@
       "source_file": "Backend\\main.py",
       "source_location": "L20",
       "id": "main_read_root",
-      "community": 4,
+      "community": 3,
       "norm_label": "read_root()"
     },
     {
@@ -27,35 +27,89 @@
       "source_file": "Backend\\main.py",
       "source_location": "L24",
       "id": "main_upload_file",
-      "community": 4,
+      "community": 3,
       "norm_label": "upload_file()"
     },
     {
       "label": "get_notes()",
       "file_type": "code",
       "source_file": "Backend\\main.py",
-      "source_location": "L53",
+      "source_location": "L56",
       "id": "main_get_notes",
-      "community": 4,
+      "community": 3,
       "norm_label": "get_notes()"
     },
     {
       "label": "get_quiz()",
       "file_type": "code",
       "source_file": "Backend\\main.py",
-      "source_location": "L58",
+      "source_location": "L66",
       "id": "main_get_quiz",
-      "community": 4,
+      "community": 3,
       "norm_label": "get_quiz()"
     },
     {
       "label": "submit_answer()",
       "file_type": "code",
       "source_file": "Backend\\main.py",
-      "source_location": "L63",
+      "source_location": "L75",
       "id": "main_submit_answer",
-      "community": 4,
+      "community": 0,
       "norm_label": "submit_answer()"
+    },
+    {
+      "label": "get_summary()",
+      "file_type": "code",
+      "source_file": "Backend\\main.py",
+      "source_location": "L90",
+      "id": "main_get_summary",
+      "community": 3,
+      "norm_label": "get_summary()"
+    },
+    {
+      "label": "get_flashcards()",
+      "file_type": "code",
+      "source_file": "Backend\\main.py",
+      "source_location": "L99",
+      "id": "main_get_flashcards",
+      "community": 3,
+      "norm_label": "get_flashcards()"
+    },
+    {
+      "label": "get_config()",
+      "file_type": "code",
+      "source_file": "Backend\\main.py",
+      "source_location": "L107",
+      "id": "main_get_config",
+      "community": 3,
+      "norm_label": "get_config()"
+    },
+    {
+      "label": "update_config()",
+      "file_type": "code",
+      "source_file": "Backend\\main.py",
+      "source_location": "L111",
+      "id": "main_update_config",
+      "community": 3,
+      "norm_label": "update_config()"
+    },
+    {
+      "label": "test_lang.py",
+      "file_type": "code",
+      "source_file": "Backend\\test_lang.py",
+      "source_location": "L1",
+      "id": "backend_test_lang_py",
+      "community": 6,
+      "norm_label": "test_lang.py"
+    },
+    {
+      "label": "mock_extract()",
+      "file_type": "code",
+      "source_file": "Backend\\test_lang.py",
+      "source_location": "L4",
+      "id": "test_lang_mock_extract",
+      "community": 6,
+      "norm_label": "mock_extract()"
     },
     {
       "label": "test_pipeline.py",
@@ -63,7 +117,7 @@
       "source_file": "Backend\\test_pipeline.py",
       "source_location": "L1",
       "id": "backend_test_pipeline_py",
-      "community": 1,
+      "community": 0,
       "norm_label": "test_pipeline.py"
     },
     {
@@ -72,7 +126,7 @@
       "source_file": "Backend\\test_pipeline.py",
       "source_location": "L6",
       "id": "test_pipeline_test_chunking",
-      "community": 1,
+      "community": 0,
       "norm_label": "test_chunking()"
     },
     {
@@ -81,7 +135,7 @@
       "source_file": "Backend\\test_pipeline.py",
       "source_location": "L14",
       "id": "test_pipeline_test_json_extraction",
-      "community": 1,
+      "community": 0,
       "norm_label": "test_json_extraction()"
     },
     {
@@ -90,8 +144,17 @@
       "source_file": "Backend\\test_pipeline.py",
       "source_location": "L25",
       "id": "test_pipeline_test_full_pipeline_mock",
-      "community": 1,
+      "community": 0,
       "norm_label": "test_full_pipeline_mock()"
+    },
+    {
+      "label": "test_sim.py",
+      "file_type": "code",
+      "source_file": "Backend\\test_sim.py",
+      "source_location": "L1",
+      "id": "backend_test_sim_py",
+      "community": 17,
+      "norm_label": "test_sim.py"
     },
     {
       "label": "database.py",
@@ -180,7 +243,7 @@
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
       "source_location": "L1",
       "id": "backend_app_schemas_pydantic_schemas_py",
-      "community": 2,
+      "community": 4,
       "norm_label": "pydantic_schemas.py"
     },
     {
@@ -189,7 +252,7 @@
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
       "source_location": "L8",
       "id": "pydantic_schemas_metaschema",
-      "community": 2,
+      "community": 4,
       "norm_label": "metaschema"
     },
     {
@@ -198,7 +261,7 @@
       "source_file": "",
       "source_location": "",
       "id": "basemodel",
-      "community": 2,
+      "community": 4,
       "norm_label": "basemodel"
     },
     {
@@ -207,7 +270,7 @@
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
       "source_location": "L12",
       "id": "pydantic_schemas_responsewrapper",
-      "community": 2,
+      "community": 4,
       "norm_label": "responsewrapper"
     },
     {
@@ -216,7 +279,7 @@
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
       "source_location": "L19",
       "id": "pydantic_schemas_transcriptdata",
-      "community": 2,
+      "community": 4,
       "norm_label": "transcriptdata"
     },
     {
@@ -225,7 +288,7 @@
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
       "source_location": "L24",
       "id": "pydantic_schemas_topic",
-      "community": 2,
+      "community": 4,
       "norm_label": "topic"
     },
     {
@@ -234,7 +297,7 @@
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
       "source_location": "L33",
       "id": "pydantic_schemas_notesdata",
-      "community": 2,
+      "community": 4,
       "norm_label": "notesdata"
     },
     {
@@ -243,7 +306,7 @@
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
       "source_location": "L40",
       "id": "pydantic_schemas_quizquestiondata",
-      "community": 2,
+      "community": 4,
       "norm_label": "quizquestiondata"
     },
     {
@@ -252,7 +315,7 @@
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
       "source_location": "L48",
       "id": "pydantic_schemas_learnerstateschema",
-      "community": 2,
+      "community": 4,
       "norm_label": "learnerstateschema"
     },
     {
@@ -261,7 +324,7 @@
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
       "source_location": "L55",
       "id": "pydantic_schemas_explanationschema",
-      "community": 2,
+      "community": 4,
       "norm_label": "explanationschema"
     },
     {
@@ -270,7 +333,7 @@
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
       "source_location": "L63",
       "id": "pydantic_schemas_recommendationdata",
-      "community": 2,
+      "community": 4,
       "norm_label": "recommendationdata"
     },
     {
@@ -279,7 +342,7 @@
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
       "source_location": "L68",
       "id": "pydantic_schemas_submitrequest",
-      "community": 2,
+      "community": 4,
       "norm_label": "submitrequest"
     },
     {
@@ -288,8 +351,26 @@
       "source_file": "Backend\\app\\schemas\\pydantic_schemas.py",
       "source_location": "L74",
       "id": "pydantic_schemas_submitresponsedata",
-      "community": 2,
+      "community": 4,
       "norm_label": "submitresponsedata"
+    },
+    {
+      "label": "hindi_mock.py",
+      "file_type": "code",
+      "source_file": "Backend\\app\\services\\hindi_mock.py",
+      "source_location": "L1",
+      "id": "backend_app_services_hindi_mock_py",
+      "community": 7,
+      "norm_label": "hindi_mock.py"
+    },
+    {
+      "label": "load_hindi_mock()",
+      "file_type": "code",
+      "source_file": "Backend\\app\\services\\hindi_mock.py",
+      "source_location": "L52",
+      "id": "hindi_mock_load_hindi_mock",
+      "community": 7,
+      "norm_label": "load_hindi_mock()"
     },
     {
       "label": "logic.py",
@@ -297,170 +378,224 @@
       "source_file": "Backend\\app\\services\\logic.py",
       "source_location": "L1",
       "id": "backend_app_services_logic_py",
-      "community": 1,
+      "community": 0,
       "norm_label": "logic.py"
+    },
+    {
+      "label": "toggle_demo_mode()",
+      "file_type": "code",
+      "source_file": "Backend\\app\\services\\logic.py",
+      "source_location": "L34",
+      "id": "logic_toggle_demo_mode",
+      "community": 3,
+      "norm_label": "toggle_demo_mode()"
     },
     {
       "label": "load_fallback_file()",
       "file_type": "code",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L30",
+      "source_location": "L41",
       "id": "logic_load_fallback_file",
-      "community": 1,
+      "community": 0,
       "norm_label": "load_fallback_file()"
     },
     {
       "label": "call_ollama()",
       "file_type": "code",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L48",
+      "source_location": "L59",
       "id": "logic_call_ollama",
-      "community": 1,
+      "community": 0,
       "norm_label": "call_ollama()"
     },
     {
       "label": "extract_json()",
       "file_type": "code",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L68",
+      "source_location": "L87",
       "id": "logic_extract_json",
-      "community": 1,
+      "community": 0,
       "norm_label": "extract_json()"
     },
     {
       "label": "chunk_text()",
       "file_type": "code",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L92",
+      "source_location": "L117",
       "id": "logic_chunk_text",
-      "community": 1,
+      "community": 0,
       "norm_label": "chunk_text()"
     },
     {
       "label": "generate_notes_llm()",
       "file_type": "code",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L112",
+      "source_location": "L137",
       "id": "logic_generate_notes_llm",
-      "community": 1,
+      "community": 0,
       "norm_label": "generate_notes_llm()"
     },
     {
       "label": "generate_quiz_llm()",
       "file_type": "code",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L193",
+      "source_location": "L214",
       "id": "logic_generate_quiz_llm",
-      "community": 1,
+      "community": 0,
       "norm_label": "generate_quiz_llm()"
     },
     {
       "label": "generate_explanation_llm()",
       "file_type": "code",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L242",
+      "source_location": "L264",
       "id": "logic_generate_explanation_llm",
-      "community": 1,
+      "community": 0,
       "norm_label": "generate_explanation_llm()"
     },
     {
       "label": "extract_pdf_text()",
       "file_type": "code",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L272",
+      "source_location": "L319",
       "id": "logic_extract_pdf_text",
-      "community": 1,
+      "community": 0,
       "norm_label": "extract_pdf_text()"
     },
     {
       "label": "process_pdf_pipeline()",
       "file_type": "code",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L284",
+      "source_location": "L331",
       "id": "logic_process_pdf_pipeline",
-      "community": 1,
+      "community": 0,
       "norm_label": "process_pdf_pipeline()"
     },
     {
       "label": "get_cached_notes()",
       "file_type": "code",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L311",
+      "source_location": "L399",
       "id": "logic_get_cached_notes",
-      "community": 4,
+      "community": 3,
       "norm_label": "get_cached_notes()"
     },
     {
       "label": "get_cached_quiz()",
       "file_type": "code",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L314",
+      "source_location": "L402",
       "id": "logic_get_cached_quiz",
-      "community": 4,
+      "community": 3,
       "norm_label": "get_cached_quiz()"
     },
     {
       "label": "get_deterministic_intelligence()",
       "file_type": "code",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L317",
+      "source_location": "L405",
       "id": "logic_get_deterministic_intelligence",
-      "community": 4,
+      "community": 0,
       "norm_label": "get_deterministic_intelligence()"
     },
     {
       "label": "get_session_summary()",
       "file_type": "code",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L385",
+      "source_location": "L500",
       "id": "logic_get_session_summary",
-      "community": 1,
+      "community": 3,
       "norm_label": "get_session_summary()"
     },
     {
-      "label": "Robust JSON extraction using regex.",
+      "label": "get_flashcards()",
+      "file_type": "code",
+      "source_file": "Backend\\app\\services\\logic.py",
+      "source_location": "L534",
+      "id": "logic_get_flashcards",
+      "community": 0,
+      "norm_label": "get_flashcards()"
+    },
+    {
+      "label": "Robust JSON extraction with aggressive cleaning.",
       "file_type": "rationale",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L69",
-      "id": "logic_rationale_69",
-      "community": 1,
-      "norm_label": "robust json extraction using regex."
+      "source_location": "L88",
+      "id": "logic_rationale_88",
+      "community": 0,
+      "norm_label": "robust json extraction with aggressive cleaning."
     },
     {
       "label": "Robust Notes Generation with chunk-level fault tolerance.",
       "file_type": "rationale",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L113",
-      "id": "logic_rationale_113",
-      "community": 1,
+      "source_location": "L138",
+      "id": "logic_rationale_138",
+      "community": 0,
       "norm_label": "robust notes generation with chunk-level fault tolerance."
     },
     {
       "label": "Robust Quiz Generation with extraction and fallback.",
       "file_type": "rationale",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L194",
-      "id": "logic_rationale_194",
-      "community": 1,
+      "source_location": "L215",
+      "id": "logic_rationale_215",
+      "community": 0,
       "norm_label": "robust quiz generation with extraction and fallback."
     },
     {
-      "label": "Robust Explanation Generation.",
+      "label": "Robust Explanation Generation with Fail-Safe (Fix 1).",
       "file_type": "rationale",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L243",
-      "id": "logic_rationale_243",
-      "community": 1,
-      "norm_label": "robust explanation generation."
+      "source_location": "L265",
+      "id": "logic_rationale_265",
+      "community": 0,
+      "norm_label": "robust explanation generation with fail-safe (fix 1)."
     },
     {
       "label": "Data-driven Intelligence Layer.",
       "file_type": "rationale",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L318",
-      "id": "logic_rationale_318",
-      "community": 4,
+      "source_location": "L406",
+      "id": "logic_rationale_406",
+      "community": 0,
       "norm_label": "data-driven intelligence layer."
+    },
+    {
+      "label": "Generate lightweight flashcards from notes (Fix 4).",
+      "file_type": "rationale",
+      "source_file": "Backend\\app\\services\\logic.py",
+      "source_location": "L535",
+      "id": "logic_rationale_535",
+      "community": 0,
+      "norm_label": "generate lightweight flashcards from notes (fix 4)."
+    },
+    {
+      "label": "translation_service.py",
+      "file_type": "code",
+      "source_file": "Backend\\app\\services\\translation_service.py",
+      "source_location": "L1",
+      "id": "backend_app_services_translation_service_py",
+      "community": 0,
+      "norm_label": "translation_service.py"
+    },
+    {
+      "label": "translate_text()",
+      "file_type": "code",
+      "source_file": "Backend\\app\\services\\translation_service.py",
+      "source_location": "L6",
+      "id": "translation_service_translate_text",
+      "community": 0,
+      "norm_label": "translate_text()"
+    },
+    {
+      "label": "Minimal, safe translation layer using LLM.",
+      "file_type": "rationale",
+      "source_file": "Backend\\app\\services\\translation_service.py",
+      "source_location": "L7",
+      "id": "translation_service_rationale_7",
+      "community": 0,
+      "norm_label": "minimal, safe translation layer using llm."
     },
     {
       "label": "uuid_helper.py",
@@ -468,7 +603,7 @@
       "source_file": "Backend\\app\\utils\\uuid_helper.py",
       "source_location": "L1",
       "id": "backend_app_utils_uuid_helper_py",
-      "community": 6,
+      "community": 8,
       "norm_label": "uuid_helper.py"
     },
     {
@@ -477,7 +612,7 @@
       "source_file": "Backend\\app\\utils\\uuid_helper.py",
       "source_location": "L3",
       "id": "uuid_helper_generate_session_id",
-      "community": 6,
+      "community": 8,
       "norm_label": "generate_session_id()"
     },
     {
@@ -486,7 +621,7 @@
       "source_file": "Frontend\\eslint.config.js",
       "source_location": "L1",
       "id": "frontend_eslint_config_js",
-      "community": 15,
+      "community": 18,
       "norm_label": "eslint.config.js"
     },
     {
@@ -495,7 +630,7 @@
       "source_file": "Frontend\\vite.config.js",
       "source_location": "L1",
       "id": "frontend_vite_config_js",
-      "community": 16,
+      "community": 19,
       "norm_label": "vite.config.js"
     },
     {
@@ -504,7 +639,7 @@
       "source_file": "Frontend\\src\\App.jsx",
       "source_location": "L1",
       "id": "frontend_src_app_jsx",
-      "community": 7,
+      "community": 9,
       "norm_label": "app.jsx"
     },
     {
@@ -513,7 +648,7 @@
       "source_file": "Frontend\\src\\App.jsx",
       "source_location": "L16",
       "id": "app_app",
-      "community": 7,
+      "community": 9,
       "norm_label": "app()"
     },
     {
@@ -522,7 +657,7 @@
       "source_file": "Frontend\\src\\main.jsx",
       "source_location": "L1",
       "id": "frontend_src_main_jsx",
-      "community": 17,
+      "community": 20,
       "norm_label": "main.jsx"
     },
     {
@@ -531,7 +666,7 @@
       "source_file": "Frontend\\src\\components\\debug\\DebugPanel.jsx",
       "source_location": "L1",
       "id": "frontend_src_components_debug_debugpanel_jsx",
-      "community": 0,
+      "community": 1,
       "norm_label": "debugpanel.jsx"
     },
     {
@@ -540,7 +675,7 @@
       "source_file": "Frontend\\src\\components\\debug\\DebugPanel.jsx",
       "source_location": "L4",
       "id": "debugpanel_debugpanel",
-      "community": 0,
+      "community": 1,
       "norm_label": "debugpanel()"
     },
     {
@@ -549,7 +684,7 @@
       "source_file": "Frontend\\src\\components\\layout\\Layout.jsx",
       "source_location": "L1",
       "id": "frontend_src_components_layout_layout_jsx",
-      "community": 8,
+      "community": 10,
       "norm_label": "layout.jsx"
     },
     {
@@ -558,7 +693,7 @@
       "source_file": "Frontend\\src\\components\\layout\\Layout.jsx",
       "source_location": "L7",
       "id": "layout_layout",
-      "community": 8,
+      "community": 10,
       "norm_label": "layout()"
     },
     {
@@ -567,7 +702,7 @@
       "source_file": "Frontend\\src\\components\\layout\\Sidebar.jsx",
       "source_location": "L1",
       "id": "frontend_src_components_layout_sidebar_jsx",
-      "community": 9,
+      "community": 11,
       "norm_label": "sidebar.jsx"
     },
     {
@@ -576,7 +711,7 @@
       "source_file": "Frontend\\src\\components\\layout\\Sidebar.jsx",
       "source_location": "L16",
       "id": "sidebar_sidebar",
-      "community": 9,
+      "community": 11,
       "norm_label": "sidebar()"
     },
     {
@@ -585,16 +720,16 @@
       "source_file": "Frontend\\src\\components\\layout\\Topbar.jsx",
       "source_location": "L1",
       "id": "frontend_src_components_layout_topbar_jsx",
-      "community": 0,
+      "community": 1,
       "norm_label": "topbar.jsx"
     },
     {
       "label": "Topbar()",
       "file_type": "code",
       "source_file": "Frontend\\src\\components\\layout\\Topbar.jsx",
-      "source_location": "L7",
+      "source_location": "L8",
       "id": "topbar_topbar",
-      "community": 0,
+      "community": 1,
       "norm_label": "topbar()"
     },
     {
@@ -603,7 +738,7 @@
       "source_file": "Frontend\\src\\components\\ui\\Button.jsx",
       "source_location": "L1",
       "id": "frontend_src_components_ui_button_jsx",
-      "community": 10,
+      "community": 12,
       "norm_label": "button.jsx"
     },
     {
@@ -612,7 +747,7 @@
       "source_file": "Frontend\\src\\components\\ui\\Button.jsx",
       "source_location": "L5",
       "id": "button_button",
-      "community": 10,
+      "community": 12,
       "norm_label": "button()"
     },
     {
@@ -621,7 +756,7 @@
       "source_file": "Frontend\\src\\components\\ui\\Card.jsx",
       "source_location": "L1",
       "id": "frontend_src_components_ui_card_jsx",
-      "community": 11,
+      "community": 13,
       "norm_label": "card.jsx"
     },
     {
@@ -630,7 +765,7 @@
       "source_file": "Frontend\\src\\components\\ui\\Card.jsx",
       "source_location": "L4",
       "id": "card_card",
-      "community": 11,
+      "community": 13,
       "norm_label": "card()"
     },
     {
@@ -639,7 +774,7 @@
       "source_file": "Frontend\\src\\components\\ui\\ProgressBar.jsx",
       "source_location": "L1",
       "id": "frontend_src_components_ui_progressbar_jsx",
-      "community": 12,
+      "community": 14,
       "norm_label": "progressbar.jsx"
     },
     {
@@ -648,7 +783,7 @@
       "source_file": "Frontend\\src\\components\\ui\\ProgressBar.jsx",
       "source_location": "L4",
       "id": "progressbar_progressbar",
-      "community": 12,
+      "community": 14,
       "norm_label": "progressbar()"
     },
     {
@@ -657,7 +792,7 @@
       "source_file": "Frontend\\src\\context\\AppContext.jsx",
       "source_location": "L1",
       "id": "frontend_src_context_appcontext_jsx",
-      "community": 0,
+      "community": 1,
       "norm_label": "appcontext.jsx"
     },
     {
@@ -666,7 +801,7 @@
       "source_file": "Frontend\\src\\context\\AppContext.jsx",
       "source_location": "L5",
       "id": "appcontext_useappcontext",
-      "community": 0,
+      "community": 1,
       "norm_label": "useappcontext()"
     },
     {
@@ -675,7 +810,7 @@
       "source_file": "Frontend\\src\\context\\AppContext.jsx",
       "source_location": "L7",
       "id": "appcontext_getstorageitem",
-      "community": 0,
+      "community": 1,
       "norm_label": "getstorageitem()"
     },
     {
@@ -684,7 +819,7 @@
       "source_file": "Frontend\\src\\context\\AppContext.jsx",
       "source_location": "L16",
       "id": "appcontext_setstorageitem",
-      "community": 0,
+      "community": 1,
       "norm_label": "setstorageitem()"
     },
     {
@@ -693,7 +828,7 @@
       "source_file": "Frontend\\src\\context\\AppContext.jsx",
       "source_location": "L20",
       "id": "appcontext_appprovider",
-      "community": 0,
+      "community": 1,
       "norm_label": "appprovider()"
     },
     {
@@ -702,7 +837,7 @@
       "source_file": "Frontend\\src\\pages\\Dashboard.jsx",
       "source_location": "L1",
       "id": "frontend_src_pages_dashboard_jsx",
-      "community": 0,
+      "community": 1,
       "norm_label": "dashboard.jsx"
     },
     {
@@ -711,7 +846,7 @@
       "source_file": "Frontend\\src\\pages\\Dashboard.jsx",
       "source_location": "L9",
       "id": "dashboard_dashboard",
-      "community": 0,
+      "community": 1,
       "norm_label": "dashboard()"
     },
     {
@@ -720,7 +855,7 @@
       "source_file": "Frontend\\src\\pages\\Landing.jsx",
       "source_location": "L1",
       "id": "frontend_src_pages_landing_jsx",
-      "community": 13,
+      "community": 15,
       "norm_label": "landing.jsx"
     },
     {
@@ -729,7 +864,7 @@
       "source_file": "Frontend\\src\\pages\\Landing.jsx",
       "source_location": "L8",
       "id": "landing_landing",
-      "community": 13,
+      "community": 15,
       "norm_label": "landing()"
     },
     {
@@ -738,7 +873,7 @@
       "source_file": "Frontend\\src\\pages\\Leaderboard.jsx",
       "source_location": "L1",
       "id": "frontend_src_pages_leaderboard_jsx",
-      "community": 0,
+      "community": 1,
       "norm_label": "leaderboard.jsx"
     },
     {
@@ -747,7 +882,7 @@
       "source_file": "Frontend\\src\\pages\\Leaderboard.jsx",
       "source_location": "L16",
       "id": "leaderboard_leaderboard",
-      "community": 0,
+      "community": 1,
       "norm_label": "leaderboard()"
     },
     {
@@ -756,7 +891,7 @@
       "source_file": "Frontend\\src\\pages\\LearningPath.jsx",
       "source_location": "L1",
       "id": "frontend_src_pages_learningpath_jsx",
-      "community": 14,
+      "community": 16,
       "norm_label": "learningpath.jsx"
     },
     {
@@ -765,7 +900,7 @@
       "source_file": "Frontend\\src\\pages\\LearningPath.jsx",
       "source_location": "L16",
       "id": "learningpath_learningpath",
-      "community": 14,
+      "community": 16,
       "norm_label": "learningpath()"
     },
     {
@@ -774,7 +909,7 @@
       "source_file": "Frontend\\src\\pages\\Notes.jsx",
       "source_location": "L1",
       "id": "frontend_src_pages_notes_jsx",
-      "community": 0,
+      "community": 1,
       "norm_label": "notes.jsx"
     },
     {
@@ -783,7 +918,7 @@
       "source_file": "Frontend\\src\\pages\\Notes.jsx",
       "source_location": "L12",
       "id": "notes_notes",
-      "community": 0,
+      "community": 1,
       "norm_label": "notes()"
     },
     {
@@ -792,7 +927,7 @@
       "source_file": "Frontend\\src\\pages\\Quiz.jsx",
       "source_location": "L1",
       "id": "frontend_src_pages_quiz_jsx",
-      "community": 0,
+      "community": 1,
       "norm_label": "quiz.jsx"
     },
     {
@@ -801,7 +936,7 @@
       "source_file": "Frontend\\src\\pages\\Quiz.jsx",
       "source_location": "L12",
       "id": "quiz_quiz",
-      "community": 0,
+      "community": 1,
       "norm_label": "quiz()"
     },
     {
@@ -810,16 +945,16 @@
       "source_file": "Frontend\\src\\pages\\Results.jsx",
       "source_location": "L1",
       "id": "frontend_src_pages_results_jsx",
-      "community": 0,
+      "community": 1,
       "norm_label": "results.jsx"
     },
     {
       "label": "Results()",
       "file_type": "code",
       "source_file": "Frontend\\src\\pages\\Results.jsx",
-      "source_location": "L10",
+      "source_location": "L11",
       "id": "results_results",
-      "community": 0,
+      "community": 1,
       "norm_label": "results()"
     },
     {
@@ -828,16 +963,16 @@
       "source_file": "Frontend\\src\\pages\\Upload.jsx",
       "source_location": "L1",
       "id": "frontend_src_pages_upload_jsx",
-      "community": 0,
+      "community": 1,
       "norm_label": "upload.jsx"
     },
     {
       "label": "Upload()",
       "file_type": "code",
       "source_file": "Frontend\\src\\pages\\Upload.jsx",
-      "source_location": "L11",
+      "source_location": "L12",
       "id": "upload_upload",
-      "community": 0,
+      "community": 1,
       "norm_label": "upload()"
     },
     {
@@ -846,7 +981,7 @@
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
       "source_location": "L1",
       "id": "frontend_src_services_zerofrictionapi_js",
-      "community": 3,
+      "community": 2,
       "norm_label": "zerofrictionapi.js"
     },
     {
@@ -855,7 +990,7 @@
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
       "source_location": "L6",
       "id": "zerofrictionapi_wrap",
-      "community": 3,
+      "community": 2,
       "norm_label": "wrap()"
     },
     {
@@ -864,7 +999,7 @@
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
       "source_location": "L15",
       "id": "zerofrictionapi_delay",
-      "community": 3,
+      "community": 2,
       "norm_label": "delay()"
     },
     {
@@ -873,7 +1008,7 @@
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
       "source_location": "L17",
       "id": "zerofrictionapi_generateuuid",
-      "community": 3,
+      "community": 2,
       "norm_label": "generateuuid()"
     },
     {
@@ -882,7 +1017,7 @@
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
       "source_location": "L24",
       "id": "zerofrictionapi_logtiming",
-      "community": 3,
+      "community": 2,
       "norm_label": "logtiming()"
     },
     {
@@ -891,7 +1026,7 @@
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
       "source_location": "L30",
       "id": "zerofrictionapi_assertsuccess",
-      "community": 3,
+      "community": 2,
       "norm_label": "assertsuccess()"
     },
     {
@@ -900,51 +1035,132 @@
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
       "source_location": "L38",
       "id": "zerofrictionapi_request",
-      "community": 3,
+      "community": 2,
       "norm_label": "request()"
     },
     {
       "label": "uploadLecture()",
       "file_type": "code",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L114",
+      "source_location": "L172",
       "id": "zerofrictionapi_uploadlecture",
-      "community": 3,
+      "community": 2,
       "norm_label": "uploadlecture()"
     },
     {
       "label": "getNotes()",
       "file_type": "code",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L128",
+      "source_location": "L188",
       "id": "zerofrictionapi_getnotes",
-      "community": 3,
+      "community": 2,
       "norm_label": "getnotes()"
     },
     {
       "label": "getQuiz()",
       "file_type": "code",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L138",
+      "source_location": "L198",
       "id": "zerofrictionapi_getquiz",
-      "community": 3,
+      "community": 2,
       "norm_label": "getquiz()"
     },
     {
       "label": "submitAnswer()",
       "file_type": "code",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L148",
+      "source_location": "L208",
       "id": "zerofrictionapi_submitanswer",
-      "community": 3,
+      "community": 2,
       "norm_label": "submitanswer()"
+    },
+    {
+      "label": "getSessionSummary()",
+      "file_type": "code",
+      "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
+      "source_location": "L226",
+      "id": "zerofrictionapi_getsessionsummary",
+      "community": 2,
+      "norm_label": "getsessionsummary()"
+    },
+    {
+      "label": "getFlashcards()",
+      "file_type": "code",
+      "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
+      "source_location": "L243",
+      "id": "zerofrictionapi_getflashcards",
+      "community": 2,
+      "norm_label": "getflashcards()"
+    },
+    {
+      "label": "getDemoConfig()",
+      "file_type": "code",
+      "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
+      "source_location": "L257",
+      "id": "zerofrictionapi_getdemoconfig",
+      "community": 2,
+      "norm_label": "getdemoconfig()"
+    },
+    {
+      "label": "setDemoConfig()",
+      "file_type": "code",
+      "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
+      "source_location": "L262",
+      "id": "zerofrictionapi_setdemoconfig",
+      "community": 2,
+      "norm_label": "setdemoconfig()"
+    },
+    {
+      "label": "Robust JSON extraction using regex.",
+      "file_type": "rationale",
+      "source_file": "Backend\\app\\services\\logic.py",
+      "source_location": "L69",
+      "community": 21,
+      "norm_label": "robust json extraction using regex.",
+      "id": "logic_rationale_69"
+    },
+    {
+      "label": "Robust Notes Generation with chunk-level fault tolerance.",
+      "file_type": "rationale",
+      "source_file": "Backend\\app\\services\\logic.py",
+      "source_location": "L113",
+      "community": 22,
+      "norm_label": "robust notes generation with chunk-level fault tolerance.",
+      "id": "logic_rationale_113"
+    },
+    {
+      "label": "Robust Quiz Generation with extraction and fallback.",
+      "file_type": "rationale",
+      "source_file": "Backend\\app\\services\\logic.py",
+      "source_location": "L194",
+      "community": 23,
+      "norm_label": "robust quiz generation with extraction and fallback.",
+      "id": "logic_rationale_194"
+    },
+    {
+      "label": "Robust Explanation Generation.",
+      "file_type": "rationale",
+      "source_file": "Backend\\app\\services\\logic.py",
+      "source_location": "L243",
+      "community": 24,
+      "norm_label": "robust explanation generation.",
+      "id": "logic_rationale_243"
+    },
+    {
+      "label": "Data-driven Intelligence Layer.",
+      "file_type": "rationale",
+      "source_file": "Backend\\app\\services\\logic.py",
+      "source_location": "L318",
+      "community": 25,
+      "norm_label": "data-driven intelligence layer.",
+      "id": "logic_rationale_318"
     },
     {
       "label": "Enhanced Quiz Generation (Trap questions enabled).",
       "file_type": "rationale",
       "source_file": "Backend\\app\\services\\logic.py",
       "source_location": "L154",
-      "community": 18,
+      "community": 26,
       "norm_label": "enhanced quiz generation (trap questions enabled).",
       "id": "logic_rationale_154"
     },
@@ -953,7 +1169,7 @@
       "file_type": "rationale",
       "source_file": "Backend\\app\\services\\logic.py",
       "source_location": "L281",
-      "community": 19,
+      "community": 27,
       "norm_label": "data-driven intelligence layer (hardcoded overrides removed).",
       "id": "logic_rationale_281"
     },
@@ -962,7 +1178,7 @@
       "file_type": "rationale",
       "source_file": "Backend\\app\\services\\logic.py",
       "source_location": "L351",
-      "community": 20,
+      "community": 28,
       "norm_label": "requirement 4: strengthened post-quiz fallback.",
       "id": "logic_rationale_351"
     },
@@ -971,7 +1187,7 @@
       "file_type": "rationale",
       "source_file": "Backend\\app\\services\\logic.py",
       "source_location": "L52",
-      "community": 21,
+      "community": 29,
       "norm_label": "splits text into logical chunks of fixed size.",
       "id": "logic_rationale_52"
     },
@@ -980,7 +1196,7 @@
       "file_type": "rationale",
       "source_file": "Backend\\app\\services\\logic.py",
       "source_location": "L60",
-      "community": 22,
+      "community": 30,
       "norm_label": "simulates llm extracting 2-3 topics from a chunk.",
       "id": "logic_rationale_60"
     },
@@ -989,7 +1205,7 @@
       "file_type": "rationale",
       "source_file": "Backend\\app\\services\\logic.py",
       "source_location": "L83",
-      "community": 23,
+      "community": 31,
       "norm_label": "merges topics from multiple chunks, limits to 6 max, and deduplicates.",
       "id": "logic_rationale_83"
     },
@@ -998,7 +1214,7 @@
       "file_type": "rationale",
       "source_file": "Backend\\app\\services\\logic.py",
       "source_location": "L97",
-      "community": 24,
+      "community": 32,
       "norm_label": "checks if the extracted topics follow the required schema.",
       "id": "logic_rationale_97"
     },
@@ -1007,7 +1223,7 @@
       "file_type": "rationale",
       "source_file": "Backend\\app\\services\\logic.py",
       "source_location": "L117",
-      "community": 25,
+      "community": 33,
       "norm_label": "generates natural questions only from the final merged topics.",
       "id": "logic_rationale_117"
     }
@@ -1041,7 +1257,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\main.py",
-      "source_location": "L53",
+      "source_location": "L56",
       "weight": 1.0,
       "_src": "backend_main_py",
       "_tgt": "main_get_notes",
@@ -1053,7 +1269,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\main.py",
-      "source_location": "L58",
+      "source_location": "L66",
       "weight": 1.0,
       "_src": "backend_main_py",
       "_tgt": "main_get_quiz",
@@ -1065,12 +1281,60 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\main.py",
-      "source_location": "L63",
+      "source_location": "L75",
       "weight": 1.0,
       "_src": "backend_main_py",
       "_tgt": "main_submit_answer",
       "source": "backend_main_py",
       "target": "main_submit_answer",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend\\main.py",
+      "source_location": "L90",
+      "weight": 1.0,
+      "_src": "backend_main_py",
+      "_tgt": "main_get_summary",
+      "source": "backend_main_py",
+      "target": "main_get_summary",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend\\main.py",
+      "source_location": "L99",
+      "weight": 1.0,
+      "_src": "backend_main_py",
+      "_tgt": "main_get_flashcards",
+      "source": "backend_main_py",
+      "target": "main_get_flashcards",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend\\main.py",
+      "source_location": "L107",
+      "weight": 1.0,
+      "_src": "backend_main_py",
+      "_tgt": "main_get_config",
+      "source": "backend_main_py",
+      "target": "main_get_config",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend\\main.py",
+      "source_location": "L111",
+      "weight": 1.0,
+      "_src": "backend_main_py",
+      "_tgt": "main_update_config",
+      "source": "backend_main_py",
+      "target": "main_update_config",
       "confidence_score": 1.0
     },
     {
@@ -1120,6 +1384,42 @@
       "_tgt": "logic_get_deterministic_intelligence",
       "source": "main_submit_answer",
       "target": "logic_get_deterministic_intelligence"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "Backend\\main.py",
+      "source_location": "L92",
+      "weight": 1.0,
+      "_src": "main_get_summary",
+      "_tgt": "logic_get_session_summary",
+      "source": "main_get_summary",
+      "target": "logic_get_session_summary"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "Backend\\main.py",
+      "source_location": "L112",
+      "weight": 1.0,
+      "_src": "main_update_config",
+      "_tgt": "logic_toggle_demo_mode",
+      "source": "main_update_config",
+      "target": "logic_toggle_demo_mode"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend\\test_lang.py",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_src": "backend_test_lang_py",
+      "_tgt": "test_lang_mock_extract",
+      "source": "backend_test_lang_py",
+      "target": "test_lang_mock_extract",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -1604,8 +1904,32 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "Backend\\app\\services\\hindi_mock.py",
+      "source_location": "L52",
+      "weight": 1.0,
+      "_src": "backend_app_services_hindi_mock_py",
+      "_tgt": "hindi_mock_load_hindi_mock",
+      "source": "backend_app_services_hindi_mock_py",
+      "target": "hindi_mock_load_hindi_mock",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L30",
+      "source_location": "L34",
+      "weight": 1.0,
+      "_src": "backend_app_services_logic_py",
+      "_tgt": "logic_toggle_demo_mode",
+      "source": "backend_app_services_logic_py",
+      "target": "logic_toggle_demo_mode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend\\app\\services\\logic.py",
+      "source_location": "L41",
       "weight": 1.0,
       "_src": "backend_app_services_logic_py",
       "_tgt": "logic_load_fallback_file",
@@ -1617,7 +1941,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L48",
+      "source_location": "L59",
       "weight": 1.0,
       "_src": "backend_app_services_logic_py",
       "_tgt": "logic_call_ollama",
@@ -1629,7 +1953,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L68",
+      "source_location": "L87",
       "weight": 1.0,
       "_src": "backend_app_services_logic_py",
       "_tgt": "logic_extract_json",
@@ -1641,7 +1965,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L92",
+      "source_location": "L117",
       "weight": 1.0,
       "_src": "backend_app_services_logic_py",
       "_tgt": "logic_chunk_text",
@@ -1653,7 +1977,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L112",
+      "source_location": "L137",
       "weight": 1.0,
       "_src": "backend_app_services_logic_py",
       "_tgt": "logic_generate_notes_llm",
@@ -1665,7 +1989,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L193",
+      "source_location": "L214",
       "weight": 1.0,
       "_src": "backend_app_services_logic_py",
       "_tgt": "logic_generate_quiz_llm",
@@ -1677,7 +2001,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L242",
+      "source_location": "L264",
       "weight": 1.0,
       "_src": "backend_app_services_logic_py",
       "_tgt": "logic_generate_explanation_llm",
@@ -1689,7 +2013,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L272",
+      "source_location": "L319",
       "weight": 1.0,
       "_src": "backend_app_services_logic_py",
       "_tgt": "logic_extract_pdf_text",
@@ -1701,7 +2025,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L284",
+      "source_location": "L331",
       "weight": 1.0,
       "_src": "backend_app_services_logic_py",
       "_tgt": "logic_process_pdf_pipeline",
@@ -1713,7 +2037,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L311",
+      "source_location": "L399",
       "weight": 1.0,
       "_src": "backend_app_services_logic_py",
       "_tgt": "logic_get_cached_notes",
@@ -1725,7 +2049,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L314",
+      "source_location": "L402",
       "weight": 1.0,
       "_src": "backend_app_services_logic_py",
       "_tgt": "logic_get_cached_quiz",
@@ -1737,7 +2061,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L317",
+      "source_location": "L405",
       "weight": 1.0,
       "_src": "backend_app_services_logic_py",
       "_tgt": "logic_get_deterministic_intelligence",
@@ -1749,7 +2073,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L385",
+      "source_location": "L500",
       "weight": 1.0,
       "_src": "backend_app_services_logic_py",
       "_tgt": "logic_get_session_summary",
@@ -1758,22 +2082,22 @@
       "confidence_score": 1.0
     },
     {
-      "relation": "calls",
+      "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L155",
+      "source_location": "L534",
       "weight": 1.0,
-      "_src": "logic_generate_notes_llm",
-      "_tgt": "logic_call_ollama",
-      "source": "logic_call_ollama",
-      "target": "logic_generate_notes_llm",
+      "_src": "backend_app_services_logic_py",
+      "_tgt": "logic_get_flashcards",
+      "source": "backend_app_services_logic_py",
+      "target": "logic_get_flashcards",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L221",
+      "source_location": "L243",
       "weight": 1.0,
       "_src": "logic_generate_quiz_llm",
       "_tgt": "logic_call_ollama",
@@ -1785,7 +2109,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L258",
+      "source_location": "L282",
       "weight": 1.0,
       "_src": "logic_generate_explanation_llm",
       "_tgt": "logic_call_ollama",
@@ -1795,21 +2119,21 @@
     },
     {
       "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L160",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "Backend\\app\\services\\translation_service.py",
+      "source_location": "L12",
       "weight": 1.0,
-      "_src": "logic_generate_notes_llm",
-      "_tgt": "logic_extract_json",
-      "source": "logic_extract_json",
-      "target": "logic_generate_notes_llm",
-      "confidence_score": 1.0
+      "_src": "translation_service_translate_text",
+      "_tgt": "logic_call_ollama",
+      "source": "logic_call_ollama",
+      "target": "translation_service_translate_text"
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L224",
+      "source_location": "L246",
       "weight": 1.0,
       "_src": "logic_generate_quiz_llm",
       "_tgt": "logic_extract_json",
@@ -1821,7 +2145,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L259",
+      "source_location": "L288",
       "weight": 1.0,
       "_src": "logic_generate_explanation_llm",
       "_tgt": "logic_extract_json",
@@ -1833,19 +2157,19 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L69",
+      "source_location": "L88",
       "weight": 1.0,
-      "_src": "logic_rationale_69",
+      "_src": "logic_rationale_88",
       "_tgt": "logic_extract_json",
       "source": "logic_extract_json",
-      "target": "logic_rationale_69",
+      "target": "logic_rationale_88",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L114",
+      "source_location": "L139",
       "weight": 1.0,
       "_src": "logic_generate_notes_llm",
       "_tgt": "logic_chunk_text",
@@ -1857,7 +2181,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L195",
+      "source_location": "L216",
       "weight": 1.0,
       "_src": "logic_generate_quiz_llm",
       "_tgt": "logic_chunk_text",
@@ -1869,7 +2193,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L291",
+      "source_location": "L378",
       "weight": 1.0,
       "_src": "logic_process_pdf_pipeline",
       "_tgt": "logic_generate_notes_llm",
@@ -1881,19 +2205,19 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L113",
+      "source_location": "L138",
       "weight": 1.0,
-      "_src": "logic_rationale_113",
+      "_src": "logic_rationale_138",
       "_tgt": "logic_generate_notes_llm",
       "source": "logic_generate_notes_llm",
-      "target": "logic_rationale_113",
+      "target": "logic_rationale_138",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L292",
+      "source_location": "L379",
       "weight": 1.0,
       "_src": "logic_process_pdf_pipeline",
       "_tgt": "logic_generate_quiz_llm",
@@ -1905,19 +2229,19 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L194",
+      "source_location": "L215",
       "weight": 1.0,
-      "_src": "logic_rationale_194",
+      "_src": "logic_rationale_215",
       "_tgt": "logic_generate_quiz_llm",
       "source": "logic_generate_quiz_llm",
-      "target": "logic_rationale_194",
+      "target": "logic_rationale_215",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L355",
+      "source_location": "L462",
       "weight": 1.0,
       "_src": "logic_get_deterministic_intelligence",
       "_tgt": "logic_generate_explanation_llm",
@@ -1929,19 +2253,19 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L243",
+      "source_location": "L265",
       "weight": 1.0,
-      "_src": "logic_rationale_243",
+      "_src": "logic_rationale_265",
       "_tgt": "logic_generate_explanation_llm",
       "source": "logic_generate_explanation_llm",
-      "target": "logic_rationale_243",
+      "target": "logic_rationale_265",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L285",
+      "source_location": "L333",
       "weight": 1.0,
       "_src": "logic_process_pdf_pipeline",
       "_tgt": "logic_extract_pdf_text",
@@ -1950,15 +2274,63 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "Backend\\app\\services\\logic.py",
+      "source_location": "L376",
+      "weight": 1.0,
+      "_src": "logic_process_pdf_pipeline",
+      "_tgt": "translation_service_translate_text",
+      "source": "logic_process_pdf_pipeline",
+      "target": "translation_service_translate_text"
+    },
+    {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "Backend\\app\\services\\logic.py",
-      "source_location": "L318",
+      "source_location": "L406",
       "weight": 1.0,
-      "_src": "logic_rationale_318",
+      "_src": "logic_rationale_406",
       "_tgt": "logic_get_deterministic_intelligence",
       "source": "logic_get_deterministic_intelligence",
-      "target": "logic_rationale_318",
+      "target": "logic_rationale_406",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend\\app\\services\\logic.py",
+      "source_location": "L535",
+      "weight": 1.0,
+      "_src": "logic_rationale_535",
+      "_tgt": "logic_get_flashcards",
+      "source": "logic_get_flashcards",
+      "target": "logic_rationale_535",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend\\app\\services\\translation_service.py",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_src": "backend_app_services_translation_service_py",
+      "_tgt": "translation_service_translate_text",
+      "source": "backend_app_services_translation_service_py",
+      "target": "translation_service_translate_text",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend\\app\\services\\translation_service.py",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_src": "translation_service_rationale_7",
+      "_tgt": "translation_service_translate_text",
+      "source": "translation_service_translate_text",
+      "target": "translation_service_rationale_7",
       "confidence_score": 1.0
     },
     {
@@ -2037,7 +2409,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\components\\layout\\Topbar.jsx",
-      "source_location": "L7",
+      "source_location": "L8",
       "weight": 1.0,
       "_src": "frontend_src_components_layout_topbar_jsx",
       "_tgt": "topbar_topbar",
@@ -2289,7 +2661,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\pages\\Results.jsx",
-      "source_location": "L10",
+      "source_location": "L11",
       "weight": 1.0,
       "_src": "frontend_src_pages_results_jsx",
       "_tgt": "results_results",
@@ -2301,7 +2673,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\pages\\Upload.jsx",
-      "source_location": "L11",
+      "source_location": "L12",
       "weight": 1.0,
       "_src": "frontend_src_pages_upload_jsx",
       "_tgt": "upload_upload",
@@ -2385,7 +2757,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L114",
+      "source_location": "L172",
       "weight": 1.0,
       "_src": "frontend_src_services_zerofrictionapi_js",
       "_tgt": "zerofrictionapi_uploadlecture",
@@ -2397,7 +2769,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L128",
+      "source_location": "L188",
       "weight": 1.0,
       "_src": "frontend_src_services_zerofrictionapi_js",
       "_tgt": "zerofrictionapi_getnotes",
@@ -2409,7 +2781,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L138",
+      "source_location": "L198",
       "weight": 1.0,
       "_src": "frontend_src_services_zerofrictionapi_js",
       "_tgt": "zerofrictionapi_getquiz",
@@ -2421,7 +2793,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L148",
+      "source_location": "L208",
       "weight": 1.0,
       "_src": "frontend_src_services_zerofrictionapi_js",
       "_tgt": "zerofrictionapi_submitanswer",
@@ -2430,10 +2802,58 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
+      "source_location": "L226",
+      "weight": 1.0,
+      "_src": "frontend_src_services_zerofrictionapi_js",
+      "_tgt": "zerofrictionapi_getsessionsummary",
+      "source": "frontend_src_services_zerofrictionapi_js",
+      "target": "zerofrictionapi_getsessionsummary",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
+      "source_location": "L243",
+      "weight": 1.0,
+      "_src": "frontend_src_services_zerofrictionapi_js",
+      "_tgt": "zerofrictionapi_getflashcards",
+      "source": "frontend_src_services_zerofrictionapi_js",
+      "target": "zerofrictionapi_getflashcards",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
+      "source_location": "L257",
+      "weight": 1.0,
+      "_src": "frontend_src_services_zerofrictionapi_js",
+      "_tgt": "zerofrictionapi_getdemoconfig",
+      "source": "frontend_src_services_zerofrictionapi_js",
+      "target": "zerofrictionapi_getdemoconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
+      "source_location": "L262",
+      "weight": 1.0,
+      "_src": "frontend_src_services_zerofrictionapi_js",
+      "_tgt": "zerofrictionapi_setdemoconfig",
+      "source": "frontend_src_services_zerofrictionapi_js",
+      "target": "zerofrictionapi_setdemoconfig",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L125",
+      "source_location": "L185",
       "weight": 1.0,
       "_src": "zerofrictionapi_uploadlecture",
       "_tgt": "zerofrictionapi_wrap",
@@ -2445,7 +2865,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L135",
+      "source_location": "L195",
       "weight": 1.0,
       "_src": "zerofrictionapi_getnotes",
       "_tgt": "zerofrictionapi_wrap",
@@ -2457,7 +2877,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L145",
+      "source_location": "L205",
       "weight": 1.0,
       "_src": "zerofrictionapi_getquiz",
       "_tgt": "zerofrictionapi_wrap",
@@ -2469,7 +2889,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L162",
+      "source_location": "L223",
       "weight": 1.0,
       "_src": "zerofrictionapi_submitanswer",
       "_tgt": "zerofrictionapi_wrap",
@@ -2481,7 +2901,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L123",
+      "source_location": "L183",
       "weight": 1.0,
       "_src": "zerofrictionapi_uploadlecture",
       "_tgt": "zerofrictionapi_delay",
@@ -2493,7 +2913,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L134",
+      "source_location": "L194",
       "weight": 1.0,
       "_src": "zerofrictionapi_getnotes",
       "_tgt": "zerofrictionapi_delay",
@@ -2505,7 +2925,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L144",
+      "source_location": "L204",
       "weight": 1.0,
       "_src": "zerofrictionapi_getquiz",
       "_tgt": "zerofrictionapi_delay",
@@ -2517,7 +2937,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L159",
+      "source_location": "L219",
       "weight": 1.0,
       "_src": "zerofrictionapi_submitanswer",
       "_tgt": "zerofrictionapi_delay",
@@ -2529,7 +2949,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L125",
+      "source_location": "L185",
       "weight": 1.0,
       "_src": "zerofrictionapi_uploadlecture",
       "_tgt": "zerofrictionapi_generateuuid",
@@ -2553,7 +2973,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L120",
+      "source_location": "L180",
       "weight": 1.0,
       "_src": "zerofrictionapi_uploadlecture",
       "_tgt": "zerofrictionapi_assertsuccess",
@@ -2565,7 +2985,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L131",
+      "source_location": "L191",
       "weight": 1.0,
       "_src": "zerofrictionapi_getnotes",
       "_tgt": "zerofrictionapi_assertsuccess",
@@ -2577,7 +2997,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L141",
+      "source_location": "L201",
       "weight": 1.0,
       "_src": "zerofrictionapi_getquiz",
       "_tgt": "zerofrictionapi_assertsuccess",
@@ -2589,7 +3009,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L156",
+      "source_location": "L216",
       "weight": 1.0,
       "_src": "zerofrictionapi_submitanswer",
       "_tgt": "zerofrictionapi_assertsuccess",
@@ -2601,7 +3021,31 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L119",
+      "source_location": "L229",
+      "weight": 1.0,
+      "_src": "zerofrictionapi_getsessionsummary",
+      "_tgt": "zerofrictionapi_assertsuccess",
+      "source": "zerofrictionapi_assertsuccess",
+      "target": "zerofrictionapi_getsessionsummary",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
+      "source_location": "L246",
+      "weight": 1.0,
+      "_src": "zerofrictionapi_getflashcards",
+      "_tgt": "zerofrictionapi_assertsuccess",
+      "source": "zerofrictionapi_assertsuccess",
+      "target": "zerofrictionapi_getflashcards",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
+      "source_location": "L179",
       "weight": 1.0,
       "_src": "zerofrictionapi_uploadlecture",
       "_tgt": "zerofrictionapi_request",
@@ -2613,7 +3057,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L130",
+      "source_location": "L190",
       "weight": 1.0,
       "_src": "zerofrictionapi_getnotes",
       "_tgt": "zerofrictionapi_request",
@@ -2625,7 +3069,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L140",
+      "source_location": "L200",
       "weight": 1.0,
       "_src": "zerofrictionapi_getquiz",
       "_tgt": "zerofrictionapi_request",
@@ -2637,12 +3081,60 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
-      "source_location": "L150",
+      "source_location": "L210",
       "weight": 1.0,
       "_src": "zerofrictionapi_submitanswer",
       "_tgt": "zerofrictionapi_request",
       "source": "zerofrictionapi_request",
       "target": "zerofrictionapi_submitanswer",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
+      "source_location": "L228",
+      "weight": 1.0,
+      "_src": "zerofrictionapi_getsessionsummary",
+      "_tgt": "zerofrictionapi_request",
+      "source": "zerofrictionapi_request",
+      "target": "zerofrictionapi_getsessionsummary",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
+      "source_location": "L245",
+      "weight": 1.0,
+      "_src": "zerofrictionapi_getflashcards",
+      "_tgt": "zerofrictionapi_request",
+      "source": "zerofrictionapi_request",
+      "target": "zerofrictionapi_getflashcards",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
+      "source_location": "L258",
+      "weight": 1.0,
+      "_src": "zerofrictionapi_getdemoconfig",
+      "_tgt": "zerofrictionapi_request",
+      "source": "zerofrictionapi_request",
+      "target": "zerofrictionapi_getdemoconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend\\src\\services\\zeroFrictionApi.js",
+      "source_location": "L263",
+      "weight": 1.0,
+      "_src": "zerofrictionapi_setdemoconfig",
+      "_tgt": "zerofrictionapi_request",
+      "source": "zerofrictionapi_request",
+      "target": "zerofrictionapi_setdemoconfig",
       "confidence_score": 1.0
     }
   ],

@@ -317,3 +317,17 @@
 .search-container:focus-within .search-results {
   display: block;
 }
+
+/* Global Position Utilities */
+.relative { position: relative; }
+.absolute { position: absolute; }
+.top-1\/2 { top: 50%; }
+.-translate-y-1\/2 { transform: translateY(-50%); }
+.left-4 { left: 1rem; }
+.flex { display: flex; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.gap-2 { gap: 0.5rem; }
+.gap-3 { gap: 0.75rem; }
+.w-full { width: 100%; }
+
