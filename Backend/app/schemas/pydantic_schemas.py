@@ -24,9 +24,11 @@ class TranscriptData(BaseModel):
 class Topic(BaseModel):
     name: str
     summary: str
-    key_concepts: List[str]
-    examples: List[str] = []
-    intuition: str = "" # Added for enhanced pedagogy
+    intuition: str = ""
+    when_to_use: List[str] = []
+    common_mistake: str = ""
+    real_world_example: str = ""
+    key_concepts: List[str] = []
 
 class NotesData(BaseModel):
     note_id: int
@@ -48,6 +50,7 @@ class LearnerStateSchema(BaseModel):
     state_color: str
     message: str
     action_label: str
+    insight_reason: Optional[str] = None
 
 class ExplanationSchema(BaseModel):
     text: str

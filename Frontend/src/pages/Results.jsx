@@ -8,7 +8,7 @@ import Card from '../components/ui/Card';
 import './pages.css';
 
 const Results = () => {
-  const { quizData } = useAppContext();
+  const { quizData, sessionId } = useAppContext();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -59,19 +59,37 @@ const Results = () => {
         </h3>
         
         <div className="space-y-4">
-          <div className="p-4 bg-accent-primary/5 border border-accent-primary/20 rounded-lg">
-            <h4 className="font-bold text-accent-primary mb-2">
-              {misconception ? "Critical Misconception Detected" : "Post-Session Insight (Derived from response pattern)"}
-            </h4>
-            <p className="text-text-secondary text-sm mb-4">
-              {misconception 
-                ? misconception.recommendation.label 
-                : "Based on your accuracy and confidence metrics, we've identified a subtle area for reinforcement."}
-            </p>
-            <Button variant="outline" className="text-sm py-1.5 px-3" onClick={() => navigate(`/notes/${sessionId}`)}>
-              Retrain Concept
-            </Button>
-          </div>
+          {quizData.answers && quizData.answers.filter(a => !a.is_correct).length > 0 ? (
+            quizData.answers.filter(a => !a.is_correct).map((ans, idx) => (
+              <div key={idx} className="p-4 bg-accent-primary/5 border border-accent-primary/20 rounded-lg">
+                <h4 className="font-bold text-accent-primary mb-2">
+                  {ans.learner_state.state_label === 'MISCONCEPTION' ? "Critical Misconception Detected" : "Area for Reinforcement"}
+                </h4>
+                {ans.explanation?.correct_concept && (
+                  <div className="mb-3 p-3 bg-black/20 rounded-md border border-white/5">
+                    <p className="text-xs uppercase tracking-wider text-text-secondary mb-1">Target Concept</p>
+                    <p className="text-sm text-white">{ans.explanation.correct_concept}</p>
+                  </div>
+                )}
+                {ans.explanation?.why_wrong && (
+                  <p className="text-text-primary text-sm mb-3">
+                    <span className="text-danger font-medium">Diagnostic:</span> {ans.explanation.why_wrong}
+                  </p>
+                )}
+                <p className="text-text-secondary text-sm mb-4 italic">
+                  "{ans.recommendation?.label || "We've identified a subtle area for reinforcement based on your response pattern."}"
+                </p>
+                <Button variant="outline" className="text-sm py-1.5 px-3" onClick={() => navigate(`/notes/${sessionId}`)}>
+                  Retrain Concept
+                </Button>
+              </div>
+            ))
+          ) : (
+            <div className="p-6 bg-success/10 border border-success/20 rounded-lg text-center">
+              <p className="text-success font-bold text-lg mb-1">Flawless Mastery</p>
+              <p className="text-text-secondary text-sm">You answered all questions correctly. Keep up the excellent work!</p>
+            </div>
+          )}
         </div>
       </Card>
 

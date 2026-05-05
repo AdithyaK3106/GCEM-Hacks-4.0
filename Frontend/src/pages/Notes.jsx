@@ -122,13 +122,43 @@ const Notes = () => {
                                   </div>
                                 )}
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                  {topic.key_concepts.map((concept, cIdx) => (
-                                    <div key={cIdx} className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/5">
-                                      <CheckCircle size={14} className="text-success shrink-0" />
-                                      <span className="text-base font-medium">{concept}</span>
+                                {topic.when_to_use && topic.when_to_use.length > 0 && (
+                                  <div className="mb-6">
+                                    <p className="text-sm uppercase font-bold text-text-secondary mb-3 border-b border-white/10 pb-1">When to Use</p>
+                                    <ul className="list-disc pl-5 space-y-2 text-text-primary">
+                                      {topic.when_to_use.map((item, idx) => (
+                                        <li key={idx} className="pl-1">{item}</li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                )}
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                  {topic.real_world_example && (
+                                    <div className="p-4 bg-success/10 border border-success/20 rounded-lg">
+                                      <p className="text-xs uppercase font-bold text-success mb-2">Real World Example</p>
+                                      <p className="text-sm text-text-primary">{topic.real_world_example}</p>
                                     </div>
-                                  ))}
+                                  )}
+                                  
+                                  {topic.common_mistake && (
+                                    <div className="p-4 bg-danger/10 border border-danger/20 rounded-lg">
+                                      <p className="text-xs uppercase font-bold text-danger mb-2">Common Mistake</p>
+                                      <p className="text-sm text-text-primary">{topic.common_mistake}</p>
+                                    </div>
+                                  )}
+                                </div>
+
+                                <div className="mb-2">
+                                  <p className="text-sm uppercase font-bold text-text-secondary mb-3 border-b border-white/10 pb-1">Key Concepts</p>
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    {topic.key_concepts && topic.key_concepts.map((concept, cIdx) => (
+                                      <div key={cIdx} className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/5">
+                                        <CheckCircle size={14} className="text-success shrink-0" />
+                                        <span className="text-base font-medium">{concept}</span>
+                                      </div>
+                                    ))}
+                                  </div>
                                 </div>
                               </motion.div>
                             )}

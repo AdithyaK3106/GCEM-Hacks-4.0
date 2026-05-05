@@ -61,5 +61,5 @@ def get_quiz(session_id: str):
 
 @app.post("/submit/{session_id}", response_model=schemas.ResponseWrapper[schemas.SubmitResponseData])
 def submit_answer(session_id: str, request: schemas.SubmitRequest):
-    data = logic.get_deterministic_intelligence(session_id, request.q_id, request.selected_index)
+    data = logic.get_deterministic_intelligence(session_id, request.q_id, request.selected_index, request.confidence)
     return {"data": data}

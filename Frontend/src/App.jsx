@@ -23,8 +23,11 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/upload" element={<Upload />} />
             <Route path="/notes" element={<Notes />} />
+            <Route path="/notes/:sessionId" element={<Notes />} />
             <Route path="/quiz" element={<Quiz />} />
+            <Route path="/quiz/:sessionId" element={<Quiz />} />
             <Route path="/results" element={<Results />} />
+            <Route path="/results/:sessionId" element={<Results />} />
             <Route path="/learning-path" element={<LearningPath />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
           </Route>

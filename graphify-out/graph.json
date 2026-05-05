@@ -422,27 +422,27 @@
       "file_type": "rationale",
       "source_file": "Backend\\app\\services\\logic.py",
       "source_location": "L154",
-      "id": "logic_rationale_154",
       "community": 0,
-      "norm_label": "enhanced quiz generation (trap questions enabled)."
+      "norm_label": "enhanced quiz generation (trap questions enabled).",
+      "id": "logic_rationale_154"
     },
     {
       "label": "Data-driven Intelligence Layer (Hardcoded overrides removed).",
       "file_type": "rationale",
       "source_file": "Backend\\app\\services\\logic.py",
       "source_location": "L281",
-      "id": "logic_rationale_281",
       "community": 0,
-      "norm_label": "data-driven intelligence layer (hardcoded overrides removed)."
+      "norm_label": "data-driven intelligence layer (hardcoded overrides removed).",
+      "id": "logic_rationale_281"
     },
     {
       "label": "Requirement 4: Strengthened Post-Quiz Fallback.",
       "file_type": "rationale",
       "source_file": "Backend\\app\\services\\logic.py",
       "source_location": "L351",
-      "id": "logic_rationale_351",
       "community": 0,
-      "norm_label": "requirement 4: strengthened post-quiz fallback."
+      "norm_label": "requirement 4: strengthened post-quiz fallback.",
+      "id": "logic_rationale_351"
     },
     {
       "label": "uuid_helper.py",

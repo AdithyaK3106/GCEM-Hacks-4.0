@@ -15,13 +15,16 @@ load_dotenv()
 
 # Configure Logging
 logger = logging.getLogger("Ollama_Pipeline")
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 
 # --- Configuration ---
 OLLAMA_URL = "http://localhost:11434/api/generate"
-NOTES_MODEL = "qwen2.5-coder:14b"
+NOTES_MODEL = "deepseek-coder:6.7b" # Switched to 6.7b for faster performance
 QUIZ_MODEL = "deepseek-coder:6.7b"
-EXPLANATION_MODEL = "qwen2.5-coder:14b"
+EXPLANATION_MODEL = "deepseek-coder:6.7b" # Use faster model for explanations too
 
 # --- FALLBACK SYSTEM ---
 def load_fallback_file(filename: str, default: Any) -> Any:
@@ -48,30 +51,42 @@ def call_ollama(model: str, prompt: str) -> str:
         "prompt": prompt,
         "stream": False,
         "options": {
-            "temperature": 0.2,
-            "num_predict": 800
+            "temperature": 0.1,
+            "num_predict": 600 # Reduced for speed
         }
     }
     try:
-        logger.info(f"Calling Ollama: {model}")
+        logger.info(f"Calling Ollama Model: {model}")
         response = requests.post(OLLAMA_URL, json=payload, timeout=120)
         response.raise_for_status()
-        return response.json().get("response", "")
+        res_json = response.json()
+        return res_json.get("response", "")
     except Exception as e:
         logger.error(f"Ollama call failed: {e}")
         return ""
 
-def safe_json_parse(text: str) -> Optional[Any]:
+def extract_json(text: str) -> Optional[Any]:
+    """Robust JSON extraction using regex."""
     if not text: return None
+    
+    # Try standard load first
     try:
-        return json.loads(text)
+        return json.loads(text.strip())
     except json.JSONDecodeError:
-        try:
-            match = re.search(r"(\{[\s\S]*\}|\[[\s\S]*\])", text)
-            if match:
-                return json.loads(match.group(1))
-        except Exception:
-            return None
+        pass
+
+    # Regex to find the first JSON object or array
+    try:
+        # Matches from the first { to the last } or first [ to the last ]
+        match = re.search(r"(\{[\s\S]*\}|\[[\s\S]*\])", text)
+        if match:
+            json_str = match.group(1)
+            # Remove minor formatting issues like trailing commas or comments if necessary
+            # (Basic cleanup)
+            return json.loads(json_str)
+    except Exception as e:
+        logger.warning(f"Regex JSON extraction failed: {e}")
+    
     return None
 
 def chunk_text(text: str, max_tokens: int = 700) -> List[str]:
@@ -95,85 +110,105 @@ def chunk_text(text: str, max_tokens: int = 700) -> List[str]:
 # --- GENERATION FUNCTIONS ---
 
 def generate_notes_llm(transcript: str) -> dict:
+    """Robust Notes Generation with chunk-level fault tolerance."""
     chunks = chunk_text(transcript, max_tokens=750)
     all_topics = []
     
-    prompt_template = """You are an expert teacher.
-Your goal is to make complex concepts feel simple and intuitive.
-
-Extract ONLY the most important concepts.
+    prompt_template = """You are an expert teacher explaining concepts clearly and practically. Extract core concepts as JSON.
 
 Rules:
-* Prioritize teaching clarity over completeness.
-* Use simple language (like explaining to a student).
-* Maximum 5 topics.
-* Each topic MUST include an 'intuition' field.
+* Maximum 5 topics total across response.
+* Each topic MUST have: name, summary, intuition, when_to_use, common_mistake, real_world_example, key_concepts.
+* summary: 2-3 lines, clear and simple.
+* intuition: Memorable analogy or mental model.
+* when_to_use: 2-4 bullet points on practical scenarios.
+* common_mistake: Typical misunderstanding to avoid.
+* real_world_example: One concrete, practical example.
+* key_concepts: 3-5 short bullet points.
+* Return ONLY valid JSON.
 
-Return ONLY JSON:
+JSON Structure:
 {{
 "topics": [
 {{
-"name": "Topic Name",
-"summary": "Clear, simple explanation of what this is.",
-"key_concepts": ["List of core mechanics"],
-"intuition": "A relatable analogy or simple mental model. e.g., 'Think of it like...'"
+"name": "Concept Name",
+"summary": "Brief 2-3 line summary",
+"intuition": "Think of it like...",
+"when_to_use": ["scenario 1", "scenario 2"],
+"common_mistake": "Students often assume...",
+"real_world_example": "Spam detection in emails...",
+"key_concepts": ["core idea 1", "core idea 2"]
 }}
 ]
 }}
 
-Text:
+Text to analyze:
 {text}"""
 
-    for chunk in chunks[:2]:
+    # Speed Optimization: Process only the first substantive chunk for the demo
+    for i, chunk in enumerate(chunks[:1]): 
+        logger.info(f"Processing Note Chunk {i+1}/{len(chunks)}")
         prompt = prompt_template.format(text=chunk)
-        for attempt in range(2):
-            raw = call_ollama(NOTES_MODEL, prompt)
-            data = safe_json_parse(raw)
-            if data and "topics" in data:
-                all_topics.extend(data["topics"])
-                break
-    
-    unique_topics = []
-    seen = set()
-    for t in all_topics:
-        name = t.get("name", "").strip().lower()
-        if name and name not in seen:
-            unique_topics.append(t)
-            seen.add(name)
-            if len(unique_topics) >= 5: break
+        
+        success = False
+        for attempt in range(2): # Retry logic
+            raw_response = call_ollama(NOTES_MODEL, prompt)
             
+            # --- DEBUG LOGGING ---
+            logger.info(f"=== RAW LLM RESPONSE (CHUNK {i+1}, ATTEMPT {attempt+1}) ===\n{raw_response}\n=========================")
+            
+            data = extract_json(raw_response)
+            logger.info(f"=== PARSED JSON (CHUNK {i+1}) ===\n{json.dumps(data, indent=2) if data else 'FAILED'}\n=========================")
+
+            if data and "topics" in data and isinstance(data["topics"], list):
+                all_topics.extend(data["topics"])
+                success = True
+                logger.info(f"✅ Chunk {i+1} successfully processed.")
+                break
+            else:
+                logger.warning(f"⚠️ Chunk {i+1} attempt {attempt+1} failed to produce valid JSON topics.")
+        
+        if not success:
+            logger.error(f"❌ Chunk {i+1} skipped after {attempt+1} failed attempts.")
+
+    # Merge and Deduplicate
+    unique_topics = []
+    seen_names = set()
+    for topic in all_topics:
+        name = topic.get("name", "").strip()
+        if name and name.lower() not in seen_names:
+            unique_topics.append(topic)
+            seen_names.add(name.lower())
+            if len(unique_topics) >= 6: break # Collect a few extra then slice
+
     if not unique_topics:
+        logger.error("❌ ALL CHUNKS FAILED → fallback triggered")
         return FALLBACK_NOTES_RAW
         
     return {
-        "title": "Pedagogical Breakdown: Core Concepts",
-        "topics": unique_topics
+        "title": "Mastery Path: Structured Insights",
+        "topics": unique_topics[:5] # Limit to 5
     }
 
 def generate_quiz_llm(transcript: str) -> List[dict]:
-    """Enhanced Quiz Generation (Trap questions enabled)."""
+    """Robust Quiz Generation with extraction and fallback."""
     chunks = chunk_text(transcript, max_tokens=750)
     if not chunks: return FALLBACK_QUIZ
     
-    prompt = f"""You are a teacher generating quiz questions.
+    prompt = f"""Generate exactly 3 MCQs as JSON.
+CRITICAL RULE: Make exactly 1 question a 'trap question' targeting a common misconception. For this question, set "is_trap": true. Set "is_trap": false for others.
+Ensure every question has a "concept_tested" field.
+Return ONLY JSON.
 
-Rules:
-* 3–5 questions only.
-* MCQ format (4 options).
-* One correct answer.
-* Directly tie each question to a specific concept.
-* CRITICAL: Include exactly 1 'trap question' that targets a known misconception or common pitfall.
-* For the trap question, set "is_trap": true.
-
-Return ONLY JSON:
+Structure:
 {{
 "questions": [
 {{
-"question": "The question text",
-"options": ["Option A", "Option B", "Option C", "Option D"],
-"correct_answer": "The correct text",
-"explanation": "Why this is correct.",
-"concept_tested": "Concept Name",
+"question": "text",
+"options": ["A", "B", "C", "D"],
+"correct_answer": "correct text",
+"explanation": "why",
+"concept_tested": "name",
 "is_trap": boolean
 }}
 ]
@@ -183,8 +218,10 @@ Text:
 {chunks[0]}"""
 
     for attempt in range(2):
-        raw = call_ollama(QUIZ_MODEL, prompt)
-        data = safe_json_parse(raw)
+        raw_response = call_ollama(QUIZ_MODEL, prompt)
+        logger.info(f"=== RAW QUIZ RESPONSE (ATTEMPT {attempt+1}) ===\n{raw_response}\n=========================")
+        
+        data = extract_json(raw_response)
         if data and "questions" in data:
             formatted = []
             for i, q in enumerate(data["questions"]):
@@ -199,38 +236,35 @@ Text:
                 })
             return formatted
             
+    logger.error("❌ Quiz generation failed → fallback triggered")
     return FALLBACK_QUIZ
 
 def generate_explanation_llm(question: str, options: List[str], student_ans: str, correct_ans: str) -> dict:
-    prompt = f"""You are an expert AI tutor. A student answered a question incorrectly.
-Your goal is to diagnose their 'wrong belief' and correct it with an analogy.
-
+    """Robust Explanation Generation."""
+    prompt = f"""Diagnose why the student was wrong. Return ONLY JSON.
 Question: {question}
-Options: {options}
 Student's Answer: {student_ans}
 Correct Answer: {correct_ans}
 
-Tone: Direct, clear, slightly assertive.
-
-Return ONLY JSON:
+Structure:
 {{
-"wrong_belief": "Specifically what the student probably thought was true.",
-"why_wrong": "Why that logic fails in this specific context.",
-"correct_concept": "The actual rule or concept they missed.",
-"simple_analogy": "A powerful, simple analogy to make it stick."
+"wrong_belief": "what they thought",
+"why_wrong": "why logic fails",
+"correct_concept": "actual rule",
+"simple_analogy": "analogy"
 }}"""
 
     for attempt in range(2):
-        raw = call_ollama(EXPLANATION_MODEL, prompt)
-        data = safe_json_parse(raw)
+        raw_response = call_ollama(EXPLANATION_MODEL, prompt)
+        data = extract_json(raw_response)
         if data:
             return data
             
     return {
-        "wrong_belief": "General logical error.",
-        "why_wrong": "Incorrect application of concepts.",
-        "correct_concept": "Concept review required.",
-        "simple_analogy": "None available."
+        "wrong_belief": "Logical misalignment.",
+        "why_wrong": "The reasoning applied does not hold for this specific concept.",
+        "correct_concept": "Review core fundamentals.",
+        "simple_analogy": "Think of it like using the wrong key for a lock."
     }
 
 # --- PIPELINE ---
@@ -243,11 +277,14 @@ def extract_pdf_text(file) -> str:
             page_text = page.extract_text()
             if page_text: text += page_text + " "
         return text
-    except Exception: return ""
+    except Exception as e: 
+        logger.error(f"PDF extraction error: {e}")
+        return ""
 
 def process_pdf_pipeline(session_id: str, file) -> Dict[str, Any]:
     raw_text = extract_pdf_text(file)
     if not raw_text or len(raw_text) < 50:
+        logger.warning("Empty or short PDF. Using fallback.")
         session_store[session_id] = {"notes": FALLBACK_NOTES_RAW, "quiz": FALLBACK_QUIZ, "transcript": "Fallback content."}
         return session_store[session_id]
 
@@ -266,7 +303,7 @@ def process_pdf_pipeline(session_id: str, file) -> Dict[str, Any]:
         "notes": notes_data,
         "quiz": quiz_llm,
         "transcript": raw_text[:5000],
-        "history": [] # Track session history for fallback triggers
+        "history": [] 
     }
     
     return session_store[session_id]
@@ -277,8 +314,8 @@ def get_cached_notes(session_id: str):
 def get_cached_quiz(session_id: str):
     return session_store.get(session_id, {}).get("quiz", FALLBACK_QUIZ)
 
-def get_deterministic_intelligence(session_id: str, q_id: int, selected_index: int) -> Dict[str, Any]:
-    """Data-driven Intelligence Layer (Hardcoded overrides removed)."""
+def get_deterministic_intelligence(session_id: str, q_id: int, selected_index: int, confidence: float) -> Dict[str, Any]:
+    """Data-driven Intelligence Layer."""
     session = session_store.get(session_id)
     if not session:
         return {"error": "Session lost."}
@@ -295,8 +332,7 @@ def get_deterministic_intelligence(session_id: str, q_id: int, selected_index: i
     
     is_correct = (student_ans.lower() == correct_ans.lower())
     
-    # Requirement: Explainability logic
-    # MISCONCEPTION = Wrong answer + High Confidence
+    # Intelligence logic: ACT Model
     is_misconception = not is_correct and confidence >= 0.7
     
     state = "MASTERED" if is_correct else ("MISCONCEPTION" if is_misconception else "WEAK")
@@ -307,7 +343,7 @@ def get_deterministic_intelligence(session_id: str, q_id: int, selected_index: i
         "Incorrect answer with low confidence indicates uncertainty."
     )
 
-    # Debug Output for Judges (Requirement 6)
+    # Debug Output for Judges
     logger.info(f"[JUDGE_DEBUG] " + json.dumps({
         "question_id": q_id,
         "is_trap": question.get("is_trap", False),
@@ -342,13 +378,11 @@ def get_deterministic_intelligence(session_id: str, q_id: int, selected_index: i
         }
     }
     
-    # Save to history for fallback analysis
     session["history"].append({"q_id": q_id, "is_correct": is_correct, "state": state, "confidence": confidence, "data": response})
     
     return response
 
 def get_session_summary(session_id: str) -> Dict[str, Any]:
-    """Requirement 4: Strengthened Post-Quiz Fallback."""
     session = session_store.get(session_id)
     if not session or not session.get("history"):
         return {"status": "no_data"}
@@ -359,7 +393,6 @@ def get_session_summary(session_id: str) -> Dict[str, Any]:
     if misconceptions:
         return {"status": "insights_found", "top_misconception": misconceptions[0]}
     
-    # Fallback: Identify highest confidence wrong answer (even if not technically a 'misconception' yet)
     wrong_answers = [h for h in history if not h["is_correct"]]
     if wrong_answers:
         top_wrong = max(wrong_answers, key=lambda x: x.get("confidence", 0))

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Timer, CheckCircle, XCircle, BrainCircuit, AlertTriangle } from 'lucide-react';
+import { Timer, CheckCircle, XCircle, BrainCircuit, AlertTriangle, ArrowRight } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { submitAnswer } from '../services/zeroFrictionApi';
 import Button from '../components/ui/Button';
@@ -358,14 +358,22 @@ const Quiz = () => {
               )}
 
               <div className="flex justify-between items-center mt-8 pt-6 border-t border-white/10">
-                <p className="text-text-secondary text-sm">
+                <div className="text-text-secondary text-sm flex-1 mr-4">
                   {feedback && (
-                    feedback.is_correct
-                      ? <span className="text-success font-medium">Excellent! That's correct.</span>
-                      : <span className="text-danger font-medium">Not quite. Review this concept later.</span>
+                    feedback.is_correct ? (
+                      <div className="flex flex-col gap-1">
+                        <span className="text-success font-medium">Excellent! That's correct.</span>
+                        <span className="text-xs opacity-70">Your mastery of <strong className="text-text-primary">{currentQuestion.concept_tested || 'this concept'}</strong> is solid.</span>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col gap-1">
+                        <span className="text-danger font-medium">Not quite. Review this concept later.</span>
+                        <span className="text-xs opacity-70">Concept to review: <strong className="text-text-primary">{currentQuestion.concept_tested || 'Core Principles'}</strong></span>
+                      </div>
+                    )
                   )}
                   {error && <span className="text-danger font-medium">{error}</span>}
-                </p>
+                </div>
                 <Button
                   onClick={handleSubmit}
                   disabled={selectedOption === null || isSubmitting}

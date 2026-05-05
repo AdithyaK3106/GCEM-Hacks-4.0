@@ -42,8 +42,9 @@ const request = async (endpoint, options = {}) => {
   }
 
   const startTime = performance.now();
+
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+  const timeoutId = setTimeout(() => controller.abort(), 120000); // 120s timeout for local LLMs
 
   try {
     console.log(`[API_START] ${endpoint}`, options.method || 'GET');
