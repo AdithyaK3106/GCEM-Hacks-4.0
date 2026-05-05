@@ -44,7 +44,7 @@ uvicorn main:app --reload
 
 ### 2. Frontend Setup
 ```bash
-cd Frontend/GCEM-Hacks-4.0-main/GCEM-Hacks-4.0-main
+cd Frontend
 npm install
 npm run dev
 ```

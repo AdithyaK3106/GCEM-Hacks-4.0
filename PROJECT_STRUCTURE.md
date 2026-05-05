@@ -41,7 +41,7 @@ Backend/
 
 ## 💻 Frontend Structure (React + Vite)
 ```text
-Frontend/GCEM-Hacks-4.0-main/GCEM-Hacks-4.0-main/
+Frontend/
 ├── public/                  # Static assets
 ├── src/
 │   ├── assets/              # Images and icons

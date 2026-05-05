@@ -42,8 +42,7 @@ Before you begin, ensure you have the following installed:
 
 1. **Navigate to the Frontend directory**:
    ```bash
-   # Note: Path may vary based on your extraction
-   cd Frontend/GCEM-Hacks-4.0-main/GCEM-Hacks-4.0-main
+   cd Frontend
    ```
 
 2. **Install Dependencies**:
