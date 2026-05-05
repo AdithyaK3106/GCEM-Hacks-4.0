@@ -1,0 +1,17 @@
+[
+  {
+    "q_id": 101,
+    "selected_idx": 2,
+    "is_correct": true,
+    "confidence": 0.85,
+    "time_taken": 15
+  },
+  {
+    "q_id": 102,
+    "selected_idx": 0,
+    "is_correct": false,
+    "confidence": 0.95,
+    "time_taken": 8,
+    "note": "User selected Carbon Dioxide (idx 0) instead of Oxygen (idx 1) with very high confidence. This indicates a fundamental misunderstanding of the gas exchange in photosynthesis."
+  }
+]
