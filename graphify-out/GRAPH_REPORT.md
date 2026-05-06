@@ -1,12 +1,12 @@
 # Graph Report - Gopalan Hackathon  (2026-05-06)
 
 ## Corpus Check
-- 64 files · ~28,456 words
+- 69 files · ~29,347 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 249 nodes · 285 edges · 20 communities detected
-- Extraction: 85% EXTRACTED · 15% INFERRED · 0% AMBIGUOUS · INFERRED: 44 edges (avg confidence: 0.74)
+- 264 nodes · 291 edges · 27 communities detected
+- Extraction: 84% EXTRACTED · 16% INFERRED · 0% AMBIGUOUS · INFERRED: 47 edges (avg confidence: 0.74)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
@@ -18,9 +18,6 @@
 - [[_COMMUNITY_Community 5|Community 5]]
 - [[_COMMUNITY_Community 6|Community 6]]
 - [[_COMMUNITY_Community 9|Community 9]]
-- [[_COMMUNITY_Community 46|Community 46]]
-- [[_COMMUNITY_Community 47|Community 47]]
-- [[_COMMUNITY_Community 48|Community 48]]
 - [[_COMMUNITY_Community 49|Community 49]]
 - [[_COMMUNITY_Community 50|Community 50]]
 - [[_COMMUNITY_Community 51|Community 51]]
@@ -30,6 +27,16 @@
 - [[_COMMUNITY_Community 55|Community 55]]
 - [[_COMMUNITY_Community 56|Community 56]]
 - [[_COMMUNITY_Community 57|Community 57]]
+- [[_COMMUNITY_Community 58|Community 58]]
+- [[_COMMUNITY_Community 59|Community 59]]
+- [[_COMMUNITY_Community 60|Community 60]]
+- [[_COMMUNITY_Community 61|Community 61]]
+- [[_COMMUNITY_Community 62|Community 62]]
+- [[_COMMUNITY_Community 63|Community 63]]
+- [[_COMMUNITY_Community 64|Community 64]]
+- [[_COMMUNITY_Community 65|Community 65]]
+- [[_COMMUNITY_Community 66|Community 66]]
+- [[_COMMUNITY_Community 67|Community 67]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `TranscriptionStream` - 15 edges
@@ -37,8 +44,8 @@
 3. `useAppContext()` - 12 edges
 4. `request()` - 11 edges
 5. `ClarityTracker` - 8 edges
-6. `assertSuccess()` - 8 edges
-7. `process_pdf_pipeline()` - 7 edges
+6. `process_pdf_pipeline()` - 8 edges
+7. `assertSuccess()` - 8 edges
 8. `delay()` - 7 edges
 9. `compute_metrics()` - 6 edges
 10. `process_chunk()` - 6 edges
@@ -59,11 +66,11 @@
 
 ### Community 0 - "Community 0"
 Cohesion: 0.07
-Nodes (33): ClarityTracker, compute_clarity(), compute_metrics(), compute_noise_floor(), compute_rms(), Root Mean Square energy of a PCM buffer., Estimate noise floor as the RMS of the quietest 20% of windows.     Falls back t, clarity = signal_energy / noise_energy     Clamped to [0, 2] for a stable displa (+25 more)
+Nodes (35): debug_pdf(), call_ollama(), chunk_text(), extract_json(), extract_text(), generate_explanation_llm(), generate_notes_llm(), generate_quiz_llm() (+27 more)
 
 ### Community 1 - "Community 1"
 Cohesion: 0.07
-Nodes (34): call_ollama(), chunk_text(), extract_json(), extract_text(), generate_explanation_llm(), generate_notes_llm(), generate_quiz_llm(), get_cached_notes() (+26 more)
+Nodes (33): ClarityTracker, compute_clarity(), compute_metrics(), compute_noise_floor(), compute_rms(), Root Mean Square energy of a PCM buffer., Estimate noise floor as the RMS of the quietest 20% of windows.     Falls back t, clarity = signal_energy / noise_energy     Clamped to [0, 2] for a stable displa (+25 more)
 
 ### Community 2 - "Community 2"
 Cohesion: 0.07
@@ -89,93 +96,135 @@ Nodes (6): Base, Note, QuizQuestion, ResponseEvent, Session, TopicMastery
 Cohesion: 1.0
 Nodes (2): applyNoiseFilter(), buildBasicFilterChain()
 
-### Community 46 - "Community 46"
-Cohesion: 1.0
-Nodes (1): Entry point: accepts raw PCM bytes (16-bit signed LE by default),     returns a
-
-### Community 47 - "Community 47"
-Cohesion: 1.0
-Nodes (1): Convert float32 numpy array back to int16 bytes (for Whisper).
-
-### Community 48 - "Community 48"
+### Community 49 - "Community 49"
 Cohesion: 1.0
 Nodes (1): Robust JSON extraction with aggressive cleaning.
 
-### Community 49 - "Community 49"
-Cohesion: 1.0
-Nodes (1): Robust Notes Generation optimized for 8GB VRAM speed.
-
 ### Community 50 - "Community 50"
 Cohesion: 1.0
-Nodes (1): Robust Quiz Generation with extraction and fallback.
+Nodes (1): Robust Notes Generation optimized for 14B/7B speed.
 
 ### Community 51 - "Community 51"
 Cohesion: 1.0
-Nodes (1): Robust Explanation Generation with Fail-Safe (Fix 1).
+Nodes (1): Robust Quiz Generation with extraction and fallback.
 
 ### Community 52 - "Community 52"
 Cohesion: 1.0
-Nodes (1): Data-driven Intelligence Layer.
+Nodes (1): Robust Explanation Generation with Fail-Safe (Fix 1).
 
 ### Community 53 - "Community 53"
 Cohesion: 1.0
-Nodes (1): Generate lightweight flashcards from notes (Fix 4).
+Nodes (1): Robust extraction from PDF or Text files.
 
 ### Community 54 - "Community 54"
 Cohesion: 1.0
-Nodes (1): Accumulates audio chunks and emits transcripts as they come.     Maintains a rol
+Nodes (1): Data-driven Intelligence Layer.
 
 ### Community 55 - "Community 55"
 Cohesion: 1.0
-Nodes (1): Add a processed chunk to the buffer.         Returns True when the buffer is ful
+Nodes (1): Generate lightweight flashcards from notes (Fix 4).
 
 ### Community 56 - "Community 56"
 Cohesion: 1.0
-Nodes (1): Drain the buffer and return concatenated samples.
+Nodes (1): Entry point: accepts raw PCM bytes (16-bit signed LE by default),     returns a
 
 ### Community 57 - "Community 57"
+Cohesion: 1.0
+Nodes (1): Convert float32 numpy array back to int16 bytes (for Whisper).
+
+### Community 58 - "Community 58"
+Cohesion: 1.0
+Nodes (1): Robust JSON extraction with aggressive cleaning.
+
+### Community 59 - "Community 59"
+Cohesion: 1.0
+Nodes (1): Robust Notes Generation optimized for 8GB VRAM speed.
+
+### Community 60 - "Community 60"
+Cohesion: 1.0
+Nodes (1): Robust Quiz Generation with extraction and fallback.
+
+### Community 61 - "Community 61"
+Cohesion: 1.0
+Nodes (1): Robust Explanation Generation with Fail-Safe (Fix 1).
+
+### Community 62 - "Community 62"
+Cohesion: 1.0
+Nodes (1): Data-driven Intelligence Layer.
+
+### Community 63 - "Community 63"
+Cohesion: 1.0
+Nodes (1): Generate lightweight flashcards from notes (Fix 4).
+
+### Community 64 - "Community 64"
+Cohesion: 1.0
+Nodes (1): Accumulates audio chunks and emits transcripts as they come.     Maintains a rol
+
+### Community 65 - "Community 65"
+Cohesion: 1.0
+Nodes (1): Add a processed chunk to the buffer.         Returns True when the buffer is ful
+
+### Community 66 - "Community 66"
+Cohesion: 1.0
+Nodes (1): Drain the buffer and return concatenated samples.
+
+### Community 67 - "Community 67"
 Cohesion: 1.0
 Nodes (1): Flush the buffer and transcribe.
 
 ## Knowledge Gaps
-- **40 isolated node(s):** `Root Mean Square energy of a PCM buffer.`, `Estimate noise floor as the RMS of the quietest 20% of windows.     Falls back t`, `clarity = signal_energy / noise_energy     Clamped to [0, 2] for a stable displa`, `FIX: Track max RMS and smoothed clarity across chunks.`, `Entry point: accepts raw PCM bytes (16-bit signed LE by default),     returns a` (+35 more)
+- **46 isolated node(s):** `Root Mean Square energy of a PCM buffer.`, `Estimate noise floor as the RMS of the quietest 20% of windows.     Falls back t`, `clarity = signal_energy / noise_energy     Clamped to [0, 2] for a stable displa`, `FIX: Track max RMS and smoothed clarity across chunks.`, `Entry point: accepts raw PCM bytes (16-bit signed LE by default),     returns a` (+41 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **Thin community `Community 9`** (3 nodes): `noiseFilter.ts`, `applyNoiseFilter()`, `buildBasicFilterChain()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 46`** (1 nodes): `Entry point: accepts raw PCM bytes (16-bit signed LE by default),     returns a`
+- **Thin community `Community 49`** (1 nodes): `Robust JSON extraction with aggressive cleaning.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 47`** (1 nodes): `Convert float32 numpy array back to int16 bytes (for Whisper).`
+- **Thin community `Community 50`** (1 nodes): `Robust Notes Generation optimized for 14B/7B speed.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 48`** (1 nodes): `Robust JSON extraction with aggressive cleaning.`
+- **Thin community `Community 51`** (1 nodes): `Robust Quiz Generation with extraction and fallback.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 49`** (1 nodes): `Robust Notes Generation optimized for 8GB VRAM speed.`
+- **Thin community `Community 52`** (1 nodes): `Robust Explanation Generation with Fail-Safe (Fix 1).`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 50`** (1 nodes): `Robust Quiz Generation with extraction and fallback.`
+- **Thin community `Community 53`** (1 nodes): `Robust extraction from PDF or Text files.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 51`** (1 nodes): `Robust Explanation Generation with Fail-Safe (Fix 1).`
+- **Thin community `Community 54`** (1 nodes): `Data-driven Intelligence Layer.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 52`** (1 nodes): `Data-driven Intelligence Layer.`
+- **Thin community `Community 55`** (1 nodes): `Generate lightweight flashcards from notes (Fix 4).`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 53`** (1 nodes): `Generate lightweight flashcards from notes (Fix 4).`
+- **Thin community `Community 56`** (1 nodes): `Entry point: accepts raw PCM bytes (16-bit signed LE by default),     returns a`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 54`** (1 nodes): `Accumulates audio chunks and emits transcripts as they come.     Maintains a rol`
+- **Thin community `Community 57`** (1 nodes): `Convert float32 numpy array back to int16 bytes (for Whisper).`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 55`** (1 nodes): `Add a processed chunk to the buffer.         Returns True when the buffer is ful`
+- **Thin community `Community 58`** (1 nodes): `Robust JSON extraction with aggressive cleaning.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 56`** (1 nodes): `Drain the buffer and return concatenated samples.`
+- **Thin community `Community 59`** (1 nodes): `Robust Notes Generation optimized for 8GB VRAM speed.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 57`** (1 nodes): `Flush the buffer and transcribe.`
+- **Thin community `Community 60`** (1 nodes): `Robust Quiz Generation with extraction and fallback.`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 61`** (1 nodes): `Robust Explanation Generation with Fail-Safe (Fix 1).`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 62`** (1 nodes): `Data-driven Intelligence Layer.`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 63`** (1 nodes): `Generate lightweight flashcards from notes (Fix 4).`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 64`** (1 nodes): `Accumulates audio chunks and emits transcripts as they come.     Maintains a rol`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 65`** (1 nodes): `Add a processed chunk to the buffer.         Returns True when the buffer is ful`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 66`** (1 nodes): `Drain the buffer and return concatenated samples.`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 67`** (1 nodes): `Flush the buffer and transcribe.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `handle_audio_stream()` connect `Community 0` to `Community 1`, `Community 5`?**
-  _High betweenness centrality (0.074) - this node is a cross-community bridge._
+- **Why does `handle_audio_stream()` connect `Community 1` to `Community 0`, `Community 5`?**
+  _High betweenness centrality (0.069) - this node is a cross-community bridge._
 - **Why does `process_chunk()` connect `Community 5` to `Community 0`, `Community 1`?**
-  _High betweenness centrality (0.055) - this node is a cross-community bridge._
-- **Why does `generate_notes_llm()` connect `Community 1` to `Community 5`?**
-  _High betweenness centrality (0.047) - this node is a cross-community bridge._
+  _High betweenness centrality (0.053) - this node is a cross-community bridge._
+- **Why does `generate_notes_llm()` connect `Community 0` to `Community 5`?**
+  _High betweenness centrality (0.046) - this node is a cross-community bridge._
 - **Are the 7 inferred relationships involving `TranscriptionStream` (e.g. with `Background task to remove zombie connections.` and `Parse the wire format sent by streamClient.ts:       [4 bytes: header length (ui`) actually correct?**
   _`TranscriptionStream` has 7 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 8 inferred relationships involving `handle_audio_stream()` (e.g. with `stream_audio()` and `TranscriptionStream`) actually correct?**
@@ -183,4 +232,4 @@ _Questions this graph is uniquely positioned to answer:_
 - **Are the 11 inferred relationships involving `useAppContext()` (e.g. with `DebugPanel()` and `ExamModeButton()`) actually correct?**
   _`useAppContext()` has 11 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `Root Mean Square energy of a PCM buffer.`, `Estimate noise floor as the RMS of the quietest 20% of windows.     Falls back t`, `clarity = signal_energy / noise_energy     Clamped to [0, 2] for a stable displa` to the rest of the system?**
-  _40 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _46 weakly-connected nodes found - possible documentation gaps or missing edges._

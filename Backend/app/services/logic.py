@@ -266,12 +266,30 @@ Text:
         if data and "questions" in data:
             formatted = []
             for i, q in enumerate(data["questions"]):
+                options = q.get("options", [])
+                correct_answer = q.get("correct_answer", "")
+                
+                # Compute correct_idx
+                correct_idx = 0
+                try:
+                    # Try exact match first
+                    if correct_answer in options:
+                        correct_idx = options.index(correct_answer)
+                    else:
+                        # Try case-insensitive or starts with (A., B., etc)
+                        for idx, opt in enumerate(options):
+                            if opt.lower() == correct_answer.lower() or opt.startswith(correct_answer):
+                                correct_idx = idx
+                                break
+                except:
+                    pass
+
                 formatted.append({
-                    "q_id": i + 1,
-                    "question_text": q.get("question", ""),
-                    "options": q.get("options", []),
-                    "correct_answer": q.get("correct_answer", ""),
-                    "source_text": q.get("explanation", ""),
+                    "id": i + 1,
+                    "text": q.get("question", ""),
+                    "options": options,
+                    "correct_idx": correct_idx,
+                    "explanation": q.get("explanation", ""),
                     "concept_tested": q.get("concept_tested", ""),
                     "is_trap": q.get("is_trap", False)
                 })
@@ -470,16 +488,17 @@ def get_deterministic_intelligence(session_id: str, q_id: int, selected_index: i
         return {"error": "Session lost."}
         
     quiz_data = session.get("quiz", [])
-    question = next((q for q in quiz_data if q["q_id"] == q_id), None)
+    question = next((q for q in quiz_data if q["id"] == q_id), None)
     
     if not question:
         return {"error": "Question not found."}
 
-    correct_ans = str(question.get("correct_answer")).strip()
     options = question.get("options", [])
-    student_ans = str(options[selected_index]).strip() if selected_index < len(options) else ""
-    
-    is_correct = (student_ans.lower() == correct_ans.lower())
+    correct_idx = question.get("correct_idx", 0)
+    correct_ans = options[correct_idx] if correct_idx < len(options) else "Unknown"
+    student_ans = options[selected_index] if selected_index < len(options) else "Unknown"
+
+    is_correct = (selected_index == correct_idx)
     
     # Intelligence logic: ACT Model
     is_misconception = not is_correct and confidence >= 0.7
@@ -520,7 +539,7 @@ def get_deterministic_intelligence(session_id: str, q_id: int, selected_index: i
     }))
     
     target_language = session.get("target_language", "English")
-    exp_data = generate_explanation_llm(question["question_text"], options, student_ans, correct_ans, target_language)
+    exp_data = generate_explanation_llm(question["text"], options, student_ans, correct_ans, target_language)
     
     # Gamification (Fix 5)
     xp = 10 if is_correct else 5
@@ -530,7 +549,7 @@ def get_deterministic_intelligence(session_id: str, q_id: int, selected_index: i
     
     response = {
         "is_correct": is_correct,
-        "correct_index": next((i for i, o in enumerate(options) if str(o).strip().lower() == correct_ans.lower()), 0),
+        "correct_index": correct_idx,
         "xp": xp,
         "streak": streak,
         "learner_state": {

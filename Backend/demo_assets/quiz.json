@@ -1,27 +1,27 @@
 [
   {
-    "q_id": 1,
-    "question_text": "Where do the light-dependent reactions of photosynthesis take place?",
+    "id": 1,
+    "text": "Where do the light-dependent reactions of photosynthesis take place?",
     "options": ["Stroma", "Cytoplasm", "Thylakoid membranes", "Mitochondria"],
-    "correct_answer": "Thylakoid membranes",
+    "correct_idx": 2,
     "explanation": "Light-dependent reactions occur in the thylakoid membranes where chlorophyll is located.",
     "concept_tested": "Cellular Location",
     "is_trap": false
   },
   {
-    "q_id": 2,
-    "question_text": "Do plants undergo cellular respiration in addition to photosynthesis?",
+    "id": 2,
+    "text": "Do plants undergo cellular respiration in addition to photosynthesis?",
     "options": ["No, they only photosynthesize", "Yes, but only in the dark", "Yes, they continuously respire", "No, they absorb energy differently"],
-    "correct_answer": "Yes, they continuously respire",
+    "correct_idx": 2,
     "explanation": "A common misconception is that plants only photosynthesize. In fact, they have mitochondria and perform cellular respiration continuously to generate ATP.",
     "concept_tested": "Plant Respiration vs Photosynthesis",
     "is_trap": true
   },
   {
-    "q_id": 3,
-    "question_text": "Which enzyme is responsible for fixing CO2 during the Calvin cycle?",
+    "id": 3,
+    "text": "Which enzyme is responsible for fixing CO2 during the Calvin cycle?",
     "options": ["ATP Synthase", "Rubisco", "PEP Carboxylase", "Amylase"],
-    "correct_answer": "Rubisco",
+    "correct_idx": 1,
     "explanation": "Rubisco (Ribulose-1,5-bisphosphate carboxylase/oxygenase) is the enzyme that catalyzes the first step of carbon fixation.",
     "concept_tested": "Carbon Fixation",
     "is_trap": false

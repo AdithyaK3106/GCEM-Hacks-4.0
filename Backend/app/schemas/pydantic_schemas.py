@@ -38,12 +38,13 @@ class NotesData(BaseModel):
     key_highlights: List[str] = []
 
 class QuizQuestionData(BaseModel):
-    q_id: int
-    question_text: str
+    id: int
+    text: str
     options: List[str]
-    source_text: Optional[str] = None
+    correct_idx: int
+    explanation: Optional[str] = None
     concept_tested: Optional[str] = None
-    is_trap: bool = False # Identifies questions targeting common pitfalls
+    is_trap: bool = False
 
 class LearnerStateSchema(BaseModel):
     state_label: str

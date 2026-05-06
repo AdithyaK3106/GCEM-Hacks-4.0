@@ -113,13 +113,13 @@ const demoNotesHi = {
 };
 
 const demoQuestionsEn = [
-  { q_id: 101, question_text: 'What is the main component of Supervised Learning?', options: ['Labeled Data', 'Unlabeled Data', 'Only Images', 'None'], concept_tested: 'Supervised Learning', is_trap: false },
-  { q_id: 102, question_text: 'Is Clustering a Supervised Learning technique?', options: ['Yes', 'No', 'Maybe', 'IDK'], concept_tested: 'Clustering Type', is_trap: true },
+  { id: 101, text: 'What is the main component of Supervised Learning?', options: ['Labeled Data', 'Unlabeled Data', 'Only Images', 'None'], correct_idx: 0, concept_tested: 'Supervised Learning', is_trap: false },
+  { id: 102, text: 'Is Clustering a Supervised Learning technique?', options: ['Yes', 'No', 'Maybe', 'IDK'], correct_idx: 1, concept_tested: 'Clustering Type', is_trap: true },
 ];
 
 const demoQuestionsHi = [
-  { q_id: 101, question_text: 'सुपरवाइज्ड लर्निंग का मुख्य घटक क्या है?', options: ['लेबल किया गया डेटा', 'बिना लेबल का डेटा', 'केवल इमेज', 'कोई नहीं'], concept_tested: 'Supervised Learning', is_trap: false },
-  { q_id: 102, question_text: 'क्या क्लस्टरिंग एक सुपरवाइज्ड लर्निंग तकनीक है?', options: ['हाँ', 'नहीं', 'शायद', 'पता नहीं'], concept_tested: 'Clustering Type', is_trap: true },
+  { id: 101, text: 'सुपरवाइज्ड लर्निंग का मुख्य घटक क्या है?', options: ['लेबल किया गया डेटा', 'बिना लेबल का डेटा', 'केवल इमेज', 'कोई नहीं'], correct_idx: 0, concept_tested: 'Supervised Learning', is_trap: false },
+  { id: 102, text: 'क्या क्लस्टरिंग एक सुपरवाइज्ड लर्निंग तकनीक है?', options: ['हाँ', 'नहीं', 'शायद', 'पता नहीं'], correct_idx: 1, concept_tested: 'Clustering Type', is_trap: true },
 ];
 
 const demoSubmitResponsesEn = [
