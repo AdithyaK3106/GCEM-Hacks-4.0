@@ -23,6 +23,7 @@ export interface StreamClientCallbacks {
 export interface StreamClient {
   connect(): void;
   disconnect(): void;
+  stop(): void;
   sendChunk(chunk: AudioChunk): void;
   getStatus(): StreamStatus;
 }
@@ -87,8 +88,10 @@ export function createStreamClient(
       ws.onmessage = (event: MessageEvent) => {
         try {
           const msg: ServerMessage = JSON.parse(event.data as string);
-          if (msg.type === 'transcript' && msg.data) {
-            onTranscript?.(msg.data as TranscriptChunk);
+          // FIX: Include 'partial' and 'final_transcript' for real-time feel
+          if ((msg.type === 'transcript' || msg.type === 'final_transcript' || msg.type === 'partial') && msg.data) {
+            const isFinal = msg.type === 'final_transcript';
+            onTranscript?.({ ...(msg.data as TranscriptChunk), isFinal });
           } else if (msg.type === 'metrics' && msg.data) {
             onMetrics?.(msg.data as MetricsPayload);
           }
@@ -136,6 +139,12 @@ export function createStreamClient(
       ws?.close();
       ws = null;
       setStatus('disconnected');
+    },
+
+    stop() {
+      if (!ws || ws.readyState !== WebSocket.OPEN) return;
+      console.log('[streamClient] stop() called (sending STOP)');
+      ws.send(JSON.stringify({ type: 'STOP' }));
     },
 
     sendChunk(chunk: AudioChunk) {

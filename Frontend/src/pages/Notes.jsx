@@ -52,9 +52,9 @@ const Notes = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh]">
-        <div className="w-16 h-16 border-4 border-accent-primary/20 border-t-accent-primary rounded-full animate-spin mb-6"></div>
-        <h2 className="text-2xl font-bold">Structuring Your Learning...</h2>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] page-transition bg-[#F5EFE6]">
+        <div className="w-16 h-16 border-4 border-[#6D4AFF]/20 border-t-[#6D4AFF] rounded-full animate-spin mb-6"></div>
+        <h2 className="text-2xl font-black text-[#2D1E3E]">Structuring Your Learning...</h2>
       </div>
     );
   }
@@ -62,51 +62,53 @@ const Notes = () => {
   const topics = notes?.topics || [];
 
   return (
-    <div className="page-transition max-w-6xl mx-auto">
-      <div className="flex justify-between items-end mb-8">
+    <div className="page-transition">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
         <div>
-          <h1 className="text-4xl font-bold mb-2">Lecture Insights</h1>
-          <p className="text-text-secondary">{notes?.topic_title || 'Structured Topic Breakdown'}</p>
+          <h1 className="text-4xl font-black text-[#2D1E3E] mb-2 tracking-tight leading-tight">Lecture Insights</h1>
+          <p className="text-[#5A4A6B] font-bold text-lg">{notes?.topic_title || 'Structured Topic Breakdown'}</p>
         </div>
         <div className="flex gap-4">
-          <ExamModeButton />
+          <ExamModeButton className="bg-[#2D1E3E]" />
         </div>
       </div>
 
-      <div className="notes-container">
-        <div className="space-y-6">
-          <Card className="overflow-hidden">
-            <div className="flex gap-4 p-4 border-b border-white-op-10 bg-white-op-5">
+      <div className="notes-container grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="lg:col-span-3 space-y-6">
+          <Card className="p-0 overflow-hidden bg-white shadow-md rounded-xl border border-gray-100">
+            <div className="flex gap-1 p-2 bg-[#F5EFE6]/50 border-b border-gray-100">
               <button 
                 onClick={() => setActiveTab('summary')}
-                className={`tab-btn ${activeTab === 'summary' ? 'active' : ''}`}
+                className={`flex-1 flex items-center justify-center gap-2 py-4 rounded-lg text-sm font-black transition-all ${activeTab === 'summary' ? 'bg-white text-[#2D1E3E] shadow-sm' : 'text-[#8B7CA3] hover:text-[#2D1E3E]'}`}
               >
-                <FileText size={18} /> Structured Notes
+                <FileText size={20} /> Structured Notes
               </button>
               <button 
                 onClick={() => setActiveTab('transcript')}
-                className={`tab-btn ${activeTab === 'transcript' ? 'active' : ''}`}
+                className={`flex-1 flex items-center justify-center gap-2 py-4 rounded-lg text-sm font-black transition-all ${activeTab === 'transcript' ? 'bg-white text-[#2D1E3E] shadow-sm' : 'text-[#8B7CA3] hover:text-[#2D1E3E]'}`}
               >
-                <BookOpen size={18} /> Source Text
+                <BookOpen size={20} /> Source Text
               </button>
             </div>
             
-            <div className="p-8 min-h-[500px]">
+            <div className="p-8 md:p-12 min-h-[500px]">
               <AnimatePresence mode="wait">
                 {activeTab === 'summary' && (
-                  <motion.div key="summary" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+                  <motion.div key="summary" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
                     {topics.length > 0 ? (
                       topics.map((topic, index) => (
-                        <div key={index} className="border border-white-op-10 rounded-xl overflow-hidden bg-white-op-2 transition-all hover:border-accent-primary/30">
+                        <div key={index} className="border border-gray-100 rounded-xl overflow-hidden bg-white transition-all hover:border-[#6D4AFF]/20">
                           <button 
                             onClick={() => setExpandedTopic(expandedTopic === index ? -1 : index)}
-                            className="w-full p-6 flex justify-between items-center text-left hover-bg-white-op-10 bg-transparent"
+                            className={`w-full p-8 flex justify-between items-center text-left transition-colors ${expandedTopic === index ? 'bg-[#F5EFE6]/30' : 'bg-white hover:bg-[#F5EFE6]/10'}`}
                           >
                             <div>
-                              <h3 className="text-2xl font-bold text-accent-primary mb-1">{topic.name}</h3>
-                              <p className="text-text-secondary text-base line-clamp-2">{topic.summary}</p>
+                              <h3 className="text-2xl font-black text-[#2D1E3E] mb-1">{topic.name}</h3>
+                              <p className="text-[#8B7CA3] text-sm font-bold uppercase tracking-widest line-clamp-1">{topic.summary}</p>
                             </div>
-                            {expandedTopic === index ? <ChevronUp /> : <ChevronDown />}
+                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all ${expandedTopic === index ? 'bg-[#2D1E3E] text-white' : 'bg-[#F5EFE6] text-[#8B7CA3]'}`}>
+                              {expandedTopic === index ? <ChevronUp size={22} /> : <ChevronDown size={22} />}
+                            </div>
                           </button>
                           
                           <AnimatePresence>
@@ -115,51 +117,40 @@ const Notes = () => {
                                 initial={{ height: 0, opacity: 0 }}
                                 animate={{ height: 'auto', opacity: 1 }}
                                 exit={{ height: 0, opacity: 0 }}
-                                className="px-6 pb-6 border-t border-white-op-10 pt-4"
+                                className="px-8 pb-10 border-t border-gray-100 pt-8"
                               >
-                                <p className="text-text-primary text-lg mb-6 leading-relaxed">{topic.summary}</p>
+                                <p className="text-[#5A4A6B] text-xl mb-10 leading-relaxed font-medium">{topic.summary}</p>
                                 
                                 {topic.intuition && (
-                                  <div className="mb-6 p-4 bg-accent-primary/10 border-l-4 border-accent-primary rounded-r-lg">
-                                    <p className="text-xs uppercase font-bold text-accent-primary mb-1">The Intuition:</p>
-                                    <p className="text-sm italic">{topic.intuition}</p>
+                                  <div className="mb-10 p-6 bg-[#6D4AFF]/5 border-l-4 border-[#6D4AFF] rounded-r-xl">
+                                    <p className="text-[10px] uppercase font-black text-[#6D4AFF] mb-2 tracking-widest">Concept Intuition</p>
+                                    <p className="text-[#2D1E3E] italic font-bold text-lg leading-relaxed">"{topic.intuition}"</p>
                                   </div>
                                 )}
-
-                                {topic.when_to_use && topic.when_to_use.length > 0 && (
-                                  <div className="mb-6">
-                                    <p className="text-sm uppercase font-bold text-text-secondary mb-3 border-b border-white-op-10 pb-1">When to Use</p>
-                                    <ul className="list-disc pl-5 space-y-2 text-text-primary">
-                                      {topic.when_to_use.map((item, idx) => (
-                                        <li key={idx} className="pl-1">{item}</li>
-                                      ))}
-                                    </ul>
-                                  </div>
-                                )}
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+  
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
                                   {topic.real_world_example && (
-                                    <div className="p-4 bg-success/10 border border-success/20 rounded-lg">
-                                      <p className="text-xs uppercase font-bold text-success mb-2">Real World Example</p>
-                                      <p className="text-sm text-text-primary">{topic.real_world_example}</p>
+                                    <div className="p-6 bg-green-50 border border-green-100 rounded-xl shadow-sm">
+                                      <p className="text-[10px] uppercase font-black text-[#16A34A] mb-3 tracking-widest">Real World Example</p>
+                                      <p className="text-base text-[#16A34A] leading-relaxed font-bold">{topic.real_world_example}</p>
                                     </div>
                                   )}
                                   
                                   {topic.common_mistake && (
-                                    <div className="p-4 bg-danger/10 border border-danger/20 rounded-lg">
-                                      <p className="text-xs uppercase font-bold text-danger mb-2">Common Mistake</p>
-                                      <p className="text-sm text-text-primary">{topic.common_mistake}</p>
+                                    <div className="p-6 bg-rose-50 border border-rose-100 rounded-xl shadow-sm">
+                                      <p className="text-[10px] uppercase font-black text-rose-600 mb-3 tracking-widest">Common Mistake</p>
+                                      <p className="text-base text-rose-900 leading-relaxed font-bold">{topic.common_mistake}</p>
                                     </div>
                                   )}
                                 </div>
-
-                                <div className="mb-2">
-                                  <p className="text-sm uppercase font-bold text-text-secondary mb-3 border-b border-white-op-10 pb-1">Key Concepts</p>
-                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+  
+                                <div>
+                                  <p className="text-[10px] uppercase font-black text-[#8B7CA3] mb-5 tracking-widest">Key Terms & Core Concepts</p>
+                                  <div className="flex flex-wrap gap-3">
                                     {topic.key_concepts && topic.key_concepts.map((concept, cIdx) => (
-                                      <div key={cIdx} className="flex items-center gap-3 p-3 bg-white-op-5 rounded-lg border border-white-op-5">
-                                        <CheckCircle size={14} className="text-success shrink-0" />
-                                        <span className="text-base font-medium">{concept}</span>
+                                      <div key={cIdx} className="flex items-center gap-3 px-6 py-3 bg-[#F5EFE6] rounded-lg border border-gray-100 shadow-sm">
+                                        <CheckCircle size={16} className="text-[#16A34A]" />
+                                        <span className="text-sm font-black text-[#2D1E3E]">{concept}</span>
                                       </div>
                                     ))}
                                   </div>
@@ -170,7 +161,7 @@ const Notes = () => {
                         </div>
                       ))
                     ) : (
-                      <div className="prose prose-invert max-w-none note-content !overflow-visible !whitespace-normal">
+                      <div className="prose prose-slate max-w-none prose-headings:text-[#2D1E3E] prose-p:text-[#5A4A6B] prose-strong:text-[#2D1E3E]">
                         <ReactMarkdown>{notes?.content_markdown || 'No summary available.'}</ReactMarkdown>
                       </div>
                     )}
@@ -178,7 +169,7 @@ const Notes = () => {
                 )}
                 
                 {activeTab === 'transcript' && (
-                  <motion.div key="transcript" initial={{ opacity: 0 }} className="text-text-secondary leading-relaxed whitespace-pre-wrap font-mono text-sm opacity-80">
+                  <motion.div key="transcript" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-[#5A4A6B] leading-relaxed whitespace-pre-wrap font-mono text-base bg-[#F5EFE6]/30 p-10 rounded-xl border border-gray-100">
                     {transcript || 'Full transcript not available.'}
                   </motion.div>
                 )}
@@ -186,18 +177,18 @@ const Notes = () => {
             </div>
           </Card>
         </div>
-
-        <div className="space-y-6">
-          <Card className="bg-accent-primary/5 border-accent-primary/20 sticky top-24">
-            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <Zap className="text-warning" size={20} />
-              Verify Mastery
-            </h3>
-            <p className="text-text-secondary mb-6 text-base">
-              Ready to test your understanding of these {topics.length} topics?
+  
+        <div className="lg:col-span-1">
+          <Card className="bg-white border border-gray-100 shadow-md rounded-xl p-10 sticky top-24">
+            <div className="w-14 h-14 rounded-lg bg-[#6D4AFF]/10 text-[#6D4AFF] flex items-center justify-center mb-8 shadow-sm">
+              <Zap size={28} fill="currentColor" />
+            </div>
+            <h3 className="text-2xl font-black mb-4 text-[#2D1E3E] leading-tight">Verify Mastery</h3>
+            <p className="text-[#5A4A6B] mb-10 text-lg font-medium leading-relaxed">
+              Ready to test your understanding of these <strong className="text-[#2D1E3E] font-black">{topics.length}</strong> core topics?
             </p>
-            <Button onClick={handleProceedToQuiz} className="w-full">
-              Start Quiz <ArrowRight size={18} />
+            <Button onClick={handleProceedToQuiz} className="w-full py-5 text-xl font-black rounded-xl bg-[#6D4AFF] text-white shadow-lg hover:opacity-90">
+              Start Quiz <ArrowRight size={24} className="ml-2" />
             </Button>
           </Card>
         </div>

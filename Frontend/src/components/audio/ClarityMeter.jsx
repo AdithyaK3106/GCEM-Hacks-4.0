@@ -11,22 +11,25 @@
  * @param {boolean} props.active    - Show animated pulse when true
  */
 const ClarityMeter = ({ clarity = 0, level = 'silent', active = false }) => {
-  // Normalize 0–1 for display (clarity > 1.0 = great)
-  const normalized = Math.min(clarity / 1.5, 1);
-  const percent = Math.round(normalized * 100);
+  // FIX: boost mid-range perception for better UX (0.6 power curve)
+  const boosted = Math.pow(Math.min(clarity, 1.0), 0.6);
+  const percent = Math.round(boosted * 100);
 
-  const colorMap = {
-    silent: '#6b7280',
-    noisy: '#f59e0b',
-    clear: '#22c55e',
+  // FIX: dynamic color feedback based on clarity score
+  const getDynamicColor = () => {
+    if (level === 'silent') return '#6b7280';
+    if (clarity > 0.7) return '#22c55e'; // Green
+    if (clarity > 0.3) return '#f59e0b'; // Yellow
+    return '#ef4444'; // Red
   };
+
   const labelMap = {
     silent: 'Silent',
-    noisy: 'Noisy',
+    noisy: 'Weak',
     clear: 'Clear',
   };
 
-  const color = colorMap[level] ?? colorMap.silent;
+  const color = getDynamicColor();
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>

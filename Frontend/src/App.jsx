@@ -12,7 +12,8 @@ import Dashboard from './pages/Dashboard';
 import Leaderboard from './pages/Leaderboard';
 import LearningPath from './pages/LearningPath';
 import ExamModePage from './pages/ExamModePage';
-import DebugPanel from './components/debug/DebugPanel';
+import Help from './pages/Help';
+import Settings from './pages/Settings';
 
 function App() {
   return (
@@ -31,11 +32,12 @@ function App() {
             <Route path="/results/:sessionId" element={<Results />} />
             <Route path="/learning-path" element={<LearningPath />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
+            <Route path="/help" element={<Help />} />
+            <Route path="/settings" element={<Settings />} />
             <Route path="/exam/:sessionId" element={<ExamModePage />} />
           </Route>
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
-        <DebugPanel />
       </Router>
     </AppProvider>
   );

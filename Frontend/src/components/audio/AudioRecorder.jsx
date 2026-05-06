@@ -23,7 +23,7 @@ const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:8000/stream-audio'
  * @param {function} [props.onRecordingComplete] - Called when user stops with final transcript
  */
 const AudioRecorder = ({ sessionId, onTranscriptUpdate, onRecordingComplete }) => {
-  const [phase, setPhase] = useState('idle'); // idle | calibrating | recording | done
+  const [phase, setPhase] = useState('idle'); // idle | calibrating | recording | finalizing | done
   const [transcript, setTranscript] = useState('');
   const [metrics, setMetrics] = useState({ clarity: 0, level: 'silent' });
   const [streamStatus, setStreamStatus] = useState('disconnected');
@@ -64,16 +64,21 @@ const AudioRecorder = ({ sessionId, onTranscriptUpdate, onRecordingComplete }) =
     const client = createStreamClient(
       { wsUrl: WS_URL, sessionId },
       {
-        onTranscript: (chunk) => {
-          if (chunk.isFinal) {
-            transcriptRef.current += chunk.text + ' ';
-            setTranscript(transcriptRef.current);
-            onTranscriptUpdate?.(transcriptRef.current);
-          } else {
-            // Show partial inline
-            const displayed = transcriptRef.current + chunk.text;
-            setTranscript(displayed);
-            onTranscriptUpdate?.(displayed);
+        onTranscript: (data) => {
+          // FIX: The backend now sends the full cumulative transcript
+          // for both partial and final updates to ensure smoothness.
+          const fullText = data.text;
+          setTranscript(prev => {
+            if (fullText.startsWith(prev)) return fullText;
+            return fullText;
+          });
+          onTranscriptUpdate?.(fullText);
+          transcriptRef.current = fullText;
+
+          // If this is the final message, we can complete the phase
+          if (data.isFinal) {
+            setPhase('done');
+            onRecordingComplete?.(fullText);
           }
         },
         onMetrics: (m) => setMetrics(m),
@@ -97,17 +102,37 @@ const AudioRecorder = ({ sessionId, onTranscriptUpdate, onRecordingComplete }) =
   }, [sessionId, calibration, onTranscriptUpdate]);
 
   const handleStop = useCallback(() => {
-    recorderRef.current?.stop();
-    clientRef.current?.disconnect();
-    recorderRef.current = null;
-    clientRef.current = null;
-    setPhase('done');
+    // FIX: Properly stop recording
+    if (recorderRef.current) {
+      recorderRef.current.stop();
+      recorderRef.current = null;
+    }
+    
+    // FIX: Use stop() to signal the server instead of immediately disconnecting.
+    if (clientRef.current) {
+      clientRef.current.stop();
+      // Don't null out immediately, wait for final message or close
+    }
+
+    setPhase('finalizing');
     setMetrics({ clarity: 0, level: 'silent' });
-    onRecordingComplete?.(transcriptRef.current);
+    
+    // Safety timeout: if server doesn't respond in 180s, finish anyway
+    setTimeout(() => {
+      setPhase(prev => {
+        if (prev === 'finalizing') {
+          console.warn('[AudioRecorder] Finalization timed out after 180s, forcing completion.');
+          onRecordingComplete?.(transcriptRef.current);
+          return 'done';
+        }
+        return prev;
+      });
+    }, 180000);
   }, [onRecordingComplete]);
 
   const isRecording = phase === 'recording';
   const isCalibrating = phase === 'calibrating';
+  const isFinalizing = phase === 'finalizing';
 
   return (
     <motion.div
@@ -197,6 +222,13 @@ const AudioRecorder = ({ sessionId, onTranscriptUpdate, onRecordingComplete }) =
             <MicOff size={18} />
             Stop & Analyze
           </button>
+        )}
+        
+        {isFinalizing && (
+          <div className="flex-1 flex justify-center items-center gap-2 px-6 py-3 rounded-xl bg-[#2D1E3E] text-white font-bold text-sm">
+            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            Finalizing Transcription...
+          </div>
         )}
       </div>
 

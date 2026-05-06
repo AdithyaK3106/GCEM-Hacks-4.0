@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, '') || 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, '') || 'http://127.0.0.1:8000';
 const API_VERSION = '1.0.0';
 
 let demoSubmitCount = 0;
@@ -18,7 +18,7 @@ const generateUUID = () => {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
     return crypto.randomUUID();
   }
-  return 'fallback-' + Math.random().toString(36).substring(2, 11);
+  return 'uuid-' + Math.random().toString(36).substring(2, 11);
 };
 
 const logTiming = (endpoint, startTime) => {
@@ -47,25 +47,30 @@ const request = async (endpoint, options = {}) => {
   const timeoutId = setTimeout(() => controller.abort(), 180000); // 180s timeout for local LLMs (3 mins)
 
   try {
-    console.log(`[API_START] ${endpoint}`, options.method || 'GET');
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const url = `${API_BASE_URL}${endpoint}`;
+    console.log(`[API_START] ${url}`, options.method || 'GET');
+    
+    const response = await fetch(url, {
       ...options,
       signal: controller.signal
     });
+    
     clearTimeout(timeoutId);
     logTiming(endpoint, startTime);
     
     if (!response.ok) {
-      console.error(`[API_ERROR] ${endpoint} status: ${response.status}`);
+      const errorText = await response.text().catch(() => 'No error body');
+      console.error(`[API_ERROR] ${endpoint} status: ${response.status}`, errorText);
       return null;
     }
+    
     return await response.json();
   } catch (error) {
     clearTimeout(timeoutId);
     if (error.name === 'AbortError') {
-      console.error(`[API_TIMEOUT] ${endpoint} timed out after 10s`);
+      console.error(`[API_TIMEOUT] ${endpoint} timed out after 3 minutes`);
     } else {
-      console.warn(`[NETWORK_FAILURE] ${endpoint} falling back to demo:`, error);
+      console.warn(`[NETWORK_FAILURE] ${endpoint} falling back to demo:`, error.message);
     }
     return null;
   }
@@ -221,6 +226,32 @@ export const submitAnswer = async (sessionId, answer) => {
   const response = responses[Math.min(demoSubmitCount, responses.length - 1)];
   demoSubmitCount += 1;
   return assertSuccess(wrap(response), endpoint);
+};
+
+export const submitQuiz = async (sessionId, answers) => {
+  // Simulate bulk submission
+  const endpoint = `/submit-quiz/${sessionId}`;
+  const payload = await request(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ answers }),
+  });
+
+  if (payload) return assertSuccess(payload, endpoint);
+
+  console.log('[FALLBACK] Entering recovery mode for bulk quiz submission.');
+  await delay(800);
+  
+  // Return a comprehensive result object for the Results page
+  return {
+    status: 'success',
+    sessionId,
+    xp: 150,
+    accuracy: 85,
+    streak: 13,
+    misconceptions: 1,
+    recommendation: currentLang === 'Hindi' ? 'बेहतरीन! आप एडवांस विषयों की ओर बढ़ सकते हैं।' : 'Excellent work! You are ready for advanced synthesis.'
+  };
 };
 
 export const getSessionSummary = async (sessionId) => {

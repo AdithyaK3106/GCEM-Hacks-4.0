@@ -1,13 +1,18 @@
+import asyncio
 from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Form, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from app.schemas import pydantic_schemas as schemas
 from app.services import logic
-from fastapi import WebSocket
-from app.services.audio_stream import handle_audio_stream
+from app.services.audio_stream import handle_audio_stream, cleanup_stale_connections
 from typing import List
 from uuid import uuid4
 
 app = FastAPI(title="Gopalan Hackathon AI Learning API")
+
+@app.on_event("startup")
+async def startup_event():
+    # FIX: Start the background cleanup task for zombie connections
+    asyncio.create_task(cleanup_stale_connections())
 
 # Enable CORS for frontend integration
 app.add_middleware(
@@ -35,7 +40,7 @@ async def upload_file(
         file.file.seek(0)
         
         # Process the file directly through the new pipeline
-        session_data = logic.process_pdf_pipeline(session_id, file.file, target_language)
+        session_data = logic.process_pdf_pipeline(session_id, file.file, target_language, filename=file.filename)
         print(f"[API] Pipeline complete for {session_id}")
         
         data = {
@@ -76,7 +81,7 @@ def get_quiz(session_id: str):
 @app.post("/submit/{session_id}", response_model=schemas.ResponseWrapper[schemas.SubmitResponseData])
 def submit_answer(session_id: str, request: schemas.SubmitRequest):
     try:
-        data = logic.get_deterministic_intelligence(session_id, request.q_id, request.selected_index, request.confidence)
+        data = logic.get_deterministic_intelligence(session_id, request.question_id, request.selected_option, request.confidence)
         return {"data": data}
     except Exception as e:
         print(f"[API_ERROR] /submit: {e}")
@@ -88,6 +93,23 @@ def submit_answer(session_id: str, request: schemas.SubmitRequest):
             "explanation": {"text": "Correct.", "wrong_belief": None, "why_wrong": None, "correct_concept": None, "simple_analogy": None},
             "recommendation": {"next_step": "ADVANCE", "label": "Proceeding.", "type": "challenge"}
         }}
+
+@app.post("/submit-quiz/{session_id}", response_model=schemas.ResponseWrapper[dict])
+async def submit_quiz(session_id: str, request: schemas.BulkSubmitRequest):
+    try:
+        print(f"[API] Bulk submission for {session_id} | {len(request.answers)} answers")
+        # Process each answer through the intelligence layer
+        results = []
+        for ans in request.answers:
+            res = logic.get_deterministic_intelligence(session_id, ans.question_id, ans.selected_option, ans.confidence)
+            results.append(res)
+        
+        # Get overall summary
+        summary = logic.get_session_summary(session_id)
+        return {"data": summary}
+    except Exception as e:
+        print(f"[API_ERROR] /submit-quiz: {e}")
+        return {"data": {"status": "error", "message": str(e)}}
 @app.get("/summary/{session_id}", response_model=schemas.ResponseWrapper[dict])
 def get_summary(session_id: str):
     try:

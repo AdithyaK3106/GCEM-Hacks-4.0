@@ -66,10 +66,13 @@ class RecommendationData(BaseModel):
     type: str
 
 class SubmitRequest(BaseModel):
-    q_id: int
-    selected_index: int
+    question_id: int
+    selected_option: int
     confidence: float
-    time_spent_seconds: int
+    time_taken: int
+
+class BulkSubmitRequest(BaseModel):
+    answers: List[SubmitRequest]
 
 class SubmitResponseData(BaseModel):
     is_correct: bool

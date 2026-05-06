@@ -47,33 +47,36 @@ def compute_clarity(signal_energy: float, noise_energy: float) -> float:
     return float(min(signal_energy / noise_energy, 2.0))
 
 
-def classify_level(clarity: float, rms: float) -> Literal["clear", "noisy", "silent"]:
-    if rms < 0.005:
-        return "silent"
-    if clarity >= CLARITY_LEVELS["clear"]:
-        return "clear"
-    return "noisy"
+class ClarityTracker:
+    """FIX: Track max RMS and smoothed clarity across chunks."""
+    def __init__(self):
+        self._max_rms = 0.01
+        self._clarity = 0.0
+
+    def process(self, rms: float) -> float:
+        # FIX: remove background noise influence
+        if rms < 0.005:
+            self._clarity = 0.8 * self._clarity  # decay
+            return 0.0
+
+        # FIX: adaptive scaling based on recent max energy
+        self._max_rms = max(self._max_rms * 0.95, rms)
+        
+        # Base clarity on normalized intensity
+        raw_clarity = min(rms / (self._max_rms + 1e-6), 1.0)
+        
+        # FIX: smooth UI transitions
+        self._clarity = 0.8 * self._clarity + 0.2 * raw_clarity
+        return float(self._clarity)
 
 
-def compute_metrics(pcm_bytes: bytes, sample_width: int = 2) -> dict:
+def compute_metrics(pcm_bytes: bytes, sample_width: int = 2, tracker: ClarityTracker = None) -> dict:
     """
     Entry point: accepts raw PCM bytes (16-bit signed LE by default),
     returns a metrics dict ready for JSON serialisation.
-
-    Args:
-        pcm_bytes: Raw PCM audio bytes from client
-        sample_width: Bytes per sample (2 = int16, 4 = float32)
-
-    Returns:
-        {
-            "signal_energy": float,
-            "noise_energy": float,
-            "clarity": float,
-            "level": "clear" | "noisy" | "silent"
-        }
     """
     if not pcm_bytes:
-        return {"signal_energy": 0.0, "noise_energy": 0.0, "clarity": 0.0, "level": "silent"}
+        return {"signal_energy": 0.0, "noise_energy": 0.0, "rms": 0.0, "clarity": 0.0, "level": "silent"}
 
     if sample_width == 4:
         # Float32 from AudioWorklet
@@ -83,16 +86,29 @@ def compute_metrics(pcm_bytes: bytes, sample_width: int = 2) -> dict:
         pcm = np.frombuffer(pcm_bytes, dtype=np.int16).astype(np.float32) / 32768.0
 
     rms = compute_rms(pcm)
-    noise_floor = compute_noise_floor(pcm)
+    
+    if tracker:
+        clarity = tracker.process(rms)
+    else:
+        # Fallback to simple normalization if no tracker
+        clarity = min(rms / 0.02, 1.0)
 
+    noise_floor = compute_noise_floor(pcm)
     signal_energy = max(float(rms - noise_floor), 1e-9)
     noise_energy = max(float(noise_floor), 1e-9)
-    clarity = compute_clarity(signal_energy, noise_energy)
-    level = classify_level(clarity, rms)
+    
+    # Map clarity to levels for UI labels
+    if rms < 0.005:
+        level = "silent"
+    elif clarity > 0.6:
+        level = "clear"
+    else:
+        level = "noisy"
 
     return {
         "signal_energy": round(signal_energy, 6),
         "noise_energy": round(noise_energy, 6),
+        "rms": round(rms, 6),
         "clarity": round(clarity, 4),
         "level": level,
     }

@@ -78,7 +78,7 @@ const DebugPanel = () => {
 
       <div className="p-3 bg-white/5 border-t border-white/10 text-[10px] text-text-secondary flex justify-between">
         <span>MODE: DETERMINISTIC_DEMO</span>
-        <span>VERSION: {API_VERSION}</span>
+        <span>VERSION: v1.0.0</span>
       </div>
     </div>
   );

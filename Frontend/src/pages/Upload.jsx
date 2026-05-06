@@ -1,10 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Upload as UploadIcon, FileText, ArrowRight, Mic } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Globe, 
+  Zap, 
+  FileAudio, 
+  CheckCircle,
+  UploadCloud,
+  ArrowRight,
+  AlertCircle,
+  Mic
+} from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { uploadLecture, getDemoConfig, setDemoConfig } from '../services/zeroFrictionApi';
-import { useEffect } from 'react';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import AudioRecorder from '../components/audio/AudioRecorder';
@@ -13,14 +21,14 @@ import './pages.css';
 const Upload = () => {
   const [dragActive, setDragActive] = useState(false);
   const [file, setFile] = useState(null);
+  const fileInputRef = useRef(null);
   const [targetLanguage, setTargetLanguage] = useState("English");
   const [isProcessing, setIsProcessing] = useState(false);
   const [demoMode, setDemoMode] = useState(true);
   const [processingStep, setProcessingStep] = useState('');
   const [error, setError] = useState('');
-  const [inputMode, setInputMode] = useState('file'); // 'file' | 'audio'
-  const [liveTranscript, setLiveTranscript] = useState('');
-  const { setSessionId, setTranscript, setNotes, setQuizQuestions, setQuizData, updateProgress, setPipelineStep, sessionId } = useAppContext();
+  const [inputMode, setInputMode] = useState('file'); 
+  const { sessionId, setSessionId, setTranscript, setNotes, setQuizQuestions, setQuizData, updateProgress, setPipelineStep } = useAppContext();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,7 +37,12 @@ const Upload = () => {
       setDemoMode(config.demo_mode);
     };
     fetchConfig();
-  }, []);
+    
+    // Ensure we have a sessionId for AudioRecorder
+    if (!sessionId) {
+      setSessionId('session-' + Math.random().toString(36).substring(2, 11));
+    }
+  }, [sessionId, setSessionId]);
 
   const handleDemoToggle = async () => {
     const newStatus = !demoMode;
@@ -52,35 +65,32 @@ const Upload = () => {
     e.stopPropagation();
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleFile(e.dataTransfer.files[0]);
+      setFile(e.dataTransfer.files[0]);
     }
-  };
-
-  const handleChange = (e) => {
-    e.preventDefault();
-    if (e.target.files && e.target.files[0]) {
-      handleFile(e.target.files[0]);
-    }
-  };
-
-  const handleFile = (selectedFile) => {
-    setFile(selectedFile);
   };
 
   const processUpload = async (overrideFile = null) => {
-    const fileToProcess = overrideFile || file;
-    if (!fileToProcess) return;
+    let fileToProcess = overrideFile || file;
+    
+    if (!fileToProcess && demoMode) {
+      fileToProcess = new File(["mock content"], "lecture.txt", { type: "text/plain" });
+    }
+
+    if (!fileToProcess) {
+      setError('Please select a file or enable Demo Mode to proceed.');
+      return;
+    }
 
     setIsProcessing(true);
     setError('');
 
     try {
-      setProcessingStep('Transcribing...');
+      setProcessingStep('Initializing AI Pipeline...');
+      await new Promise(r => setTimeout(r, 1000));
+      setProcessingStep('Analyzing Context...');
       await new Promise(r => setTimeout(r, 1200));
-      setProcessingStep('Generating Notes...');
-      await new Promise(r => setTimeout(r, 1500));
-      setProcessingStep('Preparing Quiz...');
-      await new Promise(r => setTimeout(r, 1200));
+      setProcessingStep('Structuring Knowledge...');
+      await new Promise(r => setTimeout(r, 1000));
 
       const data = await uploadLecture(fileToProcess, targetLanguage);
       setSessionId(data.session_id);
@@ -89,263 +99,194 @@ const Upload = () => {
       setQuizQuestions([]);
       setQuizData(null);
       updateProgress(10);
-      setPipelineStep(1); // Ready for Notes
+      setPipelineStep(1); 
       navigate('/notes');
     } catch (err) {
-      setError(err.message || 'Upload failed. Please try again.');
+      setError(err.message || 'System error during analysis. Please try again.');
     } finally {
       setIsProcessing(false);
       setProcessingStep('');
     }
   };
 
-  const handleRecordingComplete = async (transcript) => {
-    if (!transcript?.trim()) { setError('No speech detected.'); return; }
-    setIsProcessing(true);
-    try {
-      const blob = new Blob([transcript], { type: 'text/plain' });
-      const syntheticFile = new File([blob], 'audio_transcript.txt', { type: 'text/plain' });
-      const data = await uploadLecture(syntheticFile, targetLanguage);
-      setSessionId(data.session_id);
-      setTranscript(transcript);
-      setNotes(null); setQuizQuestions([]); setQuizData(null);
-      updateProgress(10); setPipelineStep(1);
-      navigate('/notes');
-    } catch (err) {
-      setError(err.message || 'Processing failed.');
-    } finally {
-      setIsProcessing(false);
+  const handleRecordingComplete = useCallback((text) => {
+    if (!text || text.trim().length < 10) {
+      setError('Transcript too short. Please speak more to analyze.');
+      return;
     }
-  };
+    
+    // Create a virtual file from the transcript
+    const blob = new Blob([text], { type: 'text/plain' });
+    const virtualFile = new File([blob], "recorded_lecture.txt", { type: "text/plain" });
+    
+    // Trigger standard upload process
+    processUpload(virtualFile);
+  }, [processUpload]);
 
   return (
-    <div className="page-transition max-w-4xl mx-auto">
-      <div className="text-center mb-10">
-        <h1 className="text-3xl font-bold mb-4">Upload Lecture Material</h1>
-        <p className="text-text-secondary">Upload audio, video, or a text transcript. Our AI will analyze it.</p>
-        
-        {/* Premium Mode Toggle */}
-        <div className="flex justify-center mt-8 mb-10">
-          <div className="relative bg-white/5 p-2 rounded-[24px] border border-white/10 flex gap-2 backdrop-blur-xl shadow-2xl overflow-hidden w-full max-w-sm">
-            <button 
-              onClick={() => setInputMode('file')}
-              className={`relative flex-1 flex items-center justify-center gap-3 px-6 py-3 rounded-[16px] text-sm font-bold transition-all duration-300 z-10 ${inputMode === 'file' ? 'text-white' : 'text-white/50 hover:text-white/80'}`}
-            >
-              {inputMode === 'file' && (
-                <motion.div
-                  layoutId="activeModePill"
-                  className="absolute inset-0 rounded-[16px] bg-gradient-to-r from-accent-primary to-accent-secondary shadow-lg"
-                  transition={{ type: "spring", bounce: 0.25, duration: 0.6 }}
-                  style={{ zIndex: -1 }}
-                />
-              )}
-              <FileText size={18} />
-              <span className="tracking-wide">File Upload</span>
-            </button>
-            
-            <button 
-              onClick={() => setInputMode('audio')}
-              className={`relative flex-1 flex items-center justify-center gap-3 px-6 py-3 rounded-[16px] text-sm font-bold transition-all duration-300 z-10 ${inputMode === 'audio' ? 'text-white' : 'text-white/50 hover:text-white/80'}`}
-            >
-              {inputMode === 'audio' && (
-                <motion.div
-                  layoutId="activeModePill"
-                  className="absolute inset-0 rounded-[16px] bg-gradient-to-r from-accent-primary to-accent-secondary shadow-lg"
-                  transition={{ type: "spring", bounce: 0.25, duration: 0.6 }}
-                  style={{ zIndex: -1 }}
-                />
-              )}
-              <Mic size={18} />
-              <span className="tracking-wide">Record Audio</span>
-            </button>
-          </div>
-        </div>
+    <div className="space-y-12">
+      <div className="text-center space-y-4">
+        <h1 className="text-6xl font-black text-[#2D1E3E] tracking-tight leading-tight">
+          Neural Knowledge <span className="text-[#6D4AFF]">Ingestion</span>
+        </h1>
+        <p className="text-[#5A4A6B] text-2xl font-medium max-w-2xl mx-auto">
+          Sync your external materials with the AI intelligence layer.
+        </p>
       </div>
 
-      {inputMode === 'file' && (
-        <Card>
-          {!file ? (
-            <form 
-            onDragEnter={handleDrag} 
-            onDragLeave={handleDrag} 
-            onDragOver={handleDrag} 
-            onDrop={handleDrop}
-            onSubmit={(e) => e.preventDefault()}
-          >
-            <div className={`upload-area ${dragActive ? 'drag-active' : ''}`}>
-              <div className="upload-icon">
-                <UploadIcon size={40} />
-              </div>
-              <h3 className="text-xl font-bold mb-2">Drag & Drop your files here</h3>
-              <p className="text-text-secondary mb-6">Supports MP3, MP4, PDF, and TXT up to 500MB</p>
-              
-              <input 
-                type="file" 
-                id="file-upload" 
-                className="hidden" 
-                onChange={handleChange}
-                accept=".mp3,.mp4,.pdf,.txt"
-              />
-              <div className="flex flex-col gap-4 items-center justify-center mt-6">
-                <div className="w-full max-w-[280px] mb-6">
-                  <p className="text-xs font-bold text-text-secondary mb-3 text-center uppercase tracking-wider">Output Language</p>
-                  <div className="lang-selector-container">
-                    {['English', 'Hindi'].map((lang) => (
-                      <button
-                        key={lang}
-                        onClick={(e) => { e.preventDefault(); setTargetLanguage(lang); }}
-                        className={`lang-btn ${targetLanguage === lang ? 'active' : ''}`}
-                      >
-                        {targetLanguage === lang && (
-                          <motion.div
-                            layoutId="activeLangEmpty"
-                            className="absolute inset-0 rounded-xl"
-                            style={{ background: 'var(--accent-gradient)', zIndex: -1 }}
-                            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                          />
-                        )}
-                        <span className="relative z-10">{lang}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <Card className="p-8 border-white/40">
+          <div className="flex items-center gap-5 mb-8">
+            <div className="w-14 h-14 rounded-2xl bg-[#6D4AFF]/10 text-[#6D4AFF] flex items-center justify-center shadow-sm">
+              <Globe size={28} />
+            </div>
+            <div>
+              <h3 className="font-black text-[#2D1E3E] text-xl">Output Language</h3>
+              <p className="text-[10px] text-[#8B7CA3] font-black uppercase tracking-[0.2em]">Cross-Lingual Synthesis</p>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            {['English', 'Hindi', 'Spanish'].map(lang => (
+              <button
+                key={lang}
+                onClick={() => setTargetLanguage(lang)}
+                className={`px-8 py-3 rounded-xl text-sm font-black transition-all border ${targetLanguage === lang ? 'bg-[#6D4AFF] text-white border-[#6D4AFF] shadow-lg shadow-[#6D4AFF]/20' : 'bg-white/40 text-[#5A4A6B] border-white/60 hover:bg-white/60'}`}
+              >
+                {lang}
+              </button>
+            ))}
+          </div>
+        </Card>
 
-                {/* Demo Mode Toggle */}
-                <div className="w-full max-w-[280px] mb-6 demo-toggle-container">
-                  <div className="flex flex-col" style={{ textAlign: 'left' }}>
-                    <span className="text-[10px] font-bold text-accent-primary uppercase tracking-widest">Hybrid Demo Mode</span>
-                    <span className="text-[9px] text-text-secondary">Fast & Stable Mocks</span>
-                  </div>
-                  <button 
-                    onClick={handleDemoToggle}
-                    className="toggle-switch"
-                    style={{ backgroundColor: demoMode ? 'var(--accent-primary)' : 'rgba(255,255,255,0.1)' }}
-                  >
-                    <motion.div 
-                      animate={{ x: demoMode ? 24 : 0 }}
-                      className="toggle-dot"
-                    />
-                  </button>
-                </div>
-                <label htmlFor="file-upload" className="cursor-pointer">
-                  <div className="btn btn-secondary">
-                    Browse Files
-                  </div>
-                </label>
-                <div className="flex items-center gap-2">
-                  <span className="text-text-secondary text-sm">or</span>
-                </div>
-                <Button 
-                  variant="primary" 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    processUpload();
-                  }}
-                  disabled={isProcessing}
-                >
-                  {isProcessing ? (
-                    <span className="flex items-center gap-3">
-                      <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                      {processingStep}
-                    </span>
-                  ) : 'Start Demo Session'}
-                </Button>
+        <Card className="p-8 border-white/40 flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-5">
+              <div className="w-14 h-14 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center shadow-sm">
+                <Zap size={28} fill="currentColor" />
+              </div>
+              <div>
+                <h3 className="font-black text-[#2D1E3E] text-xl">Walkthrough Engine</h3>
+                <p className="text-[10px] text-[#8B7CA3] font-black uppercase tracking-[0.2em]">Zero-Friction Prototype</p>
               </div>
             </div>
-          </form>
-        ) : (
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="text-center py-8"
-          >
-            <div className="w-20 h-20 mx-auto bg-green-500/10 text-success rounded-full flex items-center justify-center mb-6">
-              <FileText size={40} />
+            <button 
+              onClick={handleDemoToggle}
+              className={`w-16 h-9 rounded-full transition-all relative ${demoMode ? 'bg-[#2D1E3E]' : 'bg-[#8B7CA3]/20'}`}
+            >
+              <div className={`absolute top-1 w-7 h-7 bg-white rounded-full transition-all shadow-md ${demoMode ? 'left-8' : 'left-1'}`} />
+            </button>
+          </div>
+          <div className="mt-6">
+            <div className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] inline-block ${demoMode ? 'bg-[#6D4AFF]/10 text-[#6D4AFF]' : 'bg-white/40 text-[#8B7CA3]'}`}>
+              {demoMode ? '✨ Status: Adaptive Mock Sequence' : 'Live Integration Active'}
             </div>
-            <h3 className="text-2xl font-bold mb-2">{file.name}</h3>
-            {error && <p className="text-danger mb-4">{error}</p>}
-            <p className="text-text-secondary mb-8">{(file.size / (1024 * 1024)).toFixed(2)} MB • Ready to process</p>
-            
-            <div className="flex justify-center gap-4">
-              <Button variant="outline" onClick={() => setFile(null)}>Cancel</Button>
-              <div className="flex flex-col justify-center">
-                <div className="lang-selector-container" style={{ padding: '0.25rem' }}>
-                  {['English', 'Hindi'].map((lang) => (
-                    <button
-                      key={lang}
-                      onClick={(e) => { e.preventDefault(); setTargetLanguage(lang); }}
-                      className={`lang-btn ${targetLanguage === lang ? 'active' : ''}`}
-                      style={{ padding: '0.4rem 1rem' }}
+          </div>
+        </Card>
+      </div>
+
+      <Card className="p-0 overflow-hidden border-white/30" hover={false}>
+        <div className="flex gap-1 p-2 bg-white/20 border-b border-white/30">
+          <button 
+            onClick={() => setInputMode('file')}
+            className={`flex-1 flex items-center justify-center gap-4 py-6 rounded-xl text-sm font-black transition-all ${inputMode === 'file' ? 'bg-[#2D1E3E] text-white shadow-xl' : 'text-[#8B7CA3] hover:text-[#2D1E3E] hover:bg-white/40'}`}
+          >
+            <FileAudio size={24} /> Material Upload
+          </button>
+          <button 
+            onClick={() => setInputMode('audio')}
+            className={`flex-1 flex items-center justify-center gap-4 py-6 rounded-xl text-sm font-black transition-all ${inputMode === 'audio' ? 'bg-[#2D1E3E] text-white shadow-xl' : 'text-[#8B7CA3] hover:text-[#2D1E3E] hover:bg-white/40'}`}
+          >
+            <Mic size={24} /> Live Stream
+          </button>
+        </div>
+        
+        <div className="p-20 text-center">
+          {inputMode === 'file' ? (
+            <div 
+              className={`border-4 border-dashed rounded-2xl p-20 transition-all group relative ${dragActive ? 'border-[#6D4AFF] bg-[#6D4AFF]/5' : file ? 'border-[#16A34A]/30 bg-[#16A34A]/5' : 'border-[#2D1E3E]/10 hover:border-[#6D4AFF]/40 hover:bg-[#6D4AFF]/5'}`}
+              onDragEnter={handleDrag}
+              onDragLeave={handleDrag}
+              onDragOver={handleDrag}
+              onDrop={handleDrop}
+            >
+              <div className="flex flex-col items-center">
+                <div className={`w-28 h-28 rounded-2xl flex items-center justify-center mb-10 transition-transform group-hover:scale-110 shadow-2xl ${file ? 'bg-[#16A34A] text-white shadow-[#16A34A]/20' : 'bg-[#2D1E3E] text-white shadow-black/20'}`}>
+                  {file ? <CheckCircle size={48} /> : <UploadCloud size={48} />}
+                </div>
+                {file ? (
+                  <>
+                    <h3 className="text-4xl font-black text-[#2D1E3E] mb-3">{file.name}</h3>
+                    <p className="text-[#16A34A] font-black text-xs tracking-[0.2em] uppercase">Data Packet Locked</p>
+                    <button onClick={() => setFile(null)} className="mt-10 text-rose-500 font-black text-[10px] uppercase tracking-[0.2em] hover:text-rose-600 px-8 py-3 rounded-xl border border-rose-200 bg-white/60 hover:bg-rose-50 transition-all">Reset Buffer</button>
+                  </>
+                ) : (
+                  <>
+                    <h3 className="text-4xl font-black text-[#2D1E3E] mb-6 tracking-tight">Drop your assets here</h3>
+                    <p className="text-[#5A4A6B] font-medium mb-12 text-xl">Audio, Video, or Transcripts</p>
+                    <input 
+                      type="file" 
+                      id="fileInput" 
+                      ref={fileInputRef}
+                      className="hidden" 
+                      onChange={(e) => setFile(e.target.files[0])}
+                    />
+                    <Button 
+                      className="px-16 py-6 text-2xl h-auto"
+                      onClick={() => fileInputRef.current?.click()}
                     >
-                      {targetLanguage === lang && (
-                        <motion.div
-                          layoutId="activeLangReady"
-                          className="absolute inset-0 rounded-lg"
-                          style={{ background: 'var(--accent-gradient)', zIndex: -1 }}
-                          transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                        />
-                      )}
-                      <span className="relative z-10">{lang}</span>
-                    </button>
-                  ))}
-                </div>
+                      Browse Filesystem
+                    </Button>
+                  </>
+                )}
               </div>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center py-10 max-w-2xl mx-auto">
+              <AudioRecorder 
+                sessionId={sessionId} 
+                onRecordingComplete={handleRecordingComplete}
+              />
+              <p className="text-[#5A4A6B] font-medium mt-12 text-center text-xl">
+                Click "Start Recording" to begin high-fidelity knowledge extraction from a live source.
+              </p>
+            </div>
+          )}
 
-              {/* Demo Mode Toggle in File Selected View */}
-              <div className="flex flex-col justify-center">
-                <div className="p-3 bg-white/5 border border-white/10 rounded-xl flex items-center justify-between gap-4">
-                  <div className="flex flex-col text-left">
-                    <span className="text-[10px] font-bold text-accent-primary uppercase tracking-widest">Hybrid Demo</span>
-                    <span className="text-[8px] text-text-secondary">Mocked</span>
-                  </div>
-                  <button 
-                    onClick={handleDemoToggle}
-                    className="toggle-switch"
-                    style={{ width: '2.5rem', height: '1.25rem', backgroundColor: demoMode ? 'var(--accent-primary)' : 'rgba(255,255,255,0.1)' }}
-                  >
-                    <motion.div 
-                      animate={{ x: demoMode ? 18 : 0 }}
-                      className="toggle-dot"
-                      style={{ width: '0.75rem', height: '0.75rem' }}
-                    />
-                  </button>
-                </div>
-              </div>
-              <Button onClick={processUpload} disabled={isProcessing}>
+          {inputMode === 'file' && (
+            <div className="mt-20 flex flex-col items-center gap-8">
+              <Button 
+                onClick={() => processUpload()} 
+                disabled={isProcessing || (!file && !demoMode)}
+                variant="accent"
+                className="px-24 py-10 text-3xl h-auto"
+              >
                 {isProcessing ? (
-                  <span className="flex items-center gap-3">
-                    <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                  <span className="flex items-center gap-6">
+                    <div className="w-8 h-8 border-4 border-white/30 border-t-white rounded-full animate-spin" />
                     {processingStep}
                   </span>
                 ) : (
-                  <span className="flex items-center gap-2">
-                    {demoMode ? 'Start Demo Session' : 'Analyze Real PDF'} <ArrowRight size={18} />
+                  <span className="flex items-center gap-6">
+                    Sync Knowledge Base <ArrowRight size={36} />
                   </span>
                 )}
               </Button>
-              {demoMode && !isProcessing && (
-                <p className="text-[10px] text-accent-primary font-bold mt-2 animate-pulse text-center">
-                  🚀 HYBRID DEMO MODE: Mocked Content
-                </p>
-              )}
-              {!demoMode && !isProcessing && (
-                <p className="text-[10px] text-text-muted mt-2 text-center">
-                  ⚡ REAL PIPELINE: Full Analysis (30-60s)
-                </p>
-              )}
+              
+              <AnimatePresence>
+                {error && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center gap-3 text-rose-600 font-black text-xs uppercase tracking-widest bg-rose-500/10 px-8 py-4 rounded-xl border border-rose-200"
+                  >
+                    <AlertCircle size={20} /> {error}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
-          </motion.div>
-        )}
+          )}
+        </div>
       </Card>
-      )}
-
-      {inputMode === 'audio' && (
-        <AudioRecorder
-          sessionId={sessionId || 'new-session'}
-          onTranscriptUpdate={setLiveTranscript}
-          onRecordingComplete={handleRecordingComplete}
-        />
-      )}
     </div>
   );
 };

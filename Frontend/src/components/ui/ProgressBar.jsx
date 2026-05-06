@@ -1,13 +1,16 @@
 import React from 'react';
 import './ui.css';
 
-const ProgressBar = ({ progress }) => {
+const ProgressBar = ({ progress, color = 'var(--accent-primary)', className = '' }) => {
   return (
-    <div className="progress-bar-container">
+    <div className={`progress-container ${className}`}>
       <div 
-        className="progress-bar-fill" 
-        style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
-      ></div>
+        className="progress-fill" 
+        style={{ 
+          width: `${progress}%`, 
+          background: color 
+        }} 
+      />
     </div>
   );
 };

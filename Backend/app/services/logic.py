@@ -22,9 +22,10 @@ logging.basicConfig(
 )
 
 # --- Configuration ---
-DEMO_MODE = True # Default to True for stability
-OLLAMA_URL = "http://localhost:11434/api/generate"
-# Switching to Qwen 2.5 Coder 7B for superior JSON reliability and speed on 8GB GPU
+DEMO_MODE = False # Set to False by default to allow real pipeline testing
+OLLAMA_URL = "http://127.0.0.1:11434/api/generate"
+# Switching to Qwen 2.5 Coder 7B as it's the most powerful STABLE model on this hardware
+# (14B is installed but triggered a 500 error/OOM in testing)
 NOTES_MODEL = "qwen2.5-coder:7b" 
 QUIZ_MODEL = "qwen2.5-coder:7b"
 EXPLANATION_MODEL = "qwen2.5-coder:7b" 
@@ -82,8 +83,11 @@ def call_ollama(model: str, prompt: str) -> str:
         sanitized = re.sub(r"<\uff5c.*?\uff5c>", "", sanitized)
         
         return sanitized.strip()
+    except requests.exceptions.ConnectionError:
+        logger.error(f"❌ OLLAMA CONNECTION FAILED: Is Ollama running on {OLLAMA_URL}?")
+        return ""
     except Exception as e:
-        logger.error(f"Ollama call failed: {e}")
+        logger.error(f"❌ Ollama call failed: {type(e).__name__} - {e}")
         return ""
 
 def extract_json(text: str) -> Optional[Any]:
@@ -137,8 +141,10 @@ def chunk_text(text: str, max_tokens: int = 700) -> List[str]:
 # --- GENERATION FUNCTIONS ---
 
 def generate_notes_llm(transcript: str, target_language: str = "English") -> dict:
-    """Robust Notes Generation optimized for 8GB VRAM speed."""
+    """Robust Notes Generation optimized for 14B/7B speed."""
+    logger.info(f"🧠 Generating Notes for {len(transcript)} chars of text...")
     chunks = chunk_text(transcript, max_tokens=500)
+    logger.info(f"📦 Split text into {len(chunks)} chunks for analysis.")
     all_topics = []
     
     prompt_template = f"""You are an expert teacher explaining concepts clearly and practically. Extract core concepts as JSON.
@@ -319,85 +325,108 @@ Structure:
 
 # --- PIPELINE ---
 
-def extract_pdf_text(file) -> str:
+def extract_text(file, filename: str = "") -> str:
+    """Robust extraction from PDF or Text files."""
+    extracted_content = ""
     try:
-        reader = PdfReader(file)
-        text = ""
-        for page in reader.pages[:20]:
-            page_text = page.extract_text()
-            if page_text: text += page_text + " "
-        return text
-    except Exception as e: 
-        logger.error(f"PDF extraction error: {e}")
-        return ""
-
-def process_pdf_pipeline(session_id: str, file, target_language: str = "English") -> Dict[str, Any]:
-    from app.services.translation_service import translate_text
-    raw_text = extract_pdf_text(file)
-    
-    # HYBRID DEMO MODE: Bypass slow components but keep session management
-    if DEMO_MODE:
-        import random
-        logger.info(f"🚀 HYBRID DEMO MODE ACTIVE: Language={target_language}")
-        
-        # Respect Target Language
-        if target_language.lower() == "hindi":
-            from app.services.hindi_mock import HINDI_NOTES, HINDI_QUIZ
-            notes = HINDI_NOTES
-            quiz = HINDI_QUIZ
-            transcript = "मशीन लर्निंग (Machine Learning) कृत्रिम बुद्धिमत्ता (AI) की एक शाखा है... (Demo Transcript)"
+        # Handle Text files
+        if filename.lower().endswith('.txt') or filename.lower().endswith('.md'):
+            file.seek(0)
+            content = file.read()
+            if isinstance(content, bytes):
+                extracted_content = content.decode('utf-8', errors='ignore')
+            else:
+                extracted_content = content
         else:
+            # Handle PDF files
+            file.seek(0)
+            reader = PdfReader(file)
+            for page in reader.pages[:20]:
+                page_text = page.extract_text()
+                if page_text: 
+                    extracted_content += page_text + " "
+        
+        return extracted_content
+    except Exception as e: 
+        logger.error(f"❌ Extraction error ({filename}): {e}")
+        return ""
+    finally:
+        logger.info(f"📄 Extracted {len(extracted_content)} characters from {filename}")
+
+def process_pdf_pipeline(session_id: str, file, target_language: str = "English", filename: str = "") -> Dict[str, Any]:
+    from app.services.translation_service import translate_text
+    try:
+        logger.info(f"🚀 Starting Pipeline: {filename} (Session: {session_id})")
+        raw_text = extract_text(file, filename)
+        
+        # Store raw transcript for UI 
+        transcript = raw_text if raw_text else "No text extracted from file."
+
+        if DEMO_MODE and (not raw_text or len(raw_text) < 50):
+            logger.info(f"🚀 HYBRID DEMO MODE ACTIVE (Mock Data): Language={target_language}")
             notes = FALLBACK_NOTES_RAW
             quiz = FALLBACK_QUIZ
-            transcript = "Machine Learning is a branch of artificial intelligence (AI) that focuses on building systems that learn from data... (Demo Transcript)"
-
-        # Human-like Latency (Fix 5)
-        time.sleep(random.uniform(1.2, 2.2)) 
+            
+            if target_language.lower() == "hindi":
+                from app.services.hindi_mock import HINDI_NOTES, HINDI_QUIZ
+                notes = HINDI_NOTES
+                quiz = HINDI_QUIZ
+            
+            session_store[session_id] = {
+                "notes": notes,
+                "quiz": quiz,
+                "transcript": transcript,
+                "history": [],
+                "target_language": target_language
+            }
+            logger.info(f"✅ Hybrid Demo Mode setup complete for {session_id}")
+            return session_store[session_id]
         
-        # Store in session
+        if DEMO_MODE:
+             logger.info(f"🚀 HYBRID DEMO MODE ACTIVE (Real Data): Proceeding with synthesis for {len(raw_text)} chars.")
+
+        if not raw_text or len(raw_text) < 50:
+            logger.warning(f"⚠️ Text too short ({len(raw_text)} chars). Triggering fallback.")
+            if target_language.lower() == "hindi":
+                from app.services.hindi_mock import HINDI_NOTES, HINDI_QUIZ
+                session_store[session_id] = {"notes": HINDI_NOTES, "quiz": HINDI_QUIZ, "transcript": "यह एक डेमो ट्रांसक्रिप्ट है।", "target_language": target_language}
+            else:
+                session_store[session_id] = {"notes": FALLBACK_NOTES_RAW, "quiz": FALLBACK_QUIZ, "transcript": "Fallback content.", "target_language": target_language}
+            return session_store[session_id]
+
+        # REAL PIPELINE ACTIVE
+        logger.info("🔥 Real Pipeline Active: Calling LLM for Synthesis...")
+        
+        if target_language.lower() != "english":
+            raw_text = translate_text(raw_text, target_language)
+
+        notes_llm = generate_notes_llm(raw_text, target_language)
+        quiz_llm = generate_quiz_llm(raw_text, target_language)
+
+        # Structure response for UI
+        notes_data = {
+            "note_id": int(time.time()),
+            "topic_title": notes_llm.get("title", "Lecture Summary"),
+            "topics": notes_llm.get("topics", []),
+            "content_markdown": notes_llm.get("content_markdown", ""),
+            "key_highlights": [t["name"] for t in notes_llm.get("topics", []) if isinstance(t, dict) and "name" in t]
+        }
+
         session_store[session_id] = {
-            "notes": notes,
-            "quiz": quiz,
-            "transcript": transcript,
+            "notes": notes_data,
+            "quiz": quiz_llm,
+            "transcript": raw_text[:5000],
             "history": [],
             "target_language": target_language
         }
+        
+        logger.info(f"✅ Pipeline Successfully Completed for {session_id}")
         return session_store[session_id]
-
-    if not raw_text or len(raw_text) < 50:
-        logger.warning("Empty or short PDF or Demo Button. Checking for Language Mock.")
-        if target_language.lower() == "hindi":
-            from app.services.hindi_mock import HINDI_NOTES, HINDI_QUIZ
-            session_store[session_id] = {"notes": HINDI_NOTES, "quiz": HINDI_QUIZ, "transcript": "यह एक डेमो ट्रांसक्रिप्ट है।", "target_language": target_language}
-        else:
-            session_store[session_id] = {"notes": FALLBACK_NOTES_RAW, "quiz": FALLBACK_QUIZ, "transcript": "Fallback content.", "target_language": target_language}
-        return session_store[session_id]
-
-    # (Note: Removed HACKATHON DEMO MOCK intercept here to allow real testing when DEMO_MODE is False)
-
-    if target_language.lower() != "english":
-        raw_text = translate_text(raw_text, target_language)
-
-    notes_llm = generate_notes_llm(raw_text, target_language)
-    quiz_llm = generate_quiz_llm(raw_text, target_language)
-    
-    notes_data = {
-        "note_id": int(time.time()),
-        "topic_title": notes_llm.get("title", "Lecture Summary"),
-        "topics": notes_llm.get("topics", []),
-        "content_markdown": "",
-        "key_highlights": [t["name"] for t in notes_llm.get("topics", [])]
-    }
-    
-    session_store[session_id] = {
-        "notes": notes_data,
-        "quiz": quiz_llm,
-        "transcript": raw_text[:5000],
-        "history": [],
-        "target_language": target_language
-    }
-    
-    return session_store[session_id]
+    except Exception as e:
+        logger.error(f"❌ CRITICAL PIPELINE FAILURE: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
+        raise e
 
 def get_cached_notes(session_id: str):
     return session_store.get(session_id, {}).get("notes", FALLBACK_NOTES_RAW)

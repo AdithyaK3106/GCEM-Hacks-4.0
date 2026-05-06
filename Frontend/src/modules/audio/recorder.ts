@@ -91,12 +91,26 @@ export function createRecorder(options: RecorderOptions = {}): Recorder {
           audio: {
             sampleRate,
             echoCancellation: true,
-            noiseSuppression: false,
-            autoGainControl: false,
+            noiseSuppression: true, // FIX: Enable for better signal
+            autoGainControl: true,  // FIX: Enable for demo reliability
           },
         });
+        console.log("[MIC STREAM]", stream); // FIX: Verify microphone capture
 
         ctx = new AudioContext({ sampleRate });
+
+        // FIX: Verify mic level with AnalyserNode
+        const analyser = ctx.createAnalyser();
+        const dataArray = new Uint8Array(analyser.fftSize);
+        const debugMicLevel = () => {
+          if (!active) return;
+          analyser.getByteTimeDomainData(dataArray);
+          const max = Math.max(...dataArray);
+          if (max > 128) { // 128 is neutral for Uint8Array time domain
+             console.log("[MIC LEVEL]", max);
+          }
+          setTimeout(debugMicLevel, 1000);
+        };
 
         // Register worklet
         const samplesPerChunk = Math.floor((sampleRate * chunkIntervalMs) / 1000);
@@ -107,6 +121,9 @@ export function createRecorder(options: RecorderOptions = {}): Recorder {
 
         // Build graph: source → gainNode → noiseFilter → worklet
         const source = ctx.createMediaStreamSource(stream);
+        source.connect(analyser); // FIX: debug connection
+        debugMicLevel(); // FIX: start level monitoring
+
         gainCtrl = createGainController(ctx, calibration);
 
         const worklet = new AudioWorkletNode(ctx, 'chunk-processor', {

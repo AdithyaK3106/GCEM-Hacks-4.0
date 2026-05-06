@@ -1,118 +1,77 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Award, Medal, Crown } from 'lucide-react';
 import Card from '../components/ui/Card';
-import { useAppContext } from '../context/AppContext';
-
-const leaderboardData = [
-  { rank: 1, name: 'Alex Chen', xp: 14500, avatar: 'A' },
-  { rank: 2, name: 'Sarah Jenkins', xp: 13200, avatar: 'S' },
-  { rank: 3, name: 'Mike Ross', xp: 12800, avatar: 'M' },
-  { rank: 4, name: 'You', xp: 1250, avatar: 'Y', isCurrentUser: true },
-  { rank: 5, name: 'Emma Wilson', xp: 1100, avatar: 'E' },
-  { rank: 6, name: 'David Lee', xp: 950, avatar: 'D' },
-];
+import { Trophy, Crown, Medal, User, Zap, Star } from 'lucide-react';
 
 const Leaderboard = () => {
-  const { userProgress } = useAppContext();
-
-  // Update current user XP in leaderboard
-  const data = leaderboardData.map(user => 
-    user.isCurrentUser ? { ...user, xp: userProgress.xp } : user
-  ).sort((a, b) => b.xp - a.xp);
-
-  // Recalculate ranks after sorting
-  const rankedData = data.map((user, index) => ({ ...user, rank: index + 1 }));
+  const leaderboardData = [
+    { rank: 1, name: 'Learner Alpha', xp: 12500, accuracy: '98%', avatar: 'LA' },
+    { rank: 2, name: 'Skill Master', xp: 11200, accuracy: '95%', avatar: 'SM' },
+    { rank: 3, name: 'Knowledge Seeker', xp: 10800, accuracy: '94%', avatar: 'KS' },
+    { rank: 4, name: 'Path Finder', xp: 9500, accuracy: '92%', avatar: 'PF' },
+    { rank: 5, name: 'Brainiac', xp: 8900, accuracy: '91%', avatar: 'BR' },
+  ];
 
   return (
-    <div className="page-transition max-w-4xl mx-auto">
-      <div className="text-center mb-10">
-        <h1 className="text-3xl font-bold mb-4 flex items-center justify-center gap-3">
-          <Award className="text-warning" size={32} /> Global Leaderboard
-        </h1>
-        <p className="text-text-secondary">Compete with other learners worldwide.</p>
+    <div className="max-w-4xl mx-auto space-y-12">
+      <div className="text-center">
+        <h1 className="text-5xl font-black text-[#2D1E3E] tracking-tight mb-3">Global Mastery</h1>
+        <p className="text-[#5A4A6B] font-medium text-xl">Compete with top learners and climb the intelligence ladder.</p>
       </div>
 
-      <div className="grid grid-cols-3 gap-4 mb-12 items-end">
-        {/* Rank 2 */}
-        <motion.div 
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="flex flex-col items-center"
-        >
-          <div className="w-16 h-16 rounded-full bg-slate-700 flex items-center justify-center text-2xl font-bold border-4 border-slate-400 mb-2 shadow-[0_0_15px_rgba(148,163,184,0.3)]">
-            {rankedData[1]?.avatar}
-          </div>
-          <div className="text-center mb-2">
-            <p className="font-bold">{rankedData[1]?.name}</p>
-            <p className="text-sm text-text-secondary">{rankedData[1]?.xp} XP</p>
-          </div>
-          <div className="w-full h-32 bg-slate-800 rounded-t-lg border-t-2 border-slate-400 flex justify-center pt-4">
-            <Medal size={32} className="text-slate-400" />
-          </div>
-        </motion.div>
+      <div className="grid grid-cols-1 gap-6">
+        {leaderboardData.map((user, idx) => {
+          const isTop3 = user.rank <= 3;
+          const rankColors = {
+            1: 'text-yellow-500 bg-yellow-500/10 border-yellow-500/20',
+            2: 'text-slate-400 bg-slate-400/10 border-slate-400/20',
+            3: 'text-orange-400 bg-orange-400/10 border-orange-400/20',
+          };
 
-        {/* Rank 1 */}
-        <motion.div 
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center"
-        >
-          <div className="w-20 h-20 rounded-full bg-yellow-600 flex items-center justify-center text-3xl font-bold border-4 border-warning mb-2 shadow-[0_0_25px_rgba(245,158,11,0.5)]">
-            {rankedData[0]?.avatar}
-          </div>
-          <div className="text-center mb-2">
-            <p className="font-bold text-warning">{rankedData[0]?.name}</p>
-            <p className="text-sm text-text-secondary">{rankedData[0]?.xp} XP</p>
-          </div>
-          <div className="w-full h-40 bg-yellow-900/30 rounded-t-lg border-t-2 border-warning flex justify-center pt-4 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-b from-warning/20 to-transparent"></div>
-            <Crown size={40} className="text-warning relative z-10" />
-          </div>
-        </motion.div>
-
-        {/* Rank 3 */}
-        <motion.div 
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="flex flex-col items-center"
-        >
-          <div className="w-16 h-16 rounded-full bg-amber-900 flex items-center justify-center text-2xl font-bold border-4 border-amber-600 mb-2 shadow-[0_0_15px_rgba(217,119,6,0.3)]">
-            {rankedData[2]?.avatar}
-          </div>
-          <div className="text-center mb-2">
-            <p className="font-bold">{rankedData[2]?.name}</p>
-            <p className="text-sm text-text-secondary">{rankedData[2]?.xp} XP</p>
-          </div>
-          <div className="w-full h-24 bg-amber-900/40 rounded-t-lg border-t-2 border-amber-600 flex justify-center pt-4">
-            <Medal size={28} className="text-amber-600" />
-          </div>
-        </motion.div>
-      </div>
-
-      <Card className="p-0 overflow-hidden">
-        <div className="divide-y divide-white/10">
-          {rankedData.slice(3).map((user, index) => (
-            <div 
+          return (
+            <Card 
               key={user.rank} 
-              className={`flex items-center justify-between p-4 hover:bg-white/5 transition-colors ${user.isCurrentUser ? 'bg-accent-primary/10 border-l-4 border-accent-primary' : ''}`}
+              delay={idx * 0.1}
+              className={`p-6 border-white/20 transition-all ${user.rank === 1 ? 'ring-2 ring-yellow-500/30 scale-105 shadow-2xl bg-white/40' : ''}`}
             >
-              <div className="flex items-center gap-4">
-                <span className="w-8 text-center text-text-secondary font-bold">{user.rank}</span>
-                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center font-bold">
-                  {user.avatar}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-8">
+                  {/* Rank Badge */}
+                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black text-2xl border ${rankColors[user.rank] || 'text-[#8B7CA3] bg-white/30 border-white/40'}`}>
+                    {user.rank === 1 ? <Crown size={28} /> : user.rank}
+                  </div>
+
+                  {/* User Identity */}
+                  <div className="flex items-center gap-5">
+                    <div className="w-14 h-14 rounded-full bg-[#533A71] text-white flex items-center justify-center font-black text-xl shadow-lg">
+                      {user.avatar}
+                    </div>
+                    <div>
+                      <h3 className={`font-black text-2xl ${user.rank === 1 ? 'text-[#2D1E3E]' : 'text-[#2D1E3E]'}`}>{user.name}</h3>
+                      <div className="flex items-center gap-4 mt-1">
+                        <span className="flex items-center gap-1.5 text-xs font-bold text-[#6D4AFF] uppercase tracking-widest">
+                          <Zap size={12} fill="currentColor" /> {user.xp.toLocaleString()} XP
+                        </span>
+                        <span className="flex items-center gap-1.5 text-xs font-bold text-[#16A34A] uppercase tracking-widest">
+                          <Star size={12} fill="currentColor" /> {user.accuracy} Acc
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <span className={`font-medium ${user.isCurrentUser ? 'text-accent-primary font-bold' : ''}`}>
-                  {user.name} {user.isCurrentUser && '(You)'}
-                </span>
+
+                {/* Rank Achievement */}
+                <div className="hidden md:flex items-center gap-3">
+                   {isTop3 && (
+                     <div className={`px-4 py-2 rounded-xl border font-black text-xs uppercase tracking-widest ${rankColors[user.rank]}`}>
+                        {user.rank === 1 ? 'Master' : user.rank === 2 ? 'Expert' : 'Elite'}
+                     </div>
+                   )}
+                </div>
               </div>
-              <span className="font-mono text-text-secondary">{user.xp} XP</span>
-            </div>
-          ))}
-        </div>
-      </Card>
+            </Card>
+          );
+        })}
+      </div>
     </div>
   );
 };

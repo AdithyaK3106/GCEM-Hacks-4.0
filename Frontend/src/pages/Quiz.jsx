@@ -1,403 +1,200 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Timer, CheckCircle, XCircle, BrainCircuit, AlertTriangle, ArrowRight } from 'lucide-react';
+import { Target, ArrowRight, CheckCircle, AlertCircle, Clock, Zap, Brain } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
-import { submitAnswer } from '../services/zeroFrictionApi';
+import { submitQuiz } from '../services/zeroFrictionApi';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import ProgressBar from '../components/ui/ProgressBar';
 import './pages.css';
 
 const Quiz = () => {
-  const [currentQuestionIdx, setCurrentQuestionIdx] = useState(() => {
-    const saved = localStorage.getItem('quiz_current_idx');
-    return saved ? parseInt(saved, 10) : 0;
-  });
-  const [selectedOption, setSelectedOption] = useState(null);
-  const [feedback, setFeedback] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [score, setScore] = useState(() => {
-    const saved = localStorage.getItem('quiz_score');
-    return saved ? parseInt(saved, 10) : 0;
-  });
-  const [answers, setAnswers] = useState(() => {
-    const saved = localStorage.getItem('quiz_answers');
-    return saved ? JSON.parse(saved) : [];
-  });
-  const [error, setError] = useState('');
-  const [thinkingStep, setThinkingStep] = useState(null); // 'evaluating', 'analyzing', null
-  const [debugMode, setDebugMode] = useState(false);
-  const { sessionId, quizQuestions, updateProgress, setQuizData, pipelineStep, setPipelineStep } = useAppContext();
+  const { sessionId: paramSessionId } = useParams();
+  const { sessionId: contextSessionId, quizQuestions, setQuizData, pipelineStep, setPipelineStep } = useAppContext();
+  const sessionId = contextSessionId || paramSessionId;
   const navigate = useNavigate();
 
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [answers, setAnswers] = useState([]);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [startTime, setStartTime] = useState(Date.now());
+  const [timeLeft, setTimeLeft] = useState(300); // 5 minutes
+
   useEffect(() => {
-    // Sequential Guard: Must have completed notes to be here
-    if (!sessionId || quizQuestions.length === 0 || pipelineStep < 1) {
-      navigate('/notes');
+    if (pipelineStep < 2 && quizQuestions.length === 0) {
+      navigate('/upload');
+      return;
     }
-  }, [sessionId, quizQuestions.length, navigate, pipelineStep]);
 
-  if (!sessionId || quizQuestions.length === 0 || pipelineStep < 1) {
-    return null;
-  }
+    const timer = setInterval(() => {
+      setTimeLeft(prev => prev > 0 ? prev - 1 : 0);
+    }, 1000);
 
-  const currentQuestion = quizQuestions[currentQuestionIdx];
-  const isLastQuestion = currentQuestionIdx === quizQuestions.length - 1;
+    return () => clearInterval(timer);
+  }, [navigate, pipelineStep, quizQuestions]);
 
-  const handleSelectOption = (idx) => {
-    if (!feedback) {
-      setSelectedOption(idx);
+  const handleOptionSelect = (optionIdx) => {
+    if (showFeedback) return;
+    
+    const timeTaken = Math.round((Date.now() - startTime) / 1000);
+    const newAnswer = {
+      question_id: quizQuestions[currentIndex].id,
+      selected_option: optionIdx,
+      time_taken: timeTaken,
+      confidence: 1.0,
+    };
+
+    const newAnswers = [...answers];
+    newAnswers[currentIndex] = newAnswer;
+    setAnswers(newAnswers);
+    setShowFeedback(true);
+  };
+
+  const nextQuestion = async () => {
+    if (currentIndex < quizQuestions.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+      setShowFeedback(false);
+      setStartTime(Date.now());
+    } else {
+      await handleSubmit();
     }
   };
 
   const handleSubmit = async () => {
-    if (!feedback) {
-      setIsSubmitting(true);
-      setError('');
-
-      try {
-        setThinkingStep('evaluating');
-        await new Promise(resolve => setTimeout(resolve, 800)); // Micro-interaction "evaluating"
-        
-        // Natural Confidence Scaling: Instead of hard-coding, we subtly amplify 
-        // confidence on trap questions if the user already feels somewhat sure.
-        let rawConfidence = selectedOption === 0 ? 0.8 : 0.6; // Mocked base confidence
-        let confidence = rawConfidence;
-        if (currentQuestion.is_trap && confidence > 0.5) {
-          confidence = Math.min(confidence + 0.15, 0.9);
-        }
-
-        const data = await submitAnswer(sessionId, {
-          q_id: currentQuestion.q_id,
-          selected_index: selectedOption,
-          confidence: confidence,
-          time_spent_seconds: 15,
-        });
-
-        setThinkingStep('analyzing');
-        await new Promise(resolve => setTimeout(resolve, 800)); // Micro-interaction "analyzing"
-        
-        setFeedback(data);
-        const newAnswers = [...answers, data];
-        setAnswers(newAnswers);
-        localStorage.setItem('quiz_answers', JSON.stringify(newAnswers));
-        
-        if (data.is_correct) {
-          const newScore = score + 1;
-          setScore(newScore);
-          localStorage.setItem('quiz_score', newScore.toString());
-        }
-      } catch (err) {
-        setError(err.message || 'Unable to submit answer.');
-      } finally {
-        setIsSubmitting(false);
-        setThinkingStep(null);
-      }
-      return;
+    setIsSubmitting(true);
+    try {
+      const result = await submitQuiz(sessionId, answers);
+      setQuizData(result);
+      setPipelineStep(3);
+      navigate(`/results/${sessionId}`);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSubmitting(false);
     }
-
-    if (isLastQuestion) {
-      setQuizData({
-        score,
-        total: quizQuestions.length,
-        answers,
-        latest_feedback: feedback,
-      });
-      updateProgress(50);
-      setPipelineStep(3); // Move to Results step
-      
-      // Clear quiz progress on completion
-      localStorage.removeItem('quiz_current_idx');
-      localStorage.removeItem('quiz_score');
-      localStorage.removeItem('quiz_answers');
-      
-      navigate('/results');
-      return;
-    }
-
-    const nextIdx = currentQuestionIdx + 1;
-    setCurrentQuestionIdx(nextIdx);
-    localStorage.setItem('quiz_current_idx', nextIdx.toString());
-    setSelectedOption(null);
-    setFeedback(null);
   };
 
-  const stateColorClass = feedback ? `state-${feedback.learner_state.state_color}` : '';
+  if (quizQuestions.length === 0) return null;
+
+  const currentQuestion = quizQuestions[currentIndex];
+  const progress = ((currentIndex + 1) / quizQuestions.length) * 100;
+  const currentAnswer = answers[currentIndex];
+  const isCorrect = currentAnswer && currentAnswer.selected_option === currentQuestion.correct_idx;
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
   return (
-    <div className="page-transition flex flex-col h-full">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold mb-2 flex items-center gap-2">
-            <BrainCircuit className="text-accent-primary" /> Mastery Check
-          </h1>
-          <p className="text-text-secondary">Testing your knowledge on Neural Networks.</p>
-        </div>
+    <div className="max-w-4xl mx-auto">
+      <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
         <div className="flex items-center gap-4">
-          <button 
-            onClick={() => setDebugMode(!debugMode)}
-            className={`text-[10px] uppercase tracking-widest px-3 py-1.5 rounded border transition-all ${debugMode ? 'bg-accent-primary/20 border-accent-primary text-accent-primary' : 'bg-white/5 border-white/10 text-text-secondary opacity-50 hover:opacity-100'}`}
-          >
-            {debugMode ? 'Technical View: ON' : 'Show Technical View'}
-          </button>
-          <div className="flex items-center gap-2 text-warning font-mono bg-warning/10 px-4 py-2 rounded-full border border-warning/20">
-            <Timer size={18} />
-            <span>04:59</span>
+          <div className="w-14 h-14 rounded-2xl bg-[#6D4AFF] text-white flex items-center justify-center shadow-lg shadow-[#6D4AFF]/20">
+            <Brain size={28} />
+          </div>
+          <div>
+            <h2 className="text-3xl font-black text-[#2D1E3E] tracking-tight">Mastery Check</h2>
+            <p className="text-[#8B7CA3] text-xs font-black uppercase tracking-widest">Integrating Module {currentIndex + 1} of {quizQuestions.length}</p>
           </div>
         </div>
-      </div>
-
-      <div className="mb-6">
-        <div className="flex justify-between text-sm text-text-secondary mb-2">
-          <span>Question {currentQuestionIdx + 1} of {quizQuestions.length}</span>
-          <span>{Math.round((currentQuestionIdx / quizQuestions.length) * 100)}% Completed</span>
+        
+        <div className="flex items-center gap-4 px-6 py-3 glass-card bg-white/40">
+          <Clock size={20} className={timeLeft < 60 ? 'text-rose-500 animate-pulse' : 'text-[#2D1E3E]'} />
+          <span className={`font-black text-2xl tabular-nums ${timeLeft < 60 ? 'text-rose-500' : 'text-[#2D1E3E]'}`}>
+            {formatTime(timeLeft)}
+          </span>
         </div>
-        <ProgressBar progress={(currentQuestionIdx / quizQuestions.length) * 100} />
       </div>
 
-      <div className="flex-1 flex items-center justify-center py-10">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentQuestionIdx}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3 }}
-            className="w-full"
-          >
-            <Card className="quiz-card relative overflow-hidden p-8 md:p-12">
-              <h2 className="text-2xl font-bold mb-4 leading-relaxed">
-                {currentQuestion.question_text}
-              </h2>
-              
-              {currentQuestion.is_trap && (
-                <div className="group relative">
-                  <p className="text-accent-primary/60 text-xs italic mb-6">
-                    Pedagogical Hint: Take a moment to choose the answer you believe is most correct.
-                  </p>
-                  <div className="absolute -top-8 left-0 bg-white/10 backdrop-blur-md px-2 py-1 rounded text-[9px] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity border border-white/5 pointer-events-none z-20">
-                    Designed to test common misunderstandings
-                  </div>
-                </div>
-              )}
-              
-              {debugMode && (
-                <div className="mb-6 p-3 bg-accent-primary/5 border border-accent-primary/20 rounded-lg flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <span className="text-[10px] font-bold uppercase text-accent-primary">Debug Context:</span>
-                    <span className={`text-[10px] px-2 py-0.5 rounded ${currentQuestion.is_trap ? 'bg-warning/20 text-warning' : 'bg-white/5 text-text-secondary'}`}>
-                      {currentQuestion.is_trap ? 'TRAP_QUESTION: TRUE' : 'NORMAL_QUESTION'}
-                    </span>
-                  </div>
-                  <div className="text-[10px] font-mono text-text-secondary opacity-50">
-                    Q_ID: {currentQuestion.q_id}
-                  </div>
-                </div>
-              )}
+      <ProgressBar progress={progress} className="mb-12 h-3 bg-white/20 rounded-full overflow-hidden shadow-inner border border-white/20" barClassName="bg-[#6D4AFF] shadow-[0_0_15px_rgba(109,74,255,0.5)]" />
 
-              <div className="space-y-3 mb-8">
-                {currentQuestion.options.map((option, idx) => {
-                  let btnClass = 'option-btn';
-                  let icon = null;
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentIndex}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 1.05 }}
+          transition={{ duration: 0.3 }}
+          className="space-y-8"
+        >
+          <Card className="p-10 border-white/30" hover={false}>
+             <h3 className="text-3xl font-black text-[#2D1E3E] mb-10 leading-tight">{currentQuestion.text}</h3>
+             
+             <div className="grid grid-cols-1 gap-4">
+               {currentQuestion.options.map((option, idx) => {
+                 let statusClass = "bg-white/40 border-white/40 text-[#5A4A6B] hover:bg-white/60";
+                 if (showFeedback) {
+                   if (idx === currentQuestion.correct_idx) statusClass = "bg-[#16A34A] text-white border-[#16A34A] shadow-lg shadow-[#16A34A]/20";
+                   else if (currentAnswer?.selected_option === idx) statusClass = "bg-rose-500 text-white border-rose-500 shadow-lg shadow-rose-500/20";
+                   else statusClass = "bg-white/10 opacity-40 border-transparent cursor-not-allowed";
+                 } else if (currentAnswer?.selected_option === idx) {
+                   statusClass = "bg-[#6D4AFF] text-white border-[#6D4AFF] shadow-lg shadow-[#6D4AFF]/20";
+                 }
 
-                  if (feedback) {
-                    if (idx === feedback.correct_index) {
-                      btnClass += ' bg-success/20 border-success text-white';
-                      icon = <CheckCircle className="text-success" size={20} />;
-                    } else if (idx === selectedOption) {
-                      btnClass += ' bg-danger/20 border-danger text-white';
-                      icon = <XCircle className="text-danger" size={20} />;
-                    }
-                  } else if (selectedOption === idx) {
-                    btnClass += ' selected';
-                  }
-
-                  return (
-                    <button
-                      key={idx}
-                      className={btnClass}
-                      onClick={() => handleSelectOption(idx)}
-                      disabled={!!feedback}
-                    >
-                      <div className="flex-1 flex items-center gap-3">
-                        <span className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-sm font-medium border border-white/10 shrink-0">
+                 return (
+                   <button
+                     key={idx}
+                     onClick={() => handleOptionSelect(idx)}
+                     disabled={showFeedback}
+                     className={`w-full p-6 text-left rounded-xl font-bold text-xl transition-all border flex items-center justify-between group active:scale-[0.98] ${statusClass}`}
+                   >
+                     <span className="flex items-center gap-5">
+                        <span className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-black border transition-all ${
+                          showFeedback && idx === currentQuestion.correct_idx ? 'bg-white/20 border-white/20' : 
+                          currentAnswer?.selected_option === idx ? 'bg-white/20 border-white/20' : 'bg-[#2D1E3E]/5 border-[#2D1E3E]/10 text-[#2D1E3E]'
+                        }`}>
                           {String.fromCharCode(65 + idx)}
                         </span>
-                        <span>{option}</span>
-                      </div>
-                      {icon}
-                    </button>
-                  );
-                })}
-              </div>
+                        {option}
+                     </span>
+                     {showFeedback && idx === currentQuestion.correct_idx && <CheckCircle size={28} className="text-white" />}
+                   </button>
+                 );
+               })}
+             </div>
+          </Card>
 
-              {isSubmitting && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mb-8 p-6 bg-accent-primary/5 rounded-xl border border-accent-primary/20 flex flex-col items-center text-center"
-                >
-                  <div className="w-8 h-8 border-2 border-accent-primary/20 border-t-accent-primary rounded-full animate-spin mb-3"></div>
-                  <p className="text-accent-primary font-bold text-sm">
-                    {thinkingStep === 'evaluating' ? 'Evaluating learning pattern...' : 'Analyzing response pattern...'}
-                  </p>
-                </motion.div>
-              )}
-
-              {feedback && (
-                <div className={`learner-feedback ${stateColorClass}`}>
-                  {/* Thinking Trace Stats */}
-                  <div className="mb-6 grid grid-cols-3 gap-4 border-b border-white/5 pb-6">
-                    <div className="text-center">
-                      <p className="text-[10px] uppercase tracking-wider text-text-secondary mb-1">XP Earned</p>
-                      <p className="text-lg font-bold text-accent-primary">+{feedback.xp || 10}</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-[10px] uppercase tracking-wider text-text-secondary mb-1">Streak</p>
-                      <p className="text-lg font-bold text-warning">
-                        {feedback.streak > 1 ? `🔥 ${feedback.streak}` : feedback.streak}
-                      </p>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-[10px] uppercase tracking-wider text-text-secondary mb-1">Confidence</p>
-                      <p className={`text-lg font-bold ${feedback.is_correct && feedback.confidence < 0.7 ? 'text-warning' : 'text-success'}`}>
-                        {feedback.confidence > 0.8 ? 'High' : (feedback.confidence > 0.6 ? 'Medium' : 'Low')}
-                      </p>
-                    </div>
+          <AnimatePresence>
+            {showFeedback && (
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-8"
+              >
+                <div className={`p-8 glass-card border-none flex flex-col md:flex-row items-start gap-8 ${isCorrect ? 'bg-[#16A34A]/10' : 'bg-rose-500/10'}`}>
+                  <div className={`p-5 rounded-2xl ${isCorrect ? 'bg-[#16A34A]' : 'bg-rose-500'} text-white shadow-xl shadow-current/20`}>
+                    {isCorrect ? <Zap size={40} /> : <AlertCircle size={40} />}
                   </div>
-
-                  <div className="flex items-start gap-3">
-                    {feedback?.learner_state?.state_label === 'MISCONCEPTION' && <AlertTriangle size={22} className="shrink-0 mt-1" />}
-                    <div className="flex-1">
-                      <div className="flex flex-col gap-3 mb-4">
-                        <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-bold text-text-secondary uppercase">State:</span>
-                          <span className="status-badge">{feedback?.learner_state?.state_label || 'ANALYSED'}</span>
-                        </div>
-                        <div className="flex items-start gap-2">
-                          <span className="text-[10px] font-bold text-text-secondary uppercase mt-1">Reason:</span>
-                          <strong className="text-sm leading-tight text-text-primary">
-                            {feedback.learner_state.insight_reason || 'Adaptive pattern detection triggered.'}
-                          </strong>
-                        </div>
-                        <div className="mt-1">
-                          <strong className="text-xs text-text-secondary italic">
-                            {feedback.is_correct && feedback.confidence < 0.6 ? "Correct, but you were unsure — let's reinforce." : 
-                             (!feedback.is_correct && feedback.confidence > 0.7 ? "You were confident but incorrect — this is a misconception." : 
-                             feedback?.learner_state?.message || 'Processing response...')}
-                          </strong>
-                        </div>
-                      </div>
-                      
-                      {feedback.explanation.wrong_belief && (
-                        <div className="mb-4 p-3 bg-danger/10 border-l-4 border-danger rounded-r-md">
-                          <p className="text-xs uppercase font-bold text-danger mb-1">Your Belief:</p>
-                          <p className="text-sm">{feedback.explanation.wrong_belief}</p>
-                        </div>
-                      )}
-
-                      <div className="space-y-3">
-                        {feedback.explanation.why_wrong && (
-                          <p className="text-text-primary text-sm"><span className="text-danger font-bold">Why it fails:</span> {feedback.explanation.why_wrong}</p>
-                        )}
-                        {feedback.explanation.correct_concept && (
-                          <p className="text-text-primary text-sm"><span className="text-success font-bold">Correct Logic:</span> {feedback.explanation.correct_concept}</p>
-                        )}
-                      </div>
-
-                      {feedback.explanation.simple_analogy && (
-                        <div className="mt-4 p-4 bg-accent-primary/10 border border-accent-primary/30 rounded-xl relative overflow-hidden">
-                          <div className="absolute top-0 right-0 p-2 opacity-10">
-                            <BrainCircuit size={40} />
-                          </div>
-                          <p className="text-xs uppercase font-bold text-accent-primary mb-1">Analogy to remember:</p>
-                          <p className="text-sm italic">"{feedback.explanation.simple_analogy}"</p>
-                        </div>
-                      )}
-
-                      {/* Visual Cause-Effect Flow (Requirement 4) */}
-                      <div className="mt-6 flex items-center gap-2 overflow-x-auto pb-2">
-                        <div className={`px-2 py-1 rounded text-[9px] font-bold uppercase ${feedback.is_correct ? 'bg-success/20 text-success' : 'bg-danger/20 text-danger'}`}>
-                          {feedback.is_correct ? 'Correct Answer' : 'Wrong Answer'}
-                        </div>
-                        <ArrowRight size={12} className="opacity-30" />
-                        <div className="px-2 py-1 rounded bg-warning/20 text-warning text-[9px] font-bold uppercase">
-                          High Confidence
-                        </div>
-                        <ArrowRight size={12} className="opacity-30" />
-                        <div className="px-2 py-1 rounded bg-accent-primary/20 text-accent-primary text-[9px] font-bold uppercase">
-                          ACT Analysis
-                        </div>
-                        <ArrowRight size={12} className="opacity-30" />
-                        <div className={`px-2 py-1 rounded text-[9px] font-bold uppercase border ${feedback.learner_state.state_color === 'green' ? 'border-success text-success' : 'border-danger text-danger'}`}>
-                          {feedback.learner_state.state_label}
-                        </div>
-                      </div>
-
-                      {debugMode && (
-                        <div className="mt-6 p-4 bg-black/40 border border-white/10 rounded-xl">
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-text-secondary mb-3">Live Reasoning Panel</p>
-                          <div className="space-y-2">
-                            <div className="flex justify-between text-[11px]">
-                              <span className="opacity-60">Rule Triggered:</span>
-                              <span className="font-mono text-accent-primary">{feedback.learner_state.state_label}</span>
-                            </div>
-                            <div className="flex justify-between text-[11px]">
-                              <span className="opacity-60">Insight Basis:</span>
-                              <span className="text-right italic opacity-80">{feedback.learner_state.insight_reason}</span>
-                            </div>
-                            <div className="pt-2 border-t border-white/5 flex gap-2">
-                              <span className="text-[9px] bg-white/5 px-1.5 rounded">is_trap: {String(currentQuestion.is_trap)}</span>
-                              <span className="text-[9px] bg-white/5 px-1.5 rounded">lat: 800ms</span>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                      
-                      <p className="mt-4 text-[9px] text-center opacity-30 italic">
-                        This decision is based on your accuracy, confidence, and response time.
-                      </p>
-
-                      {feedback?.recommendation && (
-                        <div className="mt-4 p-3 bg-white/5 rounded-md border border-white/10">
-                          <p className="text-sm font-medium text-accent-primary">Recommendation: {feedback.recommendation.label || 'Review content'}</p>
-                        </div>
-                      )}
-                    </div>
+                  <div className="flex-1">
+                    <h4 className={`text-3xl font-black mb-3 ${isCorrect ? 'text-[#16A34A]' : 'text-rose-600'}`}>
+                      {isCorrect ? 'Precision Achieved!' : 'Growth Opportunity'}
+                    </h4>
+                    <p className="text-xl font-medium leading-relaxed text-[#5A4A6B]">
+                      {currentQuestion.explanation || "This concept focuses on the core mechanics of AI inference and pattern recognition."}
+                    </p>
                   </div>
                 </div>
-              )}
 
-              <div className="flex justify-between items-center mt-8 pt-6 border-t border-white/10">
-                <div className="text-text-secondary text-sm flex-1 mr-4">
-                  {feedback && (
-                    feedback.is_correct ? (
-                      <div className="flex flex-col gap-1">
-                        <span className="text-success font-medium">Excellent! That's correct.</span>
-                        <span className="text-xs opacity-70">Your mastery of <strong className="text-text-primary">{currentQuestion.concept_tested || 'this concept'}</strong> is solid.</span>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col gap-1">
-                        <span className="text-danger font-medium">Not quite. Review this concept later.</span>
-                        <span className="text-xs opacity-70">Concept to review: <strong className="text-text-primary">{currentQuestion.concept_tested || 'Core Principles'}</strong></span>
-                      </div>
-                    )
-                  )}
-                  {error && <span className="text-danger font-medium">{error}</span>}
+                <div className="flex justify-center pt-6">
+                  <Button 
+                    onClick={nextQuestion} 
+                    disabled={isSubmitting}
+                    variant="accent"
+                    className="px-24 py-8 text-3xl h-auto"
+                  >
+                    {isSubmitting ? 'Syncing...' : currentIndex === quizQuestions.length - 1 ? 'Finalize Synthesis' : 'Next Integration'}
+                    <ArrowRight size={32} className="ml-6" />
+                  </Button>
                 </div>
-                <Button
-                  onClick={handleSubmit}
-                  disabled={selectedOption === null || isSubmitting}
-                  variant={feedback ? 'primary' : 'outline'}
-                >
-                  {isSubmitting ? 'Thinking...' : (!feedback ? 'Submit Answer' : (isLastQuestion ? 'View Results' : feedback.learner_state.action_label))}
-                </Button>
-              </div>
-            </Card>
-          </motion.div>
-        </AnimatePresence>
-      </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 };
