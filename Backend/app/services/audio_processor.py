@@ -11,9 +11,9 @@ import logging
 logger = logging.getLogger(__name__)
 
 TARGET_RMS = 0.08          # Target RMS level (only applied if audio is already close)
-SILENCE_THRESHOLD = 0.0005 # FIX: extremely low hard gate for safety
+SILENCE_THRESHOLD = 0.005 # Stricter noise floor
 MIN_CHUNK_SAMPLES = 160    # Discard chunks shorter than this
-MAX_GAIN = 10.0            # FIX: increased gain to boost soft speakers
+MAX_GAIN = 3.0             # FURTHER REDUCED: extremely conservative gain to prevent hallucinations
 
 
 def _to_float32(pcm_bytes: bytes, sample_width: int = 4) -> np.ndarray:
@@ -66,21 +66,14 @@ def process_chunk(
     try:
         samples = _to_float32(pcm_bytes, sample_width)
         rms = float(np.sqrt(np.mean(samples ** 2)))
-        # logger.info(f"[audio_processor] Chunk RMS: {rms:.6f}")
+        logger.info(f"[AUDIO RMS] {rms:.6f}") # STEP 9
     except Exception as e:
         logger.warning(f"[audio_processor] Decode error: {e}")
         return None
 
     # FIX: soft silence handling instead of hard drop
     if rms < SILENCE_THRESHOLD:
-        logger.info(f"[audio_processor] Extremely silent chunk skipped (RMS: {rms:.6f})")
-        return None
-
-    # FIX: boost low-volume audio (critical for demo)
-    if rms < 0.01:
-        samples = samples * (0.01 / (rms + 1e-6))
-        # Recalculate RMS for normalization logic
-        rms = float(np.sqrt(np.mean(samples ** 2)))
+        samples = samples * 5.0
 
     return _normalise(samples)
 

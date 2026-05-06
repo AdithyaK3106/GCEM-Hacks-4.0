@@ -25,28 +25,44 @@ logger = logging.getLogger(__name__)
 active_connections: Dict[str, dict] = {}
 MAX_CONNECTIONS = 5
 
+# FIX: Persist transcription objects across WebSocket reconnects
+stream_store: Dict[str, TranscriptionStream] = {}
+
+# FIX: Serialise sends to prevent concurrent write crashes
+send_locks: Dict[str, asyncio.Lock] = {}
 
 import traceback
 
-async def safe_send(ws: WebSocket, payload: dict):
+async def safe_send(ws: WebSocket, payload: dict, session_id: str):
     # FIX: exception-first safe send (unreliable client_state removed)
     try:
-        logger.info(f"[SEND] {payload.get('type')}")
-        await ws.send_text(json.dumps(payload))
+        conn = active_connections.get(session_id)
+        if not conn or conn.get("closed"):
+            return
+        
+        # STEP 8: Connection ID check (prevent sending to replaced socket)
+        if conn.get("ws") is not ws:
+            return
+
+        async with send_locks[session_id]:
+            await ws.send_text(json.dumps(payload))
+
     except Exception as e:
-        logger.error("🔥 SEND ERROR")
-        logger.error(e)
-        traceback.print_exc()
+        logger.error(f"[SEND ERROR] {e}")
+        if session_id in active_connections:
+            active_connections[session_id]["closed"] = True
 
 
-async def safe_close(ws: WebSocket):
+async def safe_close(ws: WebSocket, session_id: str):
     # FIX: exception-safe close
     try:
-        logger.info("[CLOSE]")
+        conn = active_connections.get(session_id)
+        if conn and conn.get("ws") is ws:
+            conn["closed"] = True
+        logger.info(f"[WS CLOSED] {session_id}")
         await ws.close()
-    except Exception as e:
-        logger.error("🔥 CLOSE ERROR")
-        logger.error(e)
+    except Exception:
+        pass
 
 
 async def cleanup_stale_connections():
@@ -89,25 +105,32 @@ async def handle_audio_stream(ws: WebSocket) -> None:
     """
     session_id: str = ws.query_params.get("session_id", "unknown")
     connection_closed = False
-    transcription_stream = TranscriptionStream()
+    
+    # FIX: PERSISTENCE - reuse stream if it exists
+    if session_id not in stream_store:
+        stream_store[session_id] = TranscriptionStream()
+    transcription_stream = stream_store[session_id]
+
+    if session_id not in send_locks:
+        send_locks[session_id] = asyncio.Lock()
 
     # FIX: Wrap ENTIRE handler in try/finally to guarantee cleanup
     try:
-        logger.info(f"[audio_stream] START session: {session_id}")
+        logger.info(f"[WS OPEN] session: {session_id}")
 
         # FIX: Prevent connection overflow (Hard Kill)
         if len(active_connections) >= MAX_CONNECTIONS and session_id not in active_connections:
             logger.warning(f"[audio_stream] Max connections reached. Rejecting {session_id}")
             await ws.accept()
-            await safe_send(ws, {"type": "error", "data": {"message": "Stream: max connections reached"}})
-            await safe_close(ws)
+            await safe_send(ws, {"type": "error", "data": {"message": "Stream: max connections reached"}}, session_id)
+            await safe_close(ws, session_id)
             connection_closed = True
             return
 
-        # FIX: Enforce strictly single-connection per session (Force Replace)
+        # STEP 4: Safe connection replacement
         if session_id in active_connections:
-            logger.info(f"[audio_stream] Force-replacing stale connection for {session_id}")
-            await safe_close(active_connections[session_id]["ws"])
+            logger.info(f"[audio_stream] Marking old connection for {session_id} as closed")
+            active_connections[session_id]["closed"] = True
 
         await ws.accept()
         
@@ -117,6 +140,7 @@ async def handle_audio_stream(ws: WebSocket) -> None:
             "last_seen": time.time(),
             "stop_processed": False,
             "stale": False,
+            "closed": False,
             "tracker": ClarityTracker() # FIX: track clarity state
         }
         logger.info(f"[audio_stream] Connected: {session_id} | Total Active: {len(active_connections)}")
@@ -124,30 +148,39 @@ async def handle_audio_stream(ws: WebSocket) -> None:
         chunk_index = 0
 
         while True:
+            # STEP 4: Stop all sends after close
+            if active_connections.get(session_id, {}).get("closed"):
+                connection_closed = True
+                break
+
+            # STEP 11: Heartbeat timeout guard
+            conn_entry = active_connections.get(session_id)
+            if not conn_entry or time.time() - conn_entry["last_seen"] > 10:
+                logger.warning(f"[WS TIMEOUT] {session_id}")
+                connection_closed = True
+                break
+
             # FIX: exception-safe receive to avoid loop crash
             try:
                 data = await ws.receive()
-                logger.info(f"[RECEIVE] {data.keys()}")
             except Exception as e:
-                logger.error("🔥 RECEIVE ERROR")
-                logger.error(e)
-                traceback.print_exc()
-                break # FIX: break, not return, to ensure finally runs
+                logger.error(f"🔥 RECEIVE ERROR: {e}")
+                connection_closed = True
+                break 
 
             # Update activity timestamp for ANY incoming message
             if session_id in active_connections:
                 active_connections[session_id]["last_seen"] = time.time()
 
-            # FIX: stale handling using break (NOT return)
-            conn_entry = active_connections.get(session_id)
+            # FIX: stale handling using break
             if conn_entry and conn_entry.get("stale"):
                 logger.info(f"[audio_stream] STALE connection closing: {session_id}")
-                await safe_close(ws)
                 connection_closed = True
                 break
 
             if data["type"] == "websocket.disconnect":
                 logger.info(f"[audio_stream] Disconnect received for {session_id}")
+                connection_closed = True
                 break
 
             # FIX: handle mixed message types safely
@@ -158,12 +191,11 @@ async def handle_audio_stream(ws: WebSocket) -> None:
                 try:
                     msg = json.loads(data["text"])
                     
-                    # Heartbeat
+                    # Heartbeat (STEP 5: Removed extra ack)
                     if msg.get("type") == "PING":
-                        await safe_send(ws, {"type": "ack", "data": "PONG"})
                         continue
                         
-                    # FIX: Idempotent STOP handling using break
+                    # FIX: Idempotent STOP handling
                     if msg.get("type") == "STOP":
                         conn_state = active_connections.get(session_id)
                         if not conn_state or conn_state["stop_processed"]:
@@ -171,7 +203,7 @@ async def handle_audio_stream(ws: WebSocket) -> None:
                         
                         conn_state["stop_processed"] = True
                         logger.info(f"[audio_stream] STOP received for {session_id}")
-                        # Break the loop to trigger finally (which flushes and closes)
+                        connection_closed = True
                         break
                 except Exception as e:
                     logger.warning(f"[audio_stream] Control error: {e}")
@@ -182,7 +214,6 @@ async def handle_audio_stream(ws: WebSocket) -> None:
             # Process audio chunk...
             try:
                 header, pcm_data = _parse_binary_message(pcm_bytes)
-                logger.info(f"[RECEIVED BYTES] {len(pcm_data)}") # FIX: Verify chunks received
                 
                 sample_rate = header.get("sampleRate", 16000)
                 chunk_index = header.get("chunkIndex", chunk_index)
@@ -191,32 +222,53 @@ async def handle_audio_stream(ws: WebSocket) -> None:
                 tracker = active_connections[session_id].get("tracker")
                 metrics = compute_metrics(pcm_data, sample_width=4, tracker=tracker)
                 
-                rms = metrics.get("rms", 0)
-                logger.info(f"[audio_stream] Chunk {chunk_index} | RMS: {rms:.6f}")
-                
-                await safe_send(ws, {"type": "metrics", "data": metrics})
-
                 processed = process_chunk(pcm_data, sample_rate=sample_rate, sample_width=4)
                 
-                # Silence gating (FIX: lowered threshold to 0.0005)
-                if rms < 0.0005:
-                    await safe_send(ws, {"type": "partial", "data": {"text": transcription_stream._stable_transcript, "isFinal": False}})
-                    await safe_send(ws, {"type": "ack", "data": None})
-                    continue
-
                 if processed is not None:
                     status = transcription_stream.add_chunk(processed)
                     if status == "final":
                         # FIX: Verify transcriber input length
                         logger.info(f"[TRANSCRIBE INPUT LEN] {transcription_stream._buffer_samples}")
                         result = await transcription_stream.transcribe_buffered()
+                        
                         if result["text"]:
-                            await safe_send(ws, {"type": "transcript", "data": {"text": result["text"], "isFinal": True}})
+                            # STEP 2: Use delta directly from result
+                            new_text = result["text"]
+                            
+                            # STEP 12: Small send delay for smoothing
+                            await asyncio.sleep(0.05)
+
+                            # STEP 6/9: Combined Update Payload (Only one send)
+                            await safe_send(ws, {
+                                "type": "update",
+                                "data": {
+                                    "metrics": metrics,
+                                    "text": new_text,
+                                    "mode": "delta"
+                                }
+                            }, session_id)
+                            logger.info(f"[DELTA SENT] '{new_text}'")
                     elif status == "preview":
                         preview_text = await transcription_stream.transcribe_preview()
-                        await safe_send(ws, {"type": "partial", "data": {"text": preview_text, "isFinal": False}})
-                
-                await safe_send(ws, {"type": "ack", "data": None})
+                        # Preview uses partial mode
+                        await safe_send(ws, {
+                            "type": "update",
+                            "data": {
+                                "metrics": metrics,
+                                "text": preview_text,
+                                "mode": "partial"
+                            }
+                        }, session_id)
+                else:
+                    # No audio processed, just send metrics (STEP 9: Only one send)
+                    await safe_send(ws, {
+                        "type": "update",
+                        "data": {
+                            "metrics": metrics,
+                            "text": "",
+                            "mode": "none"
+                        }
+                    }, session_id)
 
             except Exception as e:
                 logger.warning(f"[audio_stream] Processing error: {e}")
@@ -230,8 +282,8 @@ async def handle_audio_stream(ws: WebSocket) -> None:
         # FIX: Identity-safe connection check for cleanup
         conn_entry = active_connections.get(session_id)
 
-        # FIX: only flush if NOT stale (don't send to dead socket)
-        if conn_entry and not conn_entry.get("stale"):
+        # STEP 7: Harden final flush
+        if conn_entry and not conn_entry.get("closed") and not conn_entry.get("stale"):
             if transcription_stream._buffer_samples > 0:
                 try:
                     logger.info(f"[audio_stream] Final flush for {session_id} ({transcription_stream._buffer_samples} samples)")
@@ -243,17 +295,21 @@ async def handle_audio_stream(ws: WebSocket) -> None:
                                 "text": result["text"],
                                 "isFinal": True
                             }
-                        })
+                        }, session_id)
+                        logger.info(f"[FINAL SENT] {session_id}")
                 except Exception as flush_err:
                     logger.warning(f"[audio_stream] Final flush failed: {flush_err}")
 
         # ALWAYS ensure safe close
         await asyncio.sleep(0.1)
-        await safe_close(ws)
+        await safe_close(ws, session_id)
 
         # FIX: ALWAYS remove from active_connections (identity-safe)
         if conn_entry and conn_entry.get("ws") is ws:
             active_connections.pop(session_id, None)
+            # STEP 6: Clean up per-session resources
+            stream_store.pop(session_id, None)
+            send_locks.pop(session_id, None)
             logger.info(f"[audio_stream] CLEANUP DONE: removed {session_id}")
             
         logger.info(f"[audio_stream] ACTIVE COUNT: {len(active_connections)}")

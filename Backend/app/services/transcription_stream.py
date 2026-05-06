@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 # Lazy import — only loaded when first transcription is requested
 _whisper_model = None
-WHISPER_MODEL_SIZE = "tiny.en"  # FASTEST model for real-time responsiveness
+WHISPER_MODEL_SIZE = "small.en"  # UPGRADED: much more resilient to noise than tiny
 
 
 def _get_model():
@@ -25,9 +25,16 @@ def _get_model():
             import torch
             from faster_whisper import WhisperModel
 
-            device = "cuda" if torch.cuda.is_available() else "cpu"
-            compute = "float16" if device == "cuda" else "int8"
+            if not torch.cuda.is_available():
+                raise RuntimeError("CUDA not available — GPU REQUIRED for demo")
+
+            device = "cuda"
+            compute = "float16"
+            
+            logger.info(f"[GPU] CUDA Available: {torch.cuda.is_available()}")
+            logger.info(f"[GPU] Device: {torch.cuda.get_device_name(0)}")
             logger.info(f"[transcription] Loading faster-whisper '{WHISPER_MODEL_SIZE}' on {device} ({compute})")
+            
             _whisper_model = WhisperModel(
                 WHISPER_MODEL_SIZE,
                 device=device,
@@ -59,8 +66,8 @@ async def transcribe_chunk(
             "language": "en",
             "beam_size": 1,
             "temperature": 0.0,
-            "no_speech_threshold": 0.6, # More lenient
-            "condition_on_previous_text": True,
+            "no_speech_threshold": 0.6, # More conservative
+            "condition_on_previous_text": True, # ENABLE context memory
             "log_prob_threshold": -1.5,
         }
         params.update(whisper_kwargs)
@@ -69,11 +76,14 @@ async def transcribe_chunk(
         
         kept = []
         for seg in segments:
-            # More tolerant probability limits
-            prob_limit = 0.5 if params.get("condition_on_previous_text") else 0.4
-            if seg.no_speech_prob < prob_limit and seg.text.strip():
+            # Recalibrated probability filtering
+            # 0.4 is a balanced "Goldilocks" zone for real speech
+            if seg.no_speech_prob < 0.4 and seg.text.strip():
                 kept.append(seg.text.strip())
-        return " ".join(kept).strip()
+        
+        text = " ".join(kept).strip()
+        logger.info(f"[WHISPER OUTPUT] {text}") # STEP 9
+        return text
 
     try:
         text = await loop.run_in_executor(None, _run)
@@ -89,10 +99,10 @@ class TranscriptionStream:
     Maintains a rolling buffer so short chunks get context.
     """
 
-    # FIX: Optimized latency settings
-    BUFFER_SECONDS = 1.5
-    PREVIEW_SECONDS = 0.4
-    OVERLAP_SECONDS = 0.4
+    # OPTIMIZED: Increased buffer for small.en resilience
+    BUFFER_SECONDS = 2.5
+    PREVIEW_SECONDS = 0.5
+    OVERLAP_SECONDS = 1.2
     SAMPLE_RATE = 16000
 
     def __init__(self):
@@ -103,6 +113,7 @@ class TranscriptionStream:
         self._overlap_samples = int(self.SAMPLE_RATE * self.OVERLAP_SECONDS)
         self._last_text = ""
         self._stable_transcript = ""
+        self._last_sent_text = ""
         self._last_preview = ""
         self._preview_fired = False
 
@@ -113,6 +124,7 @@ class TranscriptionStream:
         """
         self._buffer.append(samples)
         self._buffer_samples += len(samples)
+        logger.info(f"[BUFFER SAMPLES] {self._buffer_samples}") # STEP 9
         
         if self._buffer_samples >= self._target_samples:
             self._preview_fired = False
@@ -136,10 +148,10 @@ class TranscriptionStream:
         
         result = await transcribe_chunk(
             samples, 
-            condition_on_previous_text=False, # FAST preview
+            condition_on_previous_text=True, # FAST preview
             beam_size=1,
             temperature=0.0,
-            no_speech_threshold=0.8
+            no_speech_threshold=0.6 # UNIFIED
         )
         
         preview_text = result["text"].strip()
@@ -170,35 +182,27 @@ class TranscriptionStream:
         """Flush the buffer and transcribe with final quality and alignment."""
         samples = self.flush()
         
-        # SKIP SMALL AUDIO CHUNKS
-        if len(samples) < int(0.2 * self.SAMPLE_RATE):
+        # STEP 6: Lower minimum audio requirement
+        if len(samples) < int(0.1 * self.SAMPLE_RATE):
             logger.info(f"[transcription] Chunk too small ({len(samples)}), skipping.")
             return {"text": self._stable_transcript, "isFinal": True}
         
         # FINAL PASS (One pass only for speed)
         final_result = await transcribe_chunk(
             samples,
-            condition_on_previous_text=True,
+            condition_on_previous_text=True, # ENABLING conditioning for stability
             beam_size=1,
             temperature=0.0
         )
         final_text = final_result["text"].strip()
         logger.info(f"[transcription] Final Pass: '{final_text}'")
 
-        # STRONG DEDUPLICATION
+        # FIX: More reliable deduplication
         def remove_repetition(prev, new):
-            if not prev: return new
-            # If the new text is already completely contained in the previous text (case-insensitive), skip it
-            if len(new) > 4 and new.lower() in prev.lower(): 
+            if not prev:
+                return new
+            if new.lower() in prev.lower():
                 return ""
-            
-            prev_words = prev.split()
-            new_words = new.split()
-            
-            # Look for overlapping words at the boundary
-            for i in range(min(len(prev_words), len(new_words)), 0, -1):
-                if prev_words[-i:] == new_words[:i]:
-                    return " ".join(new_words[i:])
             return new
 
         # We deduplicate the final_text against self._last_text (the full text of the PREVIOUS chunk)
@@ -208,12 +212,17 @@ class TranscriptionStream:
         if dedup_text:
             # Update last_text to be the full final_text for next chunk's deduplication
             self._last_text = final_text
-            # Append to stable transcript if not already present
-            if dedup_text not in self._stable_transcript:
-                self._stable_transcript = (self._stable_transcript + " " + dedup_text).strip()
+            # Append to stable transcript
+            self._stable_transcript += " " + dedup_text
+            logger.info(f"[LIVE TRANSCRIPT] {self._stable_transcript}")
             
+        full_text = self._stable_transcript.strip()
+        delta = full_text[len(self._last_sent_text):].strip()
+        self._last_sent_text = full_text
+
         return {
-            "text": self._stable_transcript, 
-            "isFinal": True
+            "text": delta,
+            "full_text": full_text,
+            "isFinal": False 
         }
 

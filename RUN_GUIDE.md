@@ -6,7 +6,9 @@ Follow these steps to get the full-stack application running on your local machi
 Before you begin, ensure you have the following installed:
 - **Python 3.10+**
 - **Node.js 18+**
-- **NPM** (usually comes with Node.js)
+- **Ollama**: Running locally ([Download](https://ollama.com/))
+- **Tesseract OCR**: Required for scanning images/PDFs.
+- **Poppler**: Required for PDF rendering.
 
 ---
 
@@ -17,17 +19,14 @@ Before you begin, ensure you have the following installed:
    cd Backend
    ```
 
-2. **Create a Virtual Environment** (Recommended):
-   ```bash
-   python -m venv venv
-   source venv/Scripts/activate  # Windows
-   # or
-   source venv/bin/activate      # Mac/Linux
-   ```
-
-3. **Install Dependencies**:
+2. **Install Dependencies**:
    ```bash
    pip install -r requirements.txt
+   ```
+
+3. **Setup Local AI**:
+   ```bash
+   ollama pull qwen2.5:7b
    ```
 
 4. **Start the Server**:
@@ -61,20 +60,19 @@ Before you begin, ensure you have the following installed:
 ## 🎯 Step 3: Running the Demo
 
 1. Open your browser and go to `http://localhost:5173`.
-2. **Upload**: Click the upload area. In demo mode, any file will trigger the "Neural Networks" transcript.
-3. **Review**: Read the AI-generated notes.
-4. **Quiz**: Start the Mastery Check.
-   - **Question 1**: Answer correctly (e.g., Option B). You will see the **MASTERED** (Green) state.
-   - **Question 2**: Answer incorrectly but with high confidence. You will see the **MISCONCEPTION** (Red) state with the detailed reality-check explanation.
-5. **Results**: View your final score and adaptive recommendations.
+2. **Upload**: Upload a PDF or start a Live Stream.
+3. **Review**: Read the AI-generated topics and intuitions.
+4. **Mastery Check**: 
+   - **First Attempt**: Answer correctly to trigger **MASTERED**.
+   - **Second Attempt**: Answer with high confidence but choose the wrong option to trigger the **MISCONCEPTION** detection.
 
 ---
 
 ## ❓ Troubleshooting
 
-- **Port Conflict**: If `5173` or `8000` is in use, the tools will automatically suggest another port. Ensure the Frontend's `.env` file points to the correct Backend URL.
-- **Missing Dependencies**: Ensure you ran `pip install` and `npm install` inside their respective subdirectories.
-- **Refresh Issue**: The app uses `localStorage` to persist your session, so you can safely refresh the browser during the demo.
+- **Ollama Error**: If the backend console shows connection errors, ensure Ollama is running (`ollama serve`).
+- **OCR/PDF Error**: Ensure `tesseract` and `poppler/bin` are added to your system environment PATH.
+- **VRAM Issues**: If using a GPU with < 8GB VRAM, the system may struggle with `qwen2.5:14b`. We recommend `qwen2.5:7b` for stability.
 
 ---
 *Created for the Gopalan Hackathon 2026*
