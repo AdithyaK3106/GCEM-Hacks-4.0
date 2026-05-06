@@ -3,6 +3,8 @@ uvicorn
 pydantic
 sqlalchemy
 pypdf
+pytesseract
+pdf2image
 python-multipart
 openai
 python-dotenv

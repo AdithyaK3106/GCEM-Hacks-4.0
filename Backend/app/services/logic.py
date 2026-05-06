@@ -8,6 +8,8 @@ import requests
 from typing import Dict, Any, Optional, List
 from pydantic import BaseModel, ValidationError
 from pypdf import PdfReader
+from pdf2image import convert_from_bytes
+import pytesseract
 from dotenv import load_dotenv
 from ..schemas import pydantic_schemas
 
@@ -26,9 +28,9 @@ DEMO_MODE = False # Set to False by default to allow real pipeline testing
 OLLAMA_URL = "http://127.0.0.1:11434/api/generate"
 # Switching to Qwen 2.5 Coder 7B as it's the most powerful STABLE model on this hardware
 # (14B is installed but triggered a 500 error/OOM in testing)
-NOTES_MODEL = "qwen2.5-coder:7b" 
-QUIZ_MODEL = "qwen2.5-coder:7b"
-EXPLANATION_MODEL = "qwen2.5-coder:7b" 
+NOTES_MODEL = "qwen2.5:7b" 
+QUIZ_MODEL = "qwen2.5:7b"
+EXPLANATION_MODEL = "qwen2.5:7b" 
 
 from concurrent.futures import ThreadPoolExecutor
 
@@ -45,7 +47,11 @@ def load_fallback_file(filename: str, default: Any) -> Any:
         path = os.path.join(base_path, "..", "..", "demo_assets", filename)
         if os.path.exists(path):
             with open(path, "r", encoding="utf-8") as f:
-                return json.load(f)
+                data = json.load(f)
+                # Ensure note_id exists for schema validation
+                if filename == "notes.json" and isinstance(data, dict) and "note_id" not in data:
+                    data["note_id"] = 999
+                return data
     except Exception as e:
         logger.error(f"Failed to load fallback {filename}: {e}")
     return default
@@ -147,57 +153,58 @@ def generate_notes_llm(transcript: str, target_language: str = "English") -> dic
     logger.info(f"📦 Split text into {len(chunks)} chunks for analysis.")
     all_topics = []
     
-    prompt_template = f"""You are an expert teacher explaining concepts clearly and practically. Extract core concepts as JSON.
-Output must be in {target_language}.
+    prompt_template = """
+You are an expert teacher.
 
-Rules:
-* Output must be in {target_language}.
-* Maximum 5 topics total across response.
-* Each topic MUST have: name, summary, intuition, when_to_use, common_mistake, real_world_example, key_concepts.
-* summary: 2-3 lines, clear and simple.
-* intuition: Memorable analogy or mental model.
-* when_to_use: 2-4 bullet points on practical scenarios.
-* common_mistake: Typical misunderstanding to avoid.
-* real_world_example: One concrete, practical example.
-* key_concepts: 3-5 short bullet points.
-* Return ONLY valid JSON.
-* DO NOT include special tokens or control characters in the JSON values.
-* If you need a newline in a string, use \n instead of a literal newline.
+Extract key concepts from the text and return ONLY valid JSON.
 
-JSON Structure:
-{{{{
+STRICT RULES:
+
+* Output must be valid JSON ONLY
+* No explanations, no markdown, no extra text
+* No trailing commas
+* Use simple strings (no special tokens)
+
+JSON FORMAT:
+{
 "topics": [
-{{{{
+{
 "name": "Concept Name",
-"summary": "Brief 2-3 line summary",
-"intuition": "Think of it like...",
-"when_to_use": ["scenario 1", "scenario 2"],
-"common_mistake": "Students often assume...",
-"real_world_example": "Spam detection in emails...",
-"key_concepts": ["core idea 1", "core idea 2"]
-}}}}
+"summary": "2-3 line explanation",
+"intuition": "Simple mental model",
+"when_to_use": ["case 1", "case 2"],
+"common_mistake": "Typical mistake",
+"real_world_example": "Practical example",
+"key_concepts": ["point 1", "point 2"]
+}
 ]
-}}}}
+}
 
-Text to analyze:
-{{text}}"""
+Text:
+{text}
+
+If the output is not valid JSON, you have failed.
+"""
 
     # Parallel Processing for Speed (Fix: Using ThreadPoolExecutor)
     def process_chunk(idx_chunk):
         idx, chunk = idx_chunk
         logger.info(f"⚡ Parallel Task: Processing Note Chunk {idx+1}")
-        prompt = prompt_template.format(text=chunk)
+        prompt = prompt_template.replace("{text}", chunk)
         
-        for attempt in range(2):
+        for attempt in range(3):
             raw_response = call_ollama(NOTES_MODEL, prompt)
+            logger.info(f"RAW LLM RESPONSE:\n{raw_response}")
             data = extract_json(raw_response)
+            if not data:
+                logger.error("JSON extraction failed")
             if data and "topics" in data and isinstance(data["topics"], list):
                 return data["topics"]
         return []
 
     # Sequential Processing for 8GB VRAM (More stable than parallel)
-    for i, chunk in enumerate(chunks[:2]):
-        logger.info(f"Processing Chunk {i+1}/2...")
+    for i, chunk in enumerate(chunks[:3]):
+        logger.info(f"Processing Chunk {i+1}/3...")
         topics = process_chunk((i, chunk))
         if topics:
             all_topics.extend(topics)
@@ -212,8 +219,11 @@ Text to analyze:
             seen_names.add(name.lower())
 
     if not unique_topics:
-        logger.error("❌ ALL PARALLEL CHUNKS FAILED → fallback triggered")
-        return FALLBACK_NOTES_RAW
+        logger.warning("Returning partial topics instead of fallback")
+        return {
+            "title": "Partial Notes",
+            "topics": all_topics[:3] if all_topics else []
+        }
         
     return {
         "title": "Synthesis Dashboard",
@@ -326,43 +336,61 @@ Structure:
 # --- PIPELINE ---
 
 def extract_text(file, filename: str = "") -> str:
-    """Robust extraction from PDF or Text files."""
     extracted_content = ""
+    import io
     try:
-        # Handle Text files
-        if filename.lower().endswith('.txt') or filename.lower().endswith('.md'):
-            file.seek(0)
-            content = file.read()
-            if isinstance(content, bytes):
-                extracted_content = content.decode('utf-8', errors='ignore')
-            else:
-                extracted_content = content
-        else:
-            # Handle PDF files
-            file.seek(0)
-            reader = PdfReader(file)
+        file.seek(0)
+        file_bytes = file.read()
+
+        # --- STEP A: Try PyPDF first ---
+        try:
+            reader = PdfReader(io.BytesIO(file_bytes))
             for page in reader.pages[:20]:
                 page_text = page.extract_text()
-                if page_text: 
+                if page_text:
                     extracted_content += page_text + " "
-        
-        return extracted_content
-    except Exception as e: 
+        except Exception as e:
+            logger.warning(f"PyPDF failed: {e}")
+
+        # --- STEP B: If empty → OCR fallback ---
+        if len(extracted_content.strip()) < 50:
+            logger.warning("⚠️ PyPDF returned empty. Switching to OCR...")
+
+            images = convert_from_bytes(file_bytes[:10_000_000])  # limit size for speed
+
+            ocr_text = ""
+            for img in images[:10]:  # limit pages for hackathon speed
+                text = pytesseract.image_to_string(img)
+                if text:
+                    ocr_text += text + " "
+
+            extracted_content = ocr_text
+
+        return extracted_content.strip()
+
+    except Exception as e:
         logger.error(f"❌ Extraction error ({filename}): {e}")
         return ""
+
     finally:
         logger.info(f"📄 Extracted {len(extracted_content)} characters from {filename}")
-
 def process_pdf_pipeline(session_id: str, file, target_language: str = "English", filename: str = "") -> Dict[str, Any]:
     from app.services.translation_service import translate_text
     try:
         logger.info(f"🚀 Starting Pipeline: {filename} (Session: {session_id})")
         raw_text = extract_text(file, filename)
         
+        # --- ADD DEBUG LOG (Step 3) ---
+        logger.info(f"EXTRACTED TEXT SAMPLE: {raw_text[:300]}")
+
+        # --- SAFETY CLEANING (Step 5) ---
+        raw_text = re.sub(r'\s+', ' ', raw_text)
+        
         # Store raw transcript for UI 
         transcript = raw_text if raw_text else "No text extracted from file."
 
-        if DEMO_MODE and (not raw_text or len(raw_text) < 50):
+        # --- LOWER THRESHOLD (Step 4) ---
+        if DEMO_MODE and (not raw_text or len(raw_text.strip()) < 20):
             logger.info(f"🚀 HYBRID DEMO MODE ACTIVE (Mock Data): Language={target_language}")
             notes = FALLBACK_NOTES_RAW
             quiz = FALLBACK_QUIZ
@@ -385,7 +413,8 @@ def process_pdf_pipeline(session_id: str, file, target_language: str = "English"
         if DEMO_MODE:
              logger.info(f"🚀 HYBRID DEMO MODE ACTIVE (Real Data): Proceeding with synthesis for {len(raw_text)} chars.")
 
-        if not raw_text or len(raw_text) < 50:
+        # --- LOWER THRESHOLD (Step 4) ---
+        if not raw_text or len(raw_text.strip()) < 20:
             logger.warning(f"⚠️ Text too short ({len(raw_text)} chars). Triggering fallback.")
             if target_language.lower() == "hindi":
                 from app.services.hindi_mock import HINDI_NOTES, HINDI_QUIZ
